@@ -1,0 +1,31 @@
+{
+  "name": "rastreabilidade",
+  "version": "1.0.0",
+  "description": "A solução será composta por uma aplicação web integrada ao ERP Protheus, utilizando arquitetura baseada em Backend, Frontend Web e integração via API externa.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxcode42/client-alvenius-rastreabilidade-produtos.git"
+  },
+  "author": "Josuel A. Lopes",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/maxcode42/client-alvenius-rastreabilidade-produtos/issues"
+  },
+  "homepage": "https://github.com/maxcode42/client-alvenius-rastreabilidade-produtos#readme",
+  "dependencies": {
+    "next": "^14.2.5",
+    "next-connect": "^1.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.4.13"
+  }
+}
