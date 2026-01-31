@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+
+  @apply text-stone-950 font-sans bg-gradient-to-br from-stone-100 to-stone-50;
+}
+
+/* 
+::-webkit-scrollbar {
+  width: 0.5rem;
+  scrollbar-width: "thin",
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: "#eee"; 
+  scrollbar-color: "#1c1917 #44403c";
+  border-radius: 1rem;
+} */
+
+/* body > div > * {
+  @apply  grid grid-cols-[50vw_50vw] h-screen;
+} */
+
+header,
+main > div,
+footer {
+  @apply bg-gradient-to-br from-stone-50 to-stone-100;
+}
+
+main {
+  /* @apply grid grid-cols-login h-screen;
+  */
+}
+
+header > *,
+main > *,
+footer > * {
+  /* @apply col-start-1 col-end-3; */
+  @apply w-full;
+}
+
+.bg-banner {
+  background-image: url("../../assets/imagens/em_desenvolvimento.jpg");
+  width: 100vw;
+  opacity: 0.9;
+  z-index: 1;
+}
