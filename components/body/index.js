@@ -5,7 +5,7 @@ import developer from "../../assets/imagens/em_desenvolvimento.jpg";
 export default function Body() {
   return (
     <main>
-      <div className="flex flex-col gap-6 w-full h-1/3 justify-between items-center">
+      <div className="flex flex-col gap-4 w-full h-1/3 justify-between items-center">
         <h2 className="font-semibold text-4x sm:text-2xl py-4 px-8 rounded-lg mt-[-38px] bg-stone-50">
           Rastreabilidade de produtos
         </h2>
