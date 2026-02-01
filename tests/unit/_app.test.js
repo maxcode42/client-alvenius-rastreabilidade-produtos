@@ -1,7 +1,7 @@
 describe("Application smoke test", () => {
   describe("Anonymous user", () => {
-    test("should run the application environment", () => {
-      expect(true).toBe(true);
+    test("should have NODE_ENV defined", () => {
+      expect(process.env.NODE_ENV).toBeDefined();
     });
   });
 });
