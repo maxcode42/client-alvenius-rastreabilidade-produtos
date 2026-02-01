@@ -5,7 +5,12 @@
   "main": "index.js",
   "scripts": {
     "dev": "next dev",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --runInBand --verbose --passWithNoTests",
+    "lint:prettier:check": "prettier --check .",
+    "lint:prettier:fix": "prettier --write .",
+    "lint:eslint:check": "next lint --dir .",
+    "prepare": "husky",
+    "commit": "cz"
   },
   "repository": {
     "type": "git",
@@ -18,14 +23,32 @@
   },
   "homepage": "https://github.com/maxcode42/client-alvenius-rastreabilidade-produtos#readme",
   "dependencies": {
+    "dotenv": "^16.4.5",
+    "dotenv-expand": "^11.0.6",
     "next": "^14.2.5",
     "next-connect": "^1.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.4.0",
+    "@commitlint/config-conventional": "^19.2.2",
     "autoprefixer": "^10.4.21",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.5",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-jest": "^28.8.0",
+    "husky": "^9.1.7",
+    "jest": "^29.7.0",
     "postcss": "^8.4.31",
+    "prettier": "^3.3.3",
     "tailwindcss": "^3.4.13"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
