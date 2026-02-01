@@ -4,8 +4,17 @@
   "description": "A solução será composta por uma aplicação web integrada ao ERP Protheus, utilizando arquitetura baseada em Backend, Frontend Web e integração via API externa.",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev",
-    "test": "jest --runInBand --verbose --passWithNoTests",
+    "predev": "",
+    "dev": "npm run services:up && npm run services:wait:database && npm run migrations:up && next dev",
+    "postdev": "",
+    "test": "npm run services:up && npm run services:wait:database && concurrently -n next,jest --hide next --kill-others --success command-jest \"sleep 0; next dev\" \"jest --runInBand --verbose --passWithNoTests\"",
+    "posttest": "npm run services:stop",
+    "services:up": "docker compose -f infra/compose.yaml up -d",
+    "services:stop": "docker compose -f infra/compose.yaml stop",
+    "services:down": "docker compose -f infra/compose.yaml down",
+    "services:wait:database": "node infra/scripts/wait-for-postgres.js",
+    "migrations:create": "node-pg-migrate -m infra/migrations create",
+    "migrations:up": "node-pg-migrate -m infra/migrations --envPath .env.development up",
     "lint:prettier:check": "prettier --check .",
     "lint:prettier:fix": "prettier --write .",
     "lint:eslint:check": "next lint --dir .",
@@ -23,12 +32,16 @@
   },
   "homepage": "https://github.com/maxcode42/client-alvenius-rastreabilidade-produtos#readme",
   "dependencies": {
+    "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",
     "dotenv-expand": "^11.0.6",
     "next": "^14.2.5",
     "next-connect": "^1.0.0",
+    "node-pg-migrate": "^7.6.1",
+    "pg": "^8.12.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.4.0",

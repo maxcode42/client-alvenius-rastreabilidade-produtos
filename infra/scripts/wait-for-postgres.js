@@ -1,0 +1,21 @@
+const { exec } = require("node:child_process");
+
+function checkPostgres() {
+  exec(
+    "docker exec postgres-rastreabilidade-dev pg_isready --host localhost",
+    handleReturn,
+  );
+
+  function handleReturn(_, stdout) {
+    if (stdout.search("accepting connections") === -1) {
+      process.stdout.write(".");
+      checkPostgres();
+      return;
+    }
+
+    console.log("\n🟢 Conexão `postgres` está pronta e aceitando conexões!\n");
+  }
+}
+
+process.stdout.write("\n\n🔴 Aguardando `postgres` aceitar conexões...");
+checkPostgres();
