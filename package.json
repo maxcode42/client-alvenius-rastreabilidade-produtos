@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "next dev",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --runInBand --verbose --passWithNoTests",
     "lint:prettier:check": "prettier --check .",
     "lint:prettier:fix": "prettier --write .",
     "lint:eslint:check": "next lint --dir .",
@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/maxcode42/client-alvenius-rastreabilidade-produtos#readme",
   "dependencies": {
+    "dotenv": "^16.4.5",
+    "dotenv-expand": "^11.0.6",
     "next": "^14.2.5",
     "next-connect": "^1.0.0",
     "react": "^18.3.1",
