@@ -6,7 +6,7 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 
-  @apply text-stone-950 font-sans bg-gradient-to-br from-stone-100 to-stone-50;
+  @apply text-stone-950 font-sans bg-gradient-to-br from-stone-100 to-stone-50 overflow-hidden;
 }
 
 /* 

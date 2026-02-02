@@ -10,9 +10,6 @@ export default function Maintenance() {
     <div className="w-full h-full bg-zinc-100">
       <Header />
       <Body>
-        <h2 className="font-semibold text-4x sm:text-2xl py-4 px-8 rounded-lg mt-[-38px] bg-stone-50">
-          Rastreabilidade de produtos
-        </h2>
         <div className="sm:w-1/3 h-1/2 rounded-lg bg-stone-100">
           <Image src={developer} alt="Imagem em desenvolvimento" />
         </div>

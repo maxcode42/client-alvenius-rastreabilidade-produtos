@@ -29,7 +29,7 @@ export default function Login() {
   return (
     <div className="w-full h-full bg-zinc-100 overflow-hidden ">
       <Header />
-      <div className="overflow-hidden flex flex-col w-full h-full py-16 justify-center items-center px-4">
+      <div className="overflow-hidden flex flex-col w-full h-full py-56 justify-center items-center px-4">
         <form className="flex flex-col w-full sm:w-1/2 lg:w-1/3 p-4 gap-8 justify-center border-blue-950/50 border-2 rounded-sm">
           <section className="flex flex-col w-full items-center gap-4">
             <h2 className="text-2xl font-semibold text-blue-900">Login</h2>
@@ -58,7 +58,7 @@ export default function Login() {
           <section className="w-full">
             <Button type="button" onClick={handleLogin} disabled={loading}>
               {loading ? (
-                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span className="w-7 h-7 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 "ENTRAR"
               )}

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { LogOutIcon } from "lucide-react";
 
 import { useAuth } from "../../src/auth/auth-context";
 
@@ -13,7 +14,7 @@ export default function Header() {
   }
 
   return (
-    <header className="flex-col w-full h-40 ">
+    <header className="flex-col w-full h-40 shadow-blue-600/50 shadow-md fixed overflow-hidden inset-0 z-50">
       <div className="w-full h-full px-16 sm:px-24 flex flex-row items-center bg-zinc-300">
         <div className="flex flex-col w-1/2 h-full justify-center">
           <div className="w-[210px] h-8">
@@ -31,6 +32,9 @@ export default function Header() {
               className="w-1/3 -mr-12 sx:mr-0 sx:w-1/6 border-l-2 border-blue-950/50 m-0 p-0 text-md text-red-600 font-semibold hover:underline underline-offset-2 hover:text-red-400 justify-center items-center flex flex-col"
               onClick={handlerLogout}
             >
+              <span>
+                <LogOutIcon className="size-8" />
+              </span>
               Sair
             </button>
           </div>
