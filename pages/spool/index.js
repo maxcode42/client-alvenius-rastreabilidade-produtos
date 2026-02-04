@@ -1,5 +1,5 @@
-import { useRouter } from "next/router";
-import { SaveIcon, QrCodeIcon, ArrowBigRightDashIcon } from "lucide-react";
+//import { useRouter } from "next/router";
+import { SaveIcon, QrCodeIcon } from "lucide-react";
 
 import withAuth from "../../src/auth/auth-with";
 
@@ -9,7 +9,7 @@ import Button from "components/ui/button";
 import Table from "components/ui/table";
 
 function Spool() {
-  const router = useRouter();
+  //const router = useRouter();
   const items = [
     {
       codigo: "TJPLPL50K000311",
@@ -93,18 +93,18 @@ function Spool() {
     },
   ];
 
-  function handleNext(e) {
-    e.preventDefault();
-    router.replace("/boiler-shop");
-  }
+  // function handleNext(e) {
+  //   e.preventDefault();
+  //   router.replace("/boiler-shop");
+  // }
 
   return (
     <div className="w-full h-full bg-zinc-100">
       <Header />
 
       <Body>
-        <div className="flex flex-col w-full px-4 py-16 justify-center items-center h-full">
-          <section className="overflow-y-scroll sm:overflow-hidden h-[70vh] sm:h-full sm:w-1/2 sm:min-h-[70vh] px-4 py-4 w-full flex flex-col gap-2 sm:justify-center items-start border-blue-950/50 border-2 rounded-sm">
+        <div className="flex flex-col w-full px-4 py-6 md:mt-16 justify-center items-center h-full overflow-hidden">
+          <section className="overflow-y-scroll md:overflow-hidden h-full sm:h-full sm:w-1/2 sm:min-h-[70vh] px-4 py-4 w-full flex flex-col gap-2 sm:justify-center items-start border-blue-950/50 border-2 rounded-sm">
             <div className="w-full">
               <h3 className="text-2xl text-center font-semibold py-4">Spool</h3>
             </div>
@@ -120,12 +120,12 @@ function Spool() {
                   Escanear
                 </Button>
 
-                <Button onClick={handleNext}>
+                {/* <Button onClick={handleNext}>
                   <span className="text-xs sm:text-sm md:text-base">
-                    <ArrowBigRightDashIcon className="size-8" />
+                    <ArrowBigRightDashIcon className="size-4 md:size-8" />
                   </span>
-                  Proxima etapa
-                </Button>
+                  <span className="truncate text-xs"> Proxima etapa</span>
+                </Button> */}
 
                 <Button>
                   <span className="text-xs sm:text-sm md:text-base">

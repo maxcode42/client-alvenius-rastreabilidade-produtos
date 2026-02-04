@@ -12,7 +12,7 @@ export class InternalServerError extends Error {
 
   toJSON() {
     return {
-      name: this.constructor.name,
+      name: "InternalServerError",
       message: this.message,
       action: this.action,
       status_code: this.statusCode,
@@ -31,7 +31,7 @@ export class MethodNotAllowedError extends Error {
 
   toJSON() {
     return {
-      name: this.constructor.name,
+      name: "MethodNotAllowedError",
       message: this.message,
       action: this.action,
       status_code: this.statusCode,
@@ -51,7 +51,7 @@ export class UnauthorizedError extends Error {
 
   toJSON() {
     return {
-      name: this.constructor.name,
+      name: "UnauthorizedError",
       message: this.message,
       action: this.action,
       status_code: this.statusCode,
@@ -71,7 +71,7 @@ export class ValidationError extends Error {
 
   toJSON() {
     return {
-      name: this.constructor.name,
+      name: "ValidationError",
       message: this.message,
       action: this.action,
       status_code: this.statusCode,
@@ -93,7 +93,7 @@ export class NotFoundError extends Error {
 
   toJSON() {
     return {
-      name: this.constructor.name,
+      name: "NotFoundError",
       message: this.message,
       action: this.action,
       status_code: this.statusCode,
@@ -113,7 +113,7 @@ export class ServiceError extends Error {
 
   toJSON() {
     return {
-      name: this.constructor.name,
+      name: "ServiceError",
       message: this.message,
       action: this.action,
       status_code: this.statusCode,

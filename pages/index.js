@@ -18,8 +18,8 @@ function Home() {
       <Header />
 
       <Body>
-        <div className="flex flex-col w-full px-4 py-16 justify-center items-center h-full">
-          <section className="overflow-y-scroll sm:overflow-hidden h-[70vh] sm:h-full sm:w-1/2 sm:min-h-96 px-4 py-4 w-full flex flex-col gap-6 sm:gap:4 sm:justify-center items-start border-blue-950/50 border-2 rounded-sm">
+        <div className="flex flex-col w-full px-4 py-6 md:mt-16 justify-center items-center h-full">
+          <section className="overflow-y-scroll sm:overflow-hidden h-full sm:h-full sm:w-1/2 sm:min-h-96 px-4 py-4 w-full flex flex-col gap-6 sm:gap:4 sm:justify-center items-start border-blue-950/50 border-2 rounded-sm">
             <div className="w-full">
               <h3 className="text-2xl text-center font-semibold py-4">
                 Clique no que deseja fazer
