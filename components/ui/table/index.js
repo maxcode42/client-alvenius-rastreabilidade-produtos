@@ -1,10 +1,4 @@
-import { useMemo } from "react";
-
 export default function Table({ items }) {
-  const total = useMemo(() => {
-    return items?.reduce((acc, item) => acc + parseInt(item?.quantidade), 0);
-  }, [items]);
-
   return (
     <table className="text-sm w-full min-w-full border border-zinc-200 bg-white rounded-lg">
       <thead>
@@ -42,7 +36,7 @@ export default function Table({ items }) {
               {item?.codigo}
             </td>
             <td className="px-4 py-3 text-xs sm:text-sm md:text-base text-center text-zinc-800">
-              {item?.quantidade}
+              {String(item?.quantidade).replace(".", ",")}
             </td>
             <td className="truncate px-4 py-3 text-xs sm:text-sm md:text-base text-zinc-800">
               {item?.fluxo}
@@ -62,9 +56,7 @@ export default function Table({ items }) {
             {items?.length || 0}
           </td>
           <td></td>
-          <td className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600">
-            {total}
-          </td>
+          <td className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600"></td>
           <td></td>
           <td></td>
           <td></td>

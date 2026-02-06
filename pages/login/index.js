@@ -93,7 +93,7 @@ export default function Login() {
                   type="text"
                   value={username}
                   label="Usuário"
-                  placeholder="nome de usuário"
+                  placeholder="digite seu nome de usuário"
                   onChange={(e) => setUsername(e.target.value)}
                 >
                   <User2Icon className="text-stone-400 mr-2" size={18} />
@@ -111,7 +111,7 @@ export default function Login() {
                   type="password"
                   value={password}
                   label="Senha"
-                  placeholder=""
+                  placeholder="digite sua senha"
                   onChange={(e) => setPassword(e.target.value)}
                 >
                   <LockKeyhole
