@@ -11,13 +11,16 @@ import Table from "components/ui/table";
 
 import QRCode from "components/ui/modal/qr-code";
 import AlertConfirm from "components/ui/alert/confirm";
+import api from "provider/api-web";
+import AlertInfo from "components/ui/alert/info";
 
 function Register() {
   const [itens, setItens] = useState([]);
   const [spool, setSpool] = useState(null);
   const [openQRCode, setOpenQRCode] = useState(false);
 
-  const [openAlert, setOpenAlert] = useState(false);
+  const [openAlertInfo, setOpenAlertInfo] = useState(false);
+  const [openAlert, setOpenAlert] = useState();
   const [message, setMessage] = useState("");
 
   function openModalQRCode(e) {
@@ -37,7 +40,22 @@ function Register() {
     setOpenAlert(true);
   }
 
-  useEffect(() => {}, [openQRCode, itens, spool]);
+  async function handleCreateRegister(e) {
+    e.preventDefault();
+    console.log(">> WEB REGISTER");
+    console.log({ spool, itens });
+    const results = await api.createRegister({ data: { spool, itens } });
+
+    console.log(">> WEB REGISTER");
+    console.log(results);
+    setMessage(results?.Sucesso);
+    setOpenAlertInfo(true);
+  }
+
+  useEffect(() => {
+    console.log(">>REGISTER");
+    console.log(spool);
+  }, [openQRCode, itens, spool]);
 
   return (
     <div className="w-full h-full bg-zinc-100">
@@ -96,9 +114,20 @@ function Register() {
                   <span className="text-sm sm:text-base truncate"> Limpar</span>
                 </Button>
 
-                <Button disabled={itens.length === 0}>
-                  <SaveIcon className="size-6 sm:size-8" />
-                  <span className="text-sm sm:text-base truncate">Gravar</span>
+                <Button
+                  disabled={itens.length === 0 || openAlertInfo}
+                  onClick={(e) => handleCreateRegister(e)}
+                >
+                  {openAlertInfo ? (
+                    <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <span className="fel flex row gap-2 justify-center items-center">
+                      <SaveIcon className="size-6 sm:size-8" />
+                      <span className="text-sm sm:text-base truncate">
+                        Gravar
+                      </span>
+                    </span>
+                  )}
                 </Button>
               </div>
             </div>
@@ -121,6 +150,11 @@ function Register() {
         message={message}
         openAlert={openAlert}
         setOpenAlert={setOpenAlert}
+      />
+      <AlertInfo
+        message={message}
+        openAlert={openAlertInfo}
+        setOpenAlert={setOpenAlertInfo}
       />
     </div>
   );

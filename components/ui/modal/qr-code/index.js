@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
-import { Trash2Icon, RulerIcon } from "lucide-react";
+import { Trash2Icon, RulerDimensionLineIcon } from "lucide-react";
 
 import Input from "../../input";
 import AlertInfo from "components/ui/alert/info";
@@ -16,15 +16,15 @@ export default function QRCode({
   const qrRegionId = "qr-reader";
   const qrCodeRef = useRef(null);
 
+  const [message, setMessage] = useState("");
   const [result, setResult] = useState(null);
   const [openAlert, setOpenAlert] = useState(false);
-  const [message, setMessage] = useState("");
 
-  const [openAmountForm, setOpenAmountForm] = useState(false);
   const [amount, setAmount] = useState(1);
   const [amountMessage, setAmountMessage] = useState("");
   const [pendingItem, setPendingItem] = useState(null);
   const [scannerLocked, setScannerLocked] = useState(false);
+  const [openAmountForm, setOpenAmountForm] = useState(false);
 
   const productsTypes = ["TB", "TJ", "TK", "TU", "TV", "TW", "TI"];
 
@@ -300,7 +300,7 @@ export default function QRCode({
             <section className="w-full px-4 py-16">
               <form className="flex flex-col w-full sm:w-1/2 lg:w-1/3 p-4 gap-8 justify-center border-blue-950/50 border-2 rounded-sm">
                 <section className="flex flex-col w-full items-center gap-4">
-                  <p className="text-sm">Digite a quantidade componente.</p>
+                  <p className="text-sm">Digite o comprimento do componente.</p>
                 </section>
                 <section className="flex flex-col w-full gap-4">
                   <div className="flex flex-col">
@@ -308,7 +308,7 @@ export default function QRCode({
                       id="qtd"
                       type="number"
                       value={amount}
-                      label="Quantidade"
+                      label="Qual medida do tubo:"
                       placeholder="000,000"
                       onChange={(e) => {
                         const value = e.target.value;
@@ -317,7 +317,10 @@ export default function QRCode({
                         }
                       }}
                     >
-                      <RulerIcon className="text-stone-400 mr-2" size={18} />
+                      <RulerDimensionLineIcon
+                        className="text-stone-400 mr-2"
+                        size={18}
+                      />
                     </Input>
                     <span
                       className={`py-1 h-7 min-h-7 text-sm text-red-500 transition-all ${amountMessage.length > 0 ? "" : "hidden translate-y-9"}`}

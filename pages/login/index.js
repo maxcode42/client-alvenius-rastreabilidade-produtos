@@ -15,7 +15,7 @@ export default function Login() {
   const isFirstLoad = useRef(true);
   const { user, loading, signIn } = useAuth();
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState(""); //useState("senhaForte123");
   const [usernameMessage, setUsernameMessage] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
 
