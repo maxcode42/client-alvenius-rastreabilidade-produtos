@@ -42,20 +42,14 @@ function Register() {
 
   async function handleCreateRegister(e) {
     e.preventDefault();
-    console.log(">> WEB REGISTER");
-    console.log({ spool, itens });
+
     const results = await api.createRegister({ data: { spool, itens } });
 
-    console.log(">> WEB REGISTER");
-    console.log(results);
     setMessage(results?.Sucesso);
     setOpenAlertInfo(true);
   }
 
-  useEffect(() => {
-    console.log(">>REGISTER");
-    console.log(spool);
-  }, [openQRCode, itens, spool]);
+  useEffect(() => {}, [openQRCode, itens, spool]);
 
   return (
     <div className="w-full h-full bg-zinc-100">

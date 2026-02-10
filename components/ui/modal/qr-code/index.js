@@ -137,6 +137,10 @@ export default function QRCode({
         setOpenAmountForm(true);
         return;
       }
+      setMessage(`Componente: ${baseItem.codigo} - ${baseItem.descricao}`);
+      setScannerLocked(true);
+      setOpenAlert(true);
+
       setItens((prev) => [...prev, baseItem]);
     },
     [scannerLocked, spool],
@@ -277,6 +281,7 @@ export default function QRCode({
         message={message}
         openAlert={openAlert}
         setOpenAlert={setOpenAlert}
+        setScannerLocked={setScannerLocked}
       />
 
       {/* Form */}
