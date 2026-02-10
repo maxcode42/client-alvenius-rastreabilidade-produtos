@@ -15,7 +15,7 @@ export default function Login() {
   const isFirstLoad = useRef(true);
   const { user, loading, signIn } = useAuth();
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState(""); //useState("senhaForte123");
   const [usernameMessage, setUsernameMessage] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
 
@@ -93,7 +93,7 @@ export default function Login() {
                   type="text"
                   value={username}
                   label="Usuário"
-                  placeholder="nome de usuário"
+                  placeholder="digite seu nome de usuário"
                   onChange={(e) => setUsername(e.target.value)}
                 >
                   <User2Icon className="text-stone-400 mr-2" size={18} />
@@ -111,7 +111,7 @@ export default function Login() {
                   type="password"
                   value={password}
                   label="Senha"
-                  placeholder=""
+                  placeholder="digite sua senha"
                   onChange={(e) => setPassword(e.target.value)}
                 >
                   <LockKeyhole

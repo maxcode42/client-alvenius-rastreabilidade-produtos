@@ -29,7 +29,17 @@ async function getUser() {
   return results;
 }
 
+async function createRegister({ data }) {
+  console.log(">>WEB API");
+  console.log(data);
+  const results = await handlerSend("register", "POST", data);
+  console.log(">>WEB API RESULT");
+  console.log(results);
+  return results;
+}
+
 const api = {
+  createRegister,
   createSession,
   deleteSession,
   getUser,

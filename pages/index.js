@@ -1,5 +1,5 @@
 import {
-  QrCodeIcon,
+  PackagePlusIcon,
   PaintBucketIcon,
   SprayCanIcon,
   PaintRollerIcon,
@@ -28,14 +28,14 @@ function Home() {
             <div className="w-full h-1/2 flex flex-col sm:flex-row gap-4">
               <div className="w-full sm:w-1/2 h-32 ">
                 <ButtonPanel
-                  href={"/spool"}
-                  key={"spool"}
-                  text="Escanear componentes / proxima etapa"
+                  href={"/register"}
+                  key={"register"}
+                  text="Cadastro Spool e componentes / proxima etapa"
                 >
                   <span className="text-sm">
-                    <QrCodeIcon className="size-8" />
+                    <PackagePlusIcon className="size-8" />
                   </span>
-                  Spool
+                  Cadastro
                 </ButtonPanel>
               </div>
               <div className="w-full sm:w-1/2 h-32">
@@ -80,8 +80,9 @@ function Home() {
             <div className="w-full h-1/2 flex flex-col sm:flex-row gap-4 justify-center">
               <div className="w-full sm:w-1/2 h-32">
                 <ButtonPanel
-                  href={"/"}
-                  key={"spool"}
+                  key={"site"}
+                  target="_blank"
+                  href={"https://alvenius.ind.br/"}
                   text="Empresa, Produtos, Orçamento, Catálogos, Contato, etc."
                 >
                   <span className="text-sm">
