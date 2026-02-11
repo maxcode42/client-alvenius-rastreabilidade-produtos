@@ -9,7 +9,7 @@ async function runInsertAPIProtheus(registerInputValues) {
   return results[0];
 }
 
-async function create(registerInputValues) {
+async function create(registerInputValues, tokenProtheus) {
   const componentes = registerInputValues?.itens?.map((item) => ({
     COD_PRODUTO: item?.codigo,
     DESC: item?.descricao,
@@ -25,7 +25,10 @@ async function create(registerInputValues) {
     },
   };
 
-  const result = await runInsertAPIProtheus({ data: registerObject });
+  const result = await runInsertAPIProtheus({
+    data: registerObject,
+    tokenProtheus,
+  });
 
   return result;
 }

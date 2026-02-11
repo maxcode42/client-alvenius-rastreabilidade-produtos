@@ -21,7 +21,10 @@ async function postHandler(req, res) {
     userInputValues.password,
   );
 
-  const result = await session.create(authenticatedUser.id);
+  const result = await session.create(
+    authenticatedUser.id,
+    authenticatedUser.token_protheus,
+  );
 
   await controller.setSessionCookie(res, result.token);
 

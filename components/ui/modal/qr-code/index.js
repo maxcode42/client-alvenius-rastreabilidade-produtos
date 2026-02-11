@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Html5Qrcode } from "html5-qrcode";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trash2Icon, RulerDimensionLineIcon } from "lucide-react";
+import { Html5Qrcode } from "html5-qrcode";
 
 import Input from "../../input";
 import AlertInfo from "components/ui/alert/info";
@@ -26,7 +26,10 @@ export default function QRCode({
   const [scannerLocked, setScannerLocked] = useState(false);
   const [openAmountForm, setOpenAmountForm] = useState(false);
 
-  const productsTypes = ["TB", "TJ", "TK", "TU", "TV", "TW", "TI"];
+  const productsTypes = useMemo(
+    () => ["TB", "TJ", "TK", "TU", "TV", "TW", "TI"],
+    [],
+  );
 
   function parseQrSpoolToJson(text) {
     const match = text.trim().match(/^([A-Z]{2}-\d{4}-\d{5}-\d{3})\s+(.*)$/);
@@ -58,9 +61,12 @@ export default function QRCode({
     return obj;
   }
 
-  function checkIfItContainsProductType(codigo) {
-    return productsTypes.some((t) => codigo.includes(t));
-  }
+  const checkIfItContainsProductType = useCallback(
+    (codigo) => {
+      return productsTypes.some((t) => codigo.includes(t));
+    },
+    [productsTypes],
+  );
 
   function isValidAmount(value) {
     return /^\d{1,3}([,.]\d{1,3})?$/.test(value);
@@ -137,9 +143,13 @@ export default function QRCode({
         setOpenAmountForm(true);
         return;
       }
+      setMessage(`Componente: ${baseItem.codigo} - ${baseItem.descricao}`);
+      setScannerLocked(true);
+      setOpenAlert(true);
+
       setItens((prev) => [...prev, baseItem]);
     },
-    [scannerLocked, spool],
+    [scannerLocked, checkIfItContainsProductType, setItens, setSpool, spool],
   );
 
   useEffect(() => {
@@ -277,6 +287,7 @@ export default function QRCode({
         message={message}
         openAlert={openAlert}
         setOpenAlert={setOpenAlert}
+        setScannerLocked={setScannerLocked}
       />
 
       {/* Form */}

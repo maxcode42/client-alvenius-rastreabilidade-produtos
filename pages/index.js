@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   PackagePlusIcon,
   PaintBucketIcon,
@@ -11,8 +12,12 @@ import Body from "../components/body";
 
 import withAuth from "../src/auth/auth-with";
 import ButtonPanel from "components/ui/button-panel";
+import AlertInfo from "components/ui/alert/info";
 
 function Home() {
+  const [openAlert, setOpenAlert] = useState(false);
+  const [message] = useState("Funcionalidade e recursos em desenvolvimento");
+
   return (
     <div className="w-full h-full bg-zinc-100">
       <Header />
@@ -40,7 +45,9 @@ function Home() {
               </div>
               <div className="w-full sm:w-1/2 h-32">
                 <ButtonPanel
-                  href={"/boiler-shop"}
+                  href=""
+                  onClick={() => setOpenAlert(true)}
+                  // href={"/boiler-shop"}
                   key={"boiler-shop"}
                   text="Escanear componentes reservado / proxima etapa"
                 >
@@ -54,7 +61,9 @@ function Home() {
             <div className="w-full h-1/2 flex flex-col sm:flex-row gap-4">
               <div className="w-full sm:w-1/2 h-32">
                 <ButtonPanel
-                  href={"/coating"}
+                  href=""
+                  onClick={() => setOpenAlert(true)}
+                  // href={"/coating"}
                   key={"coating"}
                   text="Escanear componentes para revestimento / proxima etapa"
                 >
@@ -66,7 +75,9 @@ function Home() {
               </div>
               <div className="w-full sm:w-1/2 h-32">
                 <ButtonPanel
-                  href={"/painting"}
+                  href=""
+                  onClick={() => setOpenAlert(true)}
+                  // href={"/painting"}
                   key={"painting"}
                   text="Escanear componentes para pintura / encerrar etapas"
                 >
@@ -95,6 +106,15 @@ function Home() {
           </section>
         </div>
       </Body>
+      {/* Alert */}
+      {openAlert && (
+        <AlertInfo
+          message={message}
+          openAlert={openAlert}
+          setOpenAlert={setOpenAlert}
+          setScannerLocked={() => {}}
+        />
+      )}
     </div>
   );
 }

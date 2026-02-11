@@ -57,12 +57,12 @@ async function runSelectQueryUsername(username) {
     values: [username],
   });
 
-  if (results.rowCount === 0) {
-    throw new NotFoundError({
-      message: "Username informado sem cadastrado no sistema.",
-      action: "Utilize outro username para realizar o consulta no sistema.",
-    });
-  }
+  // if (results.rowCount === 0) {
+  //   throw new NotFoundError({
+  //     message: "Username informado sem cadastrado no sistema.",
+  //     action: "Utilize outro username para realizar o consulta no sistema.",
+  //   });
+  // }
 
   return results.rows[0];
 }

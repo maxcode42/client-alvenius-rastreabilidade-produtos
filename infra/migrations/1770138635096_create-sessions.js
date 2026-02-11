@@ -10,6 +10,11 @@ exports.up = (pgm) => {
       notNull: true,
       unique: true,
     },
+    token_protheus: {
+      type: "varchar(999)",
+      notNull: true,
+      unique: true,
+    },
     user_id: {
       type: "uuid",
       notNull: true,

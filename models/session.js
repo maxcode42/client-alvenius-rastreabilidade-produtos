@@ -11,17 +11,17 @@ function createDateExpiresAt() {
   return result;
 }
 
-async function runInsertQuery(userId, token, expiresAt) {
+async function runInsertQuery(userId, token, tokenProtheus, expiresAt) {
   const results = await database.query({
     text: `
       INSERT INTO
-        sessions (user_id, token, expires_at)
+        sessions (user_id, token, token_protheus, expires_at)
       VALUES
-        ($1, $2, $3)
+        ($1, $2, $3, $4)
       RETURNING
         *
     ;`,
-    values: [userId, token, expiresAt],
+    values: [userId, token, tokenProtheus, expiresAt],
   });
 
   return results.rows[0];
@@ -104,11 +104,11 @@ async function expireById(id) {
   return result;
 }
 
-async function create(userId) {
+async function create(userId, tokenProtheus) {
   const expiresAt = createDateExpiresAt();
   const token = crypto.randomBytes(48).toString("hex");
 
-  const result = await runInsertQuery(userId, token, expiresAt);
+  const result = await runInsertQuery(userId, token, tokenProtheus, expiresAt);
 
   return result;
 }
