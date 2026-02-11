@@ -30,11 +30,8 @@ async function getUser() {
 }
 
 async function createRegister({ data }) {
-  console.log(">>WEB API");
-  console.log(data);
   const results = await handlerSend("register", "POST", data);
-  console.log(">>WEB API RESULT");
-  console.log(results);
+
   return results;
 }
 

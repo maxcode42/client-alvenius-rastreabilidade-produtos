@@ -10,7 +10,7 @@ async function handlerSend(path, method, dataObject, token) {
     body: dataObject ? JSON.stringify(dataObject) : null,
   });
 
-  const responseBody = await response.json();
+  const responseBody = await response?.json();
 
   return responseBody;
 }

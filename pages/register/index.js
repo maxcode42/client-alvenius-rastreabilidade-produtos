@@ -13,6 +13,7 @@ import QRCode from "components/ui/modal/qr-code";
 import AlertConfirm from "components/ui/alert/confirm";
 import api from "provider/api-web";
 import AlertInfo from "components/ui/alert/info";
+import { STATUS_CODE } from "types/status-code";
 
 function Register() {
   const [itens, setItens] = useState([]);
@@ -45,8 +46,15 @@ function Register() {
 
     const results = await api.createRegister({ data: { spool, itens } });
 
-    setMessage(results?.Sucesso);
     setOpenAlertInfo(true);
+
+    if (results?.status_code === STATUS_CODE.SERVER_ERROR) {
+      setMessage(results?.message);
+      return;
+    }
+
+    setMessage(results?.Sucesso);
+    clearData();
   }
 
   useEffect(() => {}, [openQRCode, itens, spool]);
@@ -149,6 +157,7 @@ function Register() {
         message={message}
         openAlert={openAlertInfo}
         setOpenAlert={setOpenAlertInfo}
+        setScannerLocked={() => {}}
       />
     </div>
   );
