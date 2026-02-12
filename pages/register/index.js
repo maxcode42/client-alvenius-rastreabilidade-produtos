@@ -23,6 +23,7 @@ function Register() {
   const [openAlertInfo, setOpenAlertInfo] = useState(false);
   const [openAlert, setOpenAlert] = useState();
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   function openModalQRCode(e) {
     e.preventDefault();
@@ -42,19 +43,27 @@ function Register() {
   }
 
   async function handleCreateRegister(e) {
-    e.preventDefault();
+    try {
+      e.preventDefault();
+      setLoading(true);
+      const results = await api.createRegister({ data: { spool, itens } });
 
-    const results = await api.createRegister({ data: { spool, itens } });
+      setOpenAlertInfo(true);
 
-    setOpenAlertInfo(true);
+      if (results?.status_code === STATUS_CODE.SERVER_ERROR) {
+        setMessage(results?.message);
+        return;
+      }
 
-    if (results?.status_code === STATUS_CODE.SERVER_ERROR) {
-      setMessage(results?.message);
-      return;
+      setMessage(results?.Sucesso);
+      clearData();
+    } catch (error) {
+      setOpenAlertInfo(true);
+      setMessage("Error: Ocorreu uma falha ao gravar dados!");
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-
-    setMessage(results?.Sucesso);
-    clearData();
   }
 
   useEffect(() => {}, [openQRCode, itens, spool]);
@@ -110,17 +119,17 @@ function Register() {
 
                 <Button
                   onClick={(e) => handleConfirmClear(e)}
-                  disabled={itens.length === 0}
+                  disabled={itens.length === 0 && spool === null}
                 >
                   <Trash2Icon className="size-6 sm:size-8" />
                   <span className="text-sm sm:text-base truncate"> Limpar</span>
                 </Button>
 
                 <Button
-                  disabled={itens.length === 0 || openAlertInfo}
+                  disabled={itens.length === 0 || openAlertInfo || loading}
                   onClick={(e) => handleCreateRegister(e)}
                 >
-                  {openAlertInfo ? (
+                  {openAlertInfo || loading ? (
                     <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   ) : (
                     <span className="fel flex row gap-2 justify-center items-center">
