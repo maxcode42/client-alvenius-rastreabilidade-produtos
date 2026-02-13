@@ -31,20 +31,38 @@ export default function QRCode({
     [],
   );
 
-  function parseQrSpoolToJson(text) {
-    const match = text.trim().match(/^([A-Z]{2}-\d{4}-\d{5}-\d{3})\s+(.*)$/);
+  function normalizedText(text) {
+    return new TextDecoder("utf-8")
+      .decode(new TextEncoder().encode(text))
+      .normalize("NFC");
+  }
+
+  const parseQrSpoolToJson = useCallback((text) => {
+    const normalized = normalizedText(text);
+    //const match = text.trim().match(/^([A-Z]{2}-\d{4}-\d{5}-\d{3})\s+(.*)$/);
+    const match = normalized
+      .trim()
+      .match(/^(SP-[A-Za-z0-9]{4}-[A-Za-z0-9]{5}-[A-Za-z0-9]{3})\s+(.*)$/);
     if (!match) {
       setMessage(
-        "Escanear primeiro o QRCode do SPOOL, ou este QRCODE inválido!",
+        "Escanear primeiro o QRCode do SPOOL, ou este QRCODE é inválido!",
       );
       setOpenAlert(true);
       return null;
     }
     return { codigo: match[1], descricao: match[2] };
+  }, []);
+
+  function normalizeDelimiter(text) {
+    return text.replace(/(?<=\s)[I|](?=\s)/g, "|");
   }
 
-  function parseQrTextToJson(text) {
-    const obj = text
+  const parseQrTextToJson = useCallback((text) => {
+    const normalized = normalizedText(text);
+
+    const textNormalized = normalizeDelimiter(normalized);
+
+    const obj = textNormalized
       .split("|")
       .map((p) => p.trim())
       .reduce((acc, item) => {
@@ -59,7 +77,7 @@ export default function QRCode({
       return null;
     }
     return obj;
-  }
+  }, []);
 
   const checkIfItContainsProductType = useCallback(
     (codigo) => {
@@ -119,37 +137,47 @@ export default function QRCode({
       if (scannerLocked) return;
 
       setResult(decodedText);
+      setScannerLocked(true);
 
       if (!spool) {
         const parsedSpool = parseQrSpoolToJson(decodedText);
         if (parsedSpool) setSpool(parsedSpool);
+        setScannerLocked(false);
         return;
       }
 
       const parsed = parseQrTextToJson(decodedText);
+
       if (!parsed) return;
 
       const baseItem = {
-        codigo: parsed.COD_PRODUTO,
-        fornecedor: parsed.COD_FORNEC,
-        fluxo: parsed.CORRIDA,
-        descricao: parsed.DESC,
+        codigo: parsed?.COD_PRODUTO,
+        fornecedor: parsed?.COD_FORNEC,
+        fluxo: parsed?.CORRIDA,
+        descricao: parsed?.DESC,
         quantidade: 1,
       };
 
       if (checkIfItContainsProductType(parsed.COD_PRODUTO)) {
         setPendingItem(baseItem);
-        setScannerLocked(true);
+
         setOpenAmountForm(true);
         return;
       }
       setMessage(`Componente: ${baseItem.codigo} - ${baseItem.descricao}`);
-      setScannerLocked(true);
       setOpenAlert(true);
 
       setItens((prev) => [...prev, baseItem]);
     },
-    [scannerLocked, checkIfItContainsProductType, setItens, setSpool, spool],
+    [
+      scannerLocked,
+      checkIfItContainsProductType,
+      parseQrSpoolToJson,
+      parseQrTextToJson,
+      setItens,
+      setSpool,
+      spool,
+    ],
   );
 
   useEffect(() => {
@@ -158,9 +186,22 @@ export default function QRCode({
     const html5QrCode = new Html5Qrcode(qrRegionId);
     qrCodeRef.current = html5QrCode;
 
+    // html5QrCode.start(
+    //   { facingMode: "environment" },
+    //   { fps: 10, qrbox: { width: 250, height: 250 } },
+    //   handleQrDecoded,
+    // );
     html5QrCode.start(
       { facingMode: "environment" },
-      { fps: 10, qrbox: { width: 250, height: 250 } },
+      {
+        fps: 20,
+        aspectRatio: 1.0,
+        //qrbox: undefined, // importante
+        qrbox: (viewfinderWidth, viewfinderHeight) => {
+          const size = Math.min(viewfinderWidth, viewfinderHeight) * 0.8;
+          return { width: size, height: size };
+        },
+      },
       handleQrDecoded,
     );
 
@@ -168,14 +209,16 @@ export default function QRCode({
       html5QrCode
         .stop()
         .then(() => html5QrCode.clear())
-        .catch(() => {});
+        .catch(() => {
+          console.log("Error: Falha ao ler QRCODE");
+        });
     };
   }, [isOpen, handleQrDecoded]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 h-screen overflow-y-auto bg-black/80 flex flex-col items-center justify-start gap-2 px-4 ">
+    <div className="fixed inset-0 z-50 h-screen overflow-y-auto bg-black/80 flex flex-col items-center justify-start gap-2 px-4 pb-16 sm:pb-0 ">
       {/* Header */}
       <div className="w-full max-w-md flex justify-center items-center p-4 text-white">
         <h2 className="text-lg font-semibold">Leitor de QRCode</h2>
@@ -183,12 +226,13 @@ export default function QRCode({
 
       <div className="flex flex-col border-2 border-stone-300/50 w-full" />
       {/* Camera */}
-      <div className="bg-white rounded-lg p-2 py-4 mt-4">
-        <div id={qrRegionId} className="w-[300px] h-[240px]" />
+      <div className="bg-white rounded-md p-2 py-4 mt-4 w-full max-w-md aspect-square relative">
+        {/* <div id={qrRegionId} className="w-[300px] h-[240px]" /> */}
+        <div id={qrRegionId} className="w-full h-full" />
       </div>
 
       {/* Resultado */}
-      <div className="mt-4 bg-white w-full max-w-md p-4 rounded">
+      <div className="mt-4 bg-white w-full max-w-md p-4 rounded-md">
         <div className="flex flex-col py-2">
           <p className="text-sm font-semibold">1 - Ler o QRCode do Spool.</p>
           <p className="text-sm font-semibold">

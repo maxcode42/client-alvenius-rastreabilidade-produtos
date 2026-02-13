@@ -19,7 +19,7 @@ function Home() {
   const [message] = useState("Funcionalidade e recursos em desenvolvimento");
 
   return (
-    <div className="w-full h-full bg-zinc-100">
+    <div className="w-full h-full bg-stone-100">
       <Header />
 
       <Body>

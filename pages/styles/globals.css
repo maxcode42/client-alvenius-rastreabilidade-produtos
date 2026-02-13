@@ -53,3 +53,12 @@ footer > * {
   opacity: 0.9;
   z-index: 1;
 }
+
+/* Styles video QRCODE */
+#qr-reader video {
+  @apply w-full h-full object-cover;
+}
+
+#qr-reader canvas {
+  @apply w-full h-full;
+}
