@@ -37,7 +37,9 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    await fetchGetUser();
+    if (!pagesPublic.includes(currentRoute)) {
+      await fetchGetUser();
+    }
   }, [fetchGetUser, currentRoute, user]);
 
   async function signIn({ username, password }) {

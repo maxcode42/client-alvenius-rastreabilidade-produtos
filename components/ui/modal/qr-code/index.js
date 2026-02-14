@@ -86,8 +86,53 @@ export default function QRCode({
     [productsTypes],
   );
 
+  const handleChangeAmount = (e) => {
+    console.log(e.target.value);
+    //let input = e.target.value;
+
+    // Remove caracteres inválidos
+
+    //let digits = e.target.value.replace(/\D/g, ""); // só números
+
+    // Garante apenas um separador
+    // const parts = digits.split(/[.,]/);
+
+    // if (parts.length > 6) {
+    //   digits = parts.slice(0, 6);
+    // }
+
+    // if (digits.length <= 3) {
+    //   setAmount(digits);
+    // } else {
+    //   const before = digits.slice(0, 3);
+    //   const after = digits.slice(3);
+
+    //   setAmount(`${before},${after}`);
+    // }
+    let input = e.target.value;
+
+    // converte ponto para vírgula
+    input = input.replace(/\./g, ",");
+
+    // remove caracteres inválidos
+    input = input.replace(/[^\d,]/g, "");
+
+    // impede mais de uma vírgula
+    const parts = input.split(",");
+    if (parts.length > 2) return;
+
+    // limita inteiros a 3 dígitos
+    if (parts[0].length > 3) return;
+
+    // limita decimais a 3 dígitos
+    if (parts[1] && parts[1].length > 3) return;
+
+    setAmount(input);
+  };
+
   function isValidAmount(value) {
-    return /^\d{1,3}([,.]\d{1,3})?$/.test(value);
+    //return /^\d{1,3}([,.]\d{1,3})?$/.test(value);
+    return /^(\d{0,3})([.,]?)(\d{0,3})/.test(value);
   }
 
   function resetAmountForm() {
@@ -108,14 +153,11 @@ export default function QRCode({
       return;
     }
 
-    const numericAmount = parseFloat(String(amount).replace(",", ".")).toFixed(
-      3,
-    );
+    // const numericAmount = parseFloat(String(amount).replace(",", ".")).toFixed(
+    //   3,
+    // );
 
-    setItens((prev) => [
-      ...prev,
-      { ...pendingItem, quantidade: numericAmount },
-    ]);
+    setItens((prev) => [...prev, { ...pendingItem, quantidade: amount }]);
 
     resetAmountForm();
   };
@@ -361,16 +403,18 @@ export default function QRCode({
                   <div className="flex flex-col">
                     <Input
                       id="qtd"
-                      type="number"
+                      type="text"
+                      inputModel="decimal"
                       value={amount}
                       label="Qual medida do tubo:"
                       placeholder="000,000"
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (/^\d{0,3}([,.]\d{0,3})?$/.test(value)) {
-                          setAmount(value);
-                        }
-                      }}
+                      // onChange={(e) => {
+                      //   const value = e.target.value;
+                      //   if (/^\d{1,3}([,.]\d{1,3})?$/.test(value)) {
+                      //     setAmount(value);
+                      //   }
+                      // }}
+                      onChange={handleChangeAmount}
                     >
                       <RulerDimensionLineIcon
                         className="text-stone-400 mr-2"
