@@ -44,8 +44,8 @@ export default function Header() {
               <Image src={logo} alt="Logo alvenius" priority />
             </div>
             <div className="w-32 h-8">
-              <p className="">
-                <small>v0.0.2</small>
+              <p className="text-sm text-stone-400">
+                <small>{process.env.NEXT_PUBLIC_APP_VERSION}</small>
               </p>
             </div>
           </div>

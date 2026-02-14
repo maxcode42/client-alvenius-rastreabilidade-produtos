@@ -1,5 +1,5 @@
 //import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { SaveIcon, QrCodeIcon, Trash2Icon, InfoIcon } from "lucide-react";
 
 import withAuth from "../../src/auth/auth-with";
@@ -24,6 +24,17 @@ function Register() {
   const [openAlert, setOpenAlert] = useState();
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const titles = useMemo(() => {
+    return [
+      "Item",
+      "Código",
+      "Quantidade",
+      "Corrida",
+      "Fornecedor",
+      "Descrição",
+    ];
+  }, []);
 
   function openModalQRCode(e) {
     e.preventDefault();
@@ -107,7 +118,7 @@ function Register() {
             </div>
             <div className="w-full h-full sm:h-1/2 flex flex-col sm:flex-col gap-4">
               <div className="w-full min-w-full h-70 min-h-64 sm:min-h-96 sm:h-96 sm:max-h-96 border-blue-950/50 border-2 rounded-sm overflow-auto">
-                <Table items={itens} />
+                <Table titles={titles} items={itens} />
               </div>
               <div className="w-full sm:w-full h-16 flex gap-4 flex-row">
                 <Button type="button" onClick={(e) => openModalQRCode(e)}>

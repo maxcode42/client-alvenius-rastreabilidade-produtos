@@ -1,26 +1,17 @@
-export default function Table({ items }) {
+export default function Table({ titles, items }) {
+  console.log(titles);
   return (
     <table className="text-sm w-full min-w-full border border-zinc-200 bg-white rounded-lg">
       <thead>
         <tr className="bg-stone-200">
-          <th className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600">
-            Item
-          </th>
-          <th className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600">
-            Código
-          </th>
-          <th className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600">
-            Quantidade
-          </th>
-          <th className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600">
-            Corrida
-          </th>
-          <th className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600">
-            Fornecedor
-          </th>
-          <th className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600">
-            Descrição
-          </th>
+          {titles.map((title) => (
+            <th
+              key={title}
+              className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600"
+            >
+              {title}
+            </th>
+          ))}
         </tr>
       </thead>
       <tbody className="divide-y divide-zinc-200">
@@ -35,15 +26,21 @@ export default function Table({ items }) {
             <td className="px-4 py-3 text-xs sm:text-sm md:text-base text-zinc-800">
               {item?.codigo}
             </td>
-            <td className="px-4 py-3 text-xs sm:text-sm md:text-base text-center text-zinc-800">
-              {String(item?.quantidade).replace(".", ",")}
-            </td>
-            <td className="truncate px-4 py-3 text-xs sm:text-sm md:text-base text-zinc-800">
-              {item?.fluxo}
-            </td>
-            <td className="px-4 py-3 text-xs sm:text-sm md:text-base text-center text-zinc-800">
-              {item?.fornecedor}
-            </td>
+            {item?.quantidade && (
+              <td className="px-4 py-3 text-xs sm:text-sm md:text-base text-center text-zinc-800">
+                {String(item?.quantidade).replace(".", ",")}
+              </td>
+            )}
+            {item?.fluxo && (
+              <td className="truncate px-4 py-3 text-xs sm:text-sm md:text-base text-zinc-800">
+                {item?.fluxo}
+              </td>
+            )}
+            {item?.fornecedor && (
+              <td className="px-4 py-3 text-xs sm:text-sm md:text-base text-center text-zinc-800">
+                {item?.fornecedor}
+              </td>
+            )}
             <td className="truncate px-4 py-3 text-xs sm:text-sm md:text-base text-zinc-800">
               {item?.descricao}
             </td>

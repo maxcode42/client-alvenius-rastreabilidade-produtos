@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { LockKeyhole, User2Icon } from "lucide-react";
@@ -142,7 +143,18 @@ export default function Login() {
             </section>
             <section className="flex flex-col w-full mt-4">
               <p className="flex flex-row items-center justify-end text-left text-stone-400 w-full text-sm">
-                v0.0.2
+                <small>
+                  &#174; {new Date().getFullYear()} -{" "}
+                  <Link
+                    target="_blank"
+                    href="https://alvenius.ind.br/"
+                    alt="Link site alvenius tubos e conexões"
+                    className="text-sm border-b-2 border-transparent transition-all duration-300 hover:border-stone-500 hover:text-stone-500 cursor-pointer"
+                  >
+                    Alvenius Tubos e Conexões
+                  </Link>
+                  - {process.env.NEXT_PUBLIC_APP_VERSION}
+                </small>
               </p>
             </section>
           </form>
