@@ -1,5 +1,4 @@
 export default function Table({ titles, items }) {
-  console.log(titles);
   return (
     <table className="text-sm w-full min-w-full border border-zinc-200 bg-white rounded-lg">
       <thead>

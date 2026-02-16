@@ -140,7 +140,7 @@ export default function Header() {
                               <span className="md:hidden">
                                 <PackagePlusIcon className="w-auto" size={24} />
                               </span>
-                              <span className="uppercase">Calderaria</span>
+                              <span className="uppercase">Caldeiraria</span>
                             </span>
                             <span className="md:hidden">
                               <ChevronRightIcon className="size-6 text-blue-950/50" />

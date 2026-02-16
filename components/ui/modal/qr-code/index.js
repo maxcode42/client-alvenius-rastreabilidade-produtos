@@ -183,8 +183,10 @@ export default function QRCode({
 
       if (!spool) {
         const parsedSpool = parseQrSpoolToJson(decodedText);
-        if (parsedSpool) setSpool(parsedSpool);
-        setScannerLocked(false);
+        if (parsedSpool) {
+          setSpool(parsedSpool);
+          setScannerLocked(false);
+        }
         return;
       }
 
@@ -222,40 +224,126 @@ export default function QRCode({
     ],
   );
 
+  // const checkCameraSupport = async () => {
+  //   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+  //     console.log(false);
+  //     setMessage("Câmera não suportada neste navegador.");
+  //     setOpenAlert(true);
+  //     return false;
+  //   }
+
+  //   try {
+  //     await navigator.mediaDevices.getUserMedia({ video: true });
+  //     setMessage("Acessoa a câmera permitida neste navegador.");
+  //     setOpenAlert(true);
+  //     return true;
+  //   } catch (err) {
+  //     console.error(err);
+  //     return false;
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (!isOpen) return;
+
+  //   checkCameraSupport();
+
+  //   const html5QrCode = new Html5Qrcode(qrRegionId);
+  //   qrCodeRef.current = html5QrCode;
+
+  //   // html5QrCode.start(
+  //   //   { facingMode: "environment" },
+  //   //   { fps: 10, qrbox: { width: 250, height: 250 } },
+  //   //   handleQrDecoded,
+  //   // );
+  //   html5QrCode.start(
+  //     { facingMode: "environment" },
+  //     {
+  //       fps: 20,
+  //       aspectRatio: 1.0,
+  //       //qrbox: undefined, // importante
+  //       qrbox: (viewfinderWidth, viewfinderHeight) => {
+  //         const size = Math.min(viewfinderWidth, viewfinderHeight) * 0.8;
+  //         return { width: size, height: size };
+  //       },
+  //     },
+  //     handleQrDecoded,
+  //   );
+
+  //   return () => {
+  //     html5QrCode
+  //       .stop()
+  //       .then(() => html5QrCode.clear())
+  //       .catch(() => {
+  //         console.log("Error: Falha ao ler QRCODE");
+  //       });
+  //   };
+  // }, [isOpen, handleQrDecoded]);
+
+  const stopScanner = async () => {
+    if (!qrCodeRef.current) return;
+
+    try {
+      await qrCodeRef.current.stop();
+      await qrCodeRef.current.clear();
+    } catch (error) {
+      console.error(error);
+    }
+    qrCodeRef.current = null;
+  };
+
   useEffect(() => {
-    if (!isOpen) return;
+    if (scannerLocked) return;
+    //let isActive = true;
+    //setScannerLocked(true)
 
-    const html5QrCode = new Html5Qrcode(qrRegionId);
-    qrCodeRef.current = html5QrCode;
+    const startScanner = async () => {
+      try {
+        if (!navigator.mediaDevices?.getUserMedia) {
+          setMessage("Câmera não suportada, ou sem permissão de acesso.");
+          setOpenAlert(true);
+          return;
+        }
 
-    // html5QrCode.start(
-    //   { facingMode: "environment" },
-    //   { fps: 10, qrbox: { width: 250, height: 250 } },
-    //   handleQrDecoded,
-    // );
-    html5QrCode.start(
-      { facingMode: "environment" },
-      {
-        fps: 20,
-        aspectRatio: 1.0,
-        //qrbox: undefined, // importante
-        qrbox: (viewfinderWidth, viewfinderHeight) => {
-          const size = Math.min(viewfinderWidth, viewfinderHeight) * 0.8;
-          return { width: size, height: size };
-        },
-      },
-      handleQrDecoded,
-    );
+        if (qrCodeRef.current) return;
+
+        const html5QrCode = new Html5Qrcode(qrRegionId);
+        qrCodeRef.current = html5QrCode;
+
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          {
+            fps: 20,
+            aspectRatio: 1,
+            qrbox: (w, h) => {
+              const size = Math.min(w, h) * 0.8;
+              return { width: size, height: size };
+            },
+          },
+          (decodedText) => {
+            //if (!isActive) return;
+
+            handleQrDecoded(decodedText);
+
+            // Para câmera imediatamente ao ler
+            stopScanner();
+          },
+        );
+      } catch (err) {
+        console.error(err);
+        // setMessage("Erro: Falha ao acessar câmera.");
+        // setOpenAlert(true);
+      }
+    };
+
+    startScanner();
 
     return () => {
-      html5QrCode
-        .stop()
-        .then(() => html5QrCode.clear())
-        .catch(() => {
-          console.log("Error: Falha ao ler QRCODE");
-        });
+      setScannerLocked(true);
+      //isActive = false;
+      //stopScanner();
     };
-  }, [isOpen, handleQrDecoded]);
+  }, [scannerLocked, handleQrDecoded]);
 
   if (!isOpen) return null;
 
@@ -270,6 +358,7 @@ export default function QRCode({
       {/* Camera */}
       <div className="bg-white rounded-md p-2 py-4 mt-4 w-full max-w-md aspect-square relative">
         {/* <div id={qrRegionId} className="w-[300px] h-[240px]" /> */}
+
         <div id={qrRegionId} className="w-full h-full" />
       </div>
 
@@ -404,7 +493,7 @@ export default function QRCode({
                     <Input
                       id="qtd"
                       type="text"
-                      inputModel="decimal"
+                      // inputModel="decimal"
                       value={amount}
                       label="Qual medida do tubo:"
                       placeholder="000,000"
