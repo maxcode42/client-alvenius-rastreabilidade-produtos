@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 
 import {
   CheckCircleIcon,
@@ -30,30 +30,27 @@ export default function TableFlow({ titles, items }) {
   useEffect(() => {}, [expandItemIndex]);
 
   return (
-    <table className="text-sm w-full min-w-full border border-zinc-200 bg-white rounded-lg">
+    <table className="w-full min-w-full border border-stone-300 bg-stone-100 rounded-lg">
       <thead>
         <tr className="bg-stone-200">
-          {titles.map((title) => (
+          {titles.map((title, index) => (
             <th
-              key={title}
-              className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600"
+              key={title.concat(index)}
+              className="px-2 py-3 text-center text-xs border-r-2 border-stone-100 font-bold uppercase tracking-wider text-stone-600"
             >
               {title}
             </th>
           ))}
         </tr>
       </thead>
-      <tbody className="divide-y divide-zinc-200">
+      <tbody className="divide-y divide-stone-200">
         {items?.map((item, index) => (
-          <>
-            <tr
-              key={String(item?.codigo).concat(index)}
-              className="hover:bg-zinc-50 transition odd:bg-white"
-            >
-              <td className="px-4 py-3 text-xs sm:text-sm md:text-base text-center text-zinc-800">
+          <Fragment key={String(item?.codigo).concat(index)}>
+            <tr className="hover:bg-stone-50 transition odd:bg-white">
+              <td className="px-4 py-3 text-xs sm:text-sm md:text-base text-center text-stone-800">
                 {index + 1}
               </td>
-              <td className="max-w-16 text-center px-4 py-3 text-xs sm:text-sm md:text-base text-zinc-800">
+              <td className="max-w-16 text-center px-4 py-3 text-xs sm:text-sm md:text-base text-stone-800">
                 <Button
                   type="button"
                   title="Expandir detalhes"
@@ -67,20 +64,20 @@ export default function TableFlow({ titles, items }) {
                         ? "border-stone-600/50"
                         : "border-blue-600/50"
                     }
-                    truncate border-2 min-w-10    w-full py-1 rounded-sm text-center flex flex-row gap-2 justify-center items-center text-blue-600 hover:text-stone-100`}
+                    truncate border-2 min-w-10 w-full py-1 rounded-sm text-center flex flex-row gap-2 justify-center items-center text-blue-600 hover:text-stone-100`}
                 >
                   {String(expandItemIndex) ===
                   String(item?.codigo).concat(index) ? (
                     <EyeOffIcon className="size-4 text-stone-300" />
                   ) : (
-                    <EyeIcon className="size-4" />
+                    <EyeIcon className="size-4 text-blue-600" />
                   )}
                 </Button>
               </td>
-              <td className="px-4 py-3 text-xs sm:text-sm md:text-base text-zinc-800">
+              <td className="px-4 py-3 text-xs sm:text-sm md:text-base text-stone-800">
                 {item?.codigo}
               </td>
-              <td className="capitalize px-4 py-3 text-center text-xs sm:text-sm md:text-base text-zinc-800">
+              <td className="capitalize px-4 py-3 text-center text-xs sm:text-sm md:text-base text-stone-800">
                 <span
                   className={`
                   ${String(item?.status).toLowerCase() === "reservado" && "bg-yellow-400"}
@@ -92,7 +89,7 @@ export default function TableFlow({ titles, items }) {
                 </span>
               </td>
 
-              <td className="truncate px-4 py-3 text-xs sm:text-sm md:text-base text-zinc-800">
+              <td className="truncate px-4 py-3 text-xs sm:text-sm md:text-base text-stone-800">
                 <Button
                   type="button"
                   title="Executar produto está conforme"
@@ -102,7 +99,7 @@ export default function TableFlow({ titles, items }) {
                   <span className="text-sm sm:text-base truncate">Iniciar</span>
                 </Button>
               </td>
-              <td className="truncate px-4 py-3 text-xs sm:text-sm md:text-base text-zinc-800">
+              <td className="truncate px-4 py-3 text-xs sm:text-sm md:text-base text-stone-800">
                 <Button
                   type="button"
                   title="Executar produto está conforme"
@@ -114,7 +111,7 @@ export default function TableFlow({ titles, items }) {
                   </span>
                 </Button>
               </td>
-              <td className="truncate px-4 py-3 text-xs sm:text-sm md:text-base text-zinc-800">
+              <td className="truncate px-4 py-3 text-xs sm:text-sm md:text-base text-stone-800">
                 <Button
                   type="button"
                   title="Executar produto está conforme"
@@ -129,7 +126,7 @@ export default function TableFlow({ titles, items }) {
             </tr>
             {String(expandItemIndex) === String(item?.codigo).concat(index) && (
               <tr
-                className={`border-none transform transition-all duration-300 ease-in-out
+                className={`hover:bg-stone-50 odd:bg-white border-none transform transition-all duration-300 ease-in-out
                  ${
                    String(expandItemIndex) ===
                    String(item?.codigo).concat(index)
@@ -141,13 +138,13 @@ export default function TableFlow({ titles, items }) {
                 <td></td>
                 <td
                   colSpan={5}
-                  className="truncate border-t-2 border-stone-200 px-4 py-3 text-xs sm:text-sm md:text-base text-zinc-800"
+                  className="truncate border-t-2 border-stone-200 px-4 py-3 text-xs sm:text-sm md:text-base text-stone-800"
                 >
                   <strong>Descrição:</strong> {item?.descricao}
                 </td>
               </tr>
             )}
-          </>
+          </Fragment>
         ))}
       </tbody>
       <tfoot>
@@ -155,11 +152,18 @@ export default function TableFlow({ titles, items }) {
           <td className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600">
             {items?.length || 0}
           </td>
-          <td></td>
-          <td className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600"></td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td
+            colSpan={6}
+            className="max-w-16 px-2 py-3 text-left text-xs font-bold uppercase tracking-wider text-stone-600"
+          >
+            TOTAL ITENS
+          </td>
+          {/* <td
+            colSpan={6}
+            className="max-w-16 px-2 py-3 text-left text-xs font-bold uppercase tracking-wider text-stone-600"
+          >
+            TOTAL ITENS
+          </td> */}
         </tr>
       </tfoot>
     </table>

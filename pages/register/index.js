@@ -157,15 +157,16 @@ function Register() {
         </div>
       </Body>
 
-      <QRCode
-        isOpen={openQRCode}
-        itens={itens}
-        spool={spool}
-        setItens={setItens}
-        setSpool={setSpool}
-        onClose={() => setOpenQRCode(false)}
-      />
-
+      {openQRCode && (
+        <QRCode
+          isOpen={openQRCode}
+          itens={itens}
+          spool={spool}
+          setItens={setItens}
+          setSpool={setSpool}
+          onClose={() => setOpenQRCode(false)}
+        />
+      )}
       {/* Alert */}
       <AlertConfirm
         action={clearData}
