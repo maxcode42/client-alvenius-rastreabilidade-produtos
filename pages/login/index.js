@@ -151,9 +151,9 @@ export default function Login() {
                     alt="Link site alvenius tubos e conexões"
                     className="text-sm border-b-2 border-transparent transition-all duration-300 hover:border-stone-500 hover:text-stone-500 cursor-pointer"
                   >
-                    Alvenius Tubos e Conexões
+                    Alvenius Tubos e Conexões -{" "}
                   </Link>
-                  - {process.env.NEXT_PUBLIC_APP_VERSION}
+                  {process.env.NEXT_PUBLIC_APP_VERSION}
                 </small>
               </p>
             </section>
