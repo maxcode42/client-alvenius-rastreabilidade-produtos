@@ -25,6 +25,8 @@ export default function QRCode({
   const [pendingItem, setPendingItem] = useState(null);
   const [scannerLocked, setScannerLocked] = useState(false);
   const [openAmountForm, setOpenAmountForm] = useState(false);
+  const [hasAskedPermission, setHasAskedPermission] = useState(false);
+  const [permissionDenied, setPermissionDenied] = useState(false);
 
   const productsTypes = useMemo(
     () => ["TB", "TJ", "TK", "TU", "TV", "TW", "TI"],
@@ -39,7 +41,6 @@ export default function QRCode({
 
   const parseQrSpoolToJson = useCallback((text) => {
     const normalized = normalizedText(text);
-    //const match = text.trim().match(/^([A-Z]{2}-\d{4}-\d{5}-\d{3})\s+(.*)$/);
     const match = normalized
       .trim()
       .match(/^(SP-[A-Za-z0-9]{4}-[A-Za-z0-9]{5}-[A-Za-z0-9]{3})\s+(.*)$/);
@@ -87,28 +88,6 @@ export default function QRCode({
   );
 
   const handleChangeAmount = (e) => {
-    console.log(e.target.value);
-    //let input = e.target.value;
-
-    // Remove caracteres inválidos
-
-    //let digits = e.target.value.replace(/\D/g, ""); // só números
-
-    // Garante apenas um separador
-    // const parts = digits.split(/[.,]/);
-
-    // if (parts.length > 6) {
-    //   digits = parts.slice(0, 6);
-    // }
-
-    // if (digits.length <= 3) {
-    //   setAmount(digits);
-    // } else {
-    //   const before = digits.slice(0, 3);
-    //   const after = digits.slice(3);
-
-    //   setAmount(`${before},${after}`);
-    // }
     let input = e.target.value;
 
     // converte ponto para vírgula
@@ -131,7 +110,6 @@ export default function QRCode({
   };
 
   function isValidAmount(value) {
-    //return /^\d{1,3}([,.]\d{1,3})?$/.test(value);
     return /^(\d{0,3})([.,]?)(\d{0,3})/.test(value);
   }
 
@@ -152,10 +130,6 @@ export default function QRCode({
       setAmountMessage("Formato inválido. Ex: 123,456");
       return;
     }
-
-    // const numericAmount = parseFloat(String(amount).replace(",", ".")).toFixed(
-    //   3,
-    // );
 
     setItens((prev) => [...prev, { ...pendingItem, quantidade: amount }]);
 
@@ -184,8 +158,9 @@ export default function QRCode({
       if (!spool) {
         const parsedSpool = parseQrSpoolToJson(decodedText);
         if (parsedSpool) {
+          setMessage(`Spool: ${parsedSpool.codigo} - ${parsedSpool.descricao}`);
+          setOpenAlert(true);
           setSpool(parsedSpool);
-          setScannerLocked(false);
         }
         return;
       }
@@ -224,62 +199,6 @@ export default function QRCode({
     ],
   );
 
-  // const checkCameraSupport = async () => {
-  //   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-  //     console.log(false);
-  //     setMessage("Câmera não suportada neste navegador.");
-  //     setOpenAlert(true);
-  //     return false;
-  //   }
-
-  //   try {
-  //     await navigator.mediaDevices.getUserMedia({ video: true });
-  //     setMessage("Acessoa a câmera permitida neste navegador.");
-  //     setOpenAlert(true);
-  //     return true;
-  //   } catch (err) {
-  //     console.error(err);
-  //     return false;
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (!isOpen) return;
-
-  //   checkCameraSupport();
-
-  //   const html5QrCode = new Html5Qrcode(qrRegionId);
-  //   qrCodeRef.current = html5QrCode;
-
-  //   // html5QrCode.start(
-  //   //   { facingMode: "environment" },
-  //   //   { fps: 10, qrbox: { width: 250, height: 250 } },
-  //   //   handleQrDecoded,
-  //   // );
-  //   html5QrCode.start(
-  //     { facingMode: "environment" },
-  //     {
-  //       fps: 20,
-  //       aspectRatio: 1.0,
-  //       //qrbox: undefined, // importante
-  //       qrbox: (viewfinderWidth, viewfinderHeight) => {
-  //         const size = Math.min(viewfinderWidth, viewfinderHeight) * 0.8;
-  //         return { width: size, height: size };
-  //       },
-  //     },
-  //     handleQrDecoded,
-  //   );
-
-  //   return () => {
-  //     html5QrCode
-  //       .stop()
-  //       .then(() => html5QrCode.clear())
-  //       .catch(() => {
-  //         console.log("Error: Falha ao ler QRCODE");
-  //       });
-  //   };
-  // }, [isOpen, handleQrDecoded]);
-
   const stopScanner = async () => {
     if (!qrCodeRef.current) return;
 
@@ -292,58 +211,106 @@ export default function QRCode({
     qrCodeRef.current = null;
   };
 
+  const checkCameraSupport = () => {
+    return !!navigator.mediaDevices?.getUserMedia;
+  };
+
+  const requestCameraPermission = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+      });
+
+      stream.getTracks().forEach((track) => track.stop());
+
+      setPermissionDenied(false);
+      return true;
+    } catch (error) {
+      if (error.name === "NotAllowedError") {
+        setPermissionDenied(true);
+      }
+      return false;
+    }
+  };
+
+  const startScanner = async () => {
+    if (qrCodeRef.current) return;
+
+    const html5QrCode = new Html5Qrcode(qrRegionId);
+    qrCodeRef.current = html5QrCode;
+
+    await html5QrCode.start(
+      { facingMode: "environment" },
+      {
+        fps: 20,
+        aspectRatio: 1,
+        qrbox: (w, h) => {
+          const size = Math.min(w, h) * 0.8;
+          return { width: size, height: size };
+        },
+      },
+      (decodedText) => {
+        handleQrDecoded(decodedText);
+        stopScanner();
+      },
+    );
+  };
+
   useEffect(() => {
     if (scannerLocked) return;
-    //let isActive = true;
-    //setScannerLocked(true)
 
-    const startScanner = async () => {
-      try {
-        if (!navigator.mediaDevices?.getUserMedia) {
-          setMessage("Câmera não suportada, ou sem permissão de acesso.");
-          setOpenAlert(true);
+    let isMounted = true;
+
+    const initCamera = async () => {
+      // Verifica suporte
+      if (!checkCameraSupport()) {
+        setMessage("Câmera não suportada neste dispositivo.");
+        setOpenAlert(true);
+        return;
+      }
+
+      // Se já negou antes → mostra alerta direto
+      if (permissionDenied) {
+        setMessage(
+          "Permissão de câmera negada. Ative nas configurações do navegador.",
+        );
+        setOpenAlert(true);
+        return;
+      }
+
+      // Primeira vez → solicitar permissão sem alertar antes
+      if (!hasAskedPermission) {
+        setHasAskedPermission(true);
+
+        const granted = await requestCameraPermission();
+
+        if (!granted) {
+          // usuário negou agora → não mostrar alerta neste primeiro ciclo
           return;
         }
+      }
 
-        if (qrCodeRef.current) return;
-
-        const html5QrCode = new Html5Qrcode(qrRegionId);
-        qrCodeRef.current = html5QrCode;
-
-        await html5QrCode.start(
-          { facingMode: "environment" },
-          {
-            fps: 20,
-            aspectRatio: 1,
-            qrbox: (w, h) => {
-              const size = Math.min(w, h) * 0.8;
-              return { width: size, height: size };
-            },
-          },
-          (decodedText) => {
-            //if (!isActive) return;
-
-            handleQrDecoded(decodedText);
-
-            // Para câmera imediatamente ao ler
-            stopScanner();
-          },
-        );
-      } catch (err) {
-        console.error(err);
-        // setMessage("Erro: Falha ao acessar câmera.");
-        // setOpenAlert(true);
+      // Se permissão concedida → inicia scanner
+      if (isMounted) {
+        await startScanner();
       }
     };
 
-    startScanner();
+    initCamera();
 
     return () => {
-      setScannerLocked(true);
-      //isActive = false;
+      isMounted = false;
+      //setScannerLocked(false);
       //stopScanner();
     };
-  }, [scannerLocked, handleQrDecoded]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    isOpen,
+    scannerLocked,
+    hasAskedPermission,
+    permissionDenied,
+    //startScanner,
+  ]);
 
   if (!isOpen) return null;
 
