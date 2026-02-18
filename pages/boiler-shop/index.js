@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { QrCodeIcon, InfoIcon, Trash2Icon } from "lucide-react";
 
 import withAuth from "../../src/auth/auth-with";
@@ -7,10 +7,18 @@ import Header from "../../components/header";
 import Body from "../../components/body";
 import Button from "components/ui/button";
 import TableFlow from "components/ui/table-flow";
+import ListFlow from "components/ui/list-flow";
+import QRCodeFlow from "components/ui/modal/qr-code-flow";
 
 function BoilerShop() {
   //const [openAlertInfo, setOpenAlertInfo] = useState(false);
   //const [loading, setLoading] = useState(false);
+  const [openQRCode, setOpenQRCode] = useState(false);
+  const [spool, setSpool] = useState(null);
+  const [text, setText] = useState("");
+
+  const isView = "list"; //table
+
   const itens = [
     {
       codigo: "SP50K000311",
@@ -21,6 +29,12 @@ function BoilerShop() {
     {
       codigo: "SP5EK000311",
       status: "execução",
+      descricao:
+        "Tubo ASTMA134 PL 508MM x 6,30MM ASTM A 283 GRC DIMESOES CONF ASME B 36.10",
+    },
+    {
+      codigo: "SP7EK000456",
+      status: "sucata",
       descricao:
         "Tubo ASTMA134 PL 508MM x 6,30MM ASTM A 283 GRC DIMESOES CONF ASME B 36.10",
     },
@@ -56,10 +70,10 @@ function BoilerShop() {
     ]; //, "Descrição"];
   }, []);
 
-  const spool = {
-    codigo: "fadfasdfasdf",
-    descricao: "dafasdfasdfasdfas",
-  };
+  // const spool = {
+  //   codigo: "fadfasdfasdf",
+  //   descricao: "dafasdfasdfasdfas",
+  // };
 
   function openModalQRCode(e) {
     e.preventDefault();
@@ -95,7 +109,16 @@ function BoilerShop() {
             <div className="w-full sm:w-full h-16 flex gap-4 flex-row justify-end items-center"></div>
             <div className="w-full h-full sm:h-1/2 flex flex-col sm:flex-col gap-4">
               <div className="w-full min-w-full h-70 min-h-64 sm:min-h-96 sm:h-96 sm:max-h-96 border-blue-950/50 border-2 rounded-sm overflow-auto">
-                <TableFlow titles={titles} items={itens} />
+                {isView === "table" ? (
+                  <TableFlow titles={titles} items={itens} />
+                ) : (
+                  <ListFlow
+                    titles={titles}
+                    items={itens}
+                    setText={setText}
+                    setOpenQRCode={setOpenQRCode}
+                  />
+                )}
               </div>
               <div className="w-full sm:w-full h-16 flex gap-4 flex-row">
                 <Button
@@ -137,6 +160,16 @@ function BoilerShop() {
           </section>
         </div>
       </Body>
+      {openQRCode && (
+        <QRCodeFlow
+          isOpen={openQRCode}
+          itens={itens}
+          spool={spool}
+          setSpool={setSpool}
+          text={text}
+          onClose={() => setOpenQRCode(false)}
+        />
+      )}
     </div>
   );
 }
