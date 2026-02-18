@@ -45,9 +45,9 @@ function Home() {
               </div>
               <div className="w-full sm:w-1/2 h-32">
                 <ButtonPanel
-                  // href=""
-                  // onClick={() => setOpenAlert(true)}
-                  href={"/boiler-shop"}
+                  href=""
+                  onClick={() => setOpenAlert(true)}
+                  // href={"/boiler-shop"}
                   key={"boiler-shop"}
                   text="Escanear componentes reservado / proxima etapa"
                 >
