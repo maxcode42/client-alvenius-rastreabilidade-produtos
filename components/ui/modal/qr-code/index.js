@@ -245,8 +245,13 @@ export default function QRCode({
         fps: 20,
         aspectRatio: 1,
         qrbox: (w, h) => {
-          const size = Math.min(w, h) * 0.8;
-          return { width: size, height: size };
+          const base = Math.min(w, h);
+          const size = Math.min(Math.max(base * 0.8, 50), 400);
+
+          return {
+            width: size,
+            height: size,
+          };
         },
       },
       (decodedText) => {
@@ -321,7 +326,7 @@ export default function QRCode({
         <h2 className="text-lg font-semibold">Leitor de QRCode</h2>
       </div>
 
-      <div className="flex flex-col border-2 border-stone-300/50 w-full" />
+      <div className="flex flex-col border-2 border-stone-300/50 w-full rounded-full" />
       {/* Camera */}
       <div className="bg-white rounded-md p-2 py-4 mt-4 w-full max-w-md aspect-square relative">
         {/* <div id={qrRegionId} className="w-[300px] h-[240px]" /> */}
@@ -337,7 +342,7 @@ export default function QRCode({
             2 - Ler o QRCode dos componentes.
           </p>
         </div>
-        <div className="flex flex-col border-2 border-stone-300/50 w-full" />
+        <div className="flex flex-col border-2 border-stone-300/50 w-full rounded-full" />
         {spool && (
           <div className="flex flex-col py-4">
             <p className="mt-2 text-md break-all ">Spool:</p>
@@ -355,7 +360,7 @@ export default function QRCode({
                 </p>
               </div>
             </div>
-            <div className="flex flex-col py-4">
+            <div className="flex flex-col py-4 mb-4">
               <p className="mt-2 text-md break-all ">Componentes:</p>
               <div className="flex flex-col ">
                 <table className="text-sm w-full min-w-full border border-zinc-200 bg-white rounded-lg">
@@ -403,7 +408,7 @@ export default function QRCode({
                 </table>
               </div>
             </div>
-            <div className="flex flex-col border-2 border-stone-300/50 w-full" />
+            <div className="flex flex-col border-2 border-stone-300/50 w-full rounded-full" />
           </div>
         )}
         <div className="flex flex-col py-4">
@@ -451,7 +456,7 @@ export default function QRCode({
               <h3 className="text-2xl text-center">Quantidade componente</h3>
             </section>
             <section className="w-full px-4 py-16">
-              <form className="flex flex-col w-full sm:w-1/2 lg:w-1/3 p-4 gap-8 justify-center border-blue-950/50 border-2 rounded-sm">
+              <form className="flex flex-col w-full  p-4 gap-8 justify-center border-blue-950/50 border-2 rounded-sm">
                 <section className="flex flex-col w-full items-center gap-4">
                   <p className="text-sm">Digite o comprimento do componente.</p>
                 </section>
@@ -462,7 +467,7 @@ export default function QRCode({
                       type="text"
                       // inputModel="decimal"
                       value={amount}
-                      label="Qual medida do tubo:"
+                      label="Medida do tubo em metros:"
                       placeholder="000,000"
                       // onChange={(e) => {
                       //   const value = e.target.value;
