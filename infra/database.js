@@ -29,7 +29,10 @@ function getSSLValues() {
     };
   }
 
-  return process.env.NODE_ENV === "production" ? true : false;
+  return process.env.NODE_ENV === "production" &&
+    process.env.POSTGRES_HOST !== "localhost"
+    ? true
+    : false;
 }
 
 async function getNewClient() {

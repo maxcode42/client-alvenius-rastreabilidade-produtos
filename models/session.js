@@ -3,10 +3,11 @@ import crypto from "node:crypto";
 import database from "infra/database";
 import { UnauthorizedError } from "infra/errors";
 
-const EXPIRATION_IN_MILLISECONDS = 60 * 60 * 24 * 30 * 1_000; // 30 days in milliseconds
+// const EXPIRATION_IN_MILLISECONDS = 60 * 60 * 24 * 30 * 1_000; // 30 days in milliseconds
+const EXPIRATION_IN_MILLISECONDS = 60 * 60 * 1_000; // 1 time in milliseconds
 
 function createDateExpiresAt() {
-  const result = new Date(Date.now() + EXPIRATION_IN_MILLISECONDS); // add 30 day
+  const result = new Date(Date.now() + EXPIRATION_IN_MILLISECONDS); // add 1 time
 
   return result;
 }

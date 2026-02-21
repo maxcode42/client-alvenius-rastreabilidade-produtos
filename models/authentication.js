@@ -52,8 +52,6 @@ async function sendUserByUsernameProtheus(providedUsername, providedPassword) {
   });
 
   if (!response?.access_token) {
-    console.log("IF");
-    console.log(response);
     throw new UnauthorizedError({
       message: "Senha não confere.",
       action: "Verifique se o dado enviado está correto.",
@@ -75,7 +73,7 @@ async function getAuthenticateUser(providedUsername, providedPassword) {
     // const result = await findUserByUsername(providedUsername);
     // await validatePassword(providedPassword, result.password);
 
-    // return result;
+    // return { ...result, token_protheus: result.id };
     const results = await sendUserByUsernameProtheus(
       providedUsername,
       providedPassword,
