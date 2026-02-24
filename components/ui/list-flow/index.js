@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 
 import {
+  CalendarDaysIcon,
   CheckCircleIcon,
   Loader2Icon,
   RefreshCcwDotIcon,
@@ -56,10 +57,43 @@ export default function ListFlow({ items, setOpenQRCode, setText }) {
     return result;
   }
 
+  function getStyleStatus(sigle) {
+    const statusStyle = {
+      RE: () => {
+        return "bg-amber-400 text-amber-100";
+      },
+      EX: () => {
+        return "bg-teal-400 text-teal-100";
+      },
+      PU: () => {
+        return "bg-orange-400 text-orange-100";
+      },
+      FI: () => {
+        return "bg-green-500 text-green-100";
+      },
+      RV: () => {
+        return "bg-lime-400 text-lime-100";
+      },
+      SU: () => {
+        return "bg-red-400 text-red-100";
+      },
+      RO: () => {
+        return "bg-sky-500 text-sky-100";
+      },
+    };
+
+    const ex = statusStyle[sigle];
+
+    return ex();
+  }
+
   if (items.length === 0) {
     return (
       <div className="flex flex-col justify-center items-center h-full w-full min-h-72">
         <Loader2Icon className="size-28 animate-spin text-stone-300" />
+        <p className="text-stone-300 text-xs md:text-sm animate-pulse w-full flex flex-col justify-center items-center">
+          Carregando...
+        </p>
       </div>
     );
   }
@@ -108,12 +142,7 @@ export default function ListFlow({ items, setOpenQRCode, setText }) {
                 </div>
                 <div className="capitalize px-2 py-2 text-center min-w-20 text-xs sm:text-sm md:text-base text-stone-800">
                   <span
-                    className={`
-                  ${String(item?.status).toLowerCase() === "reservado" && "bg-yellow-400"}
-                  ${String(item?.status).toLowerCase() === "execução" && "bg-blue-400"}
-                  ${String(item?.status).toLowerCase() === "finalizado" && "bg-green-400"}
-                  ${String(item?.status).toLowerCase() === "sucata" && "bg-red-400"}
-                  p-1 text-xs  rounded-full flex flex-row justify-center items-center text-stone-100`}
+                    className={`${String(getStyleStatus(item?.status_sigla))} p-1 text-xs  rounded-full flex flex-row justify-center items-center`}
                   >
                     <small> {item?.status}</small>
                   </span>
@@ -121,16 +150,22 @@ export default function ListFlow({ items, setOpenQRCode, setText }) {
               </div>
               <div>
                 <div className="flex flex-row justify-between px-2 py-1">
-                  <p className="text-xs">
+                  <p className="text-xs flex flex-col w-1/2 gap-1">
+                    <small className="flex flex-row gap-1">
+                      <CalendarDaysIcon className="size-4 text-slate-400" />
+                      <strong>Início:</strong>
+                    </small>
                     <small>
-                      <strong>Início:</strong>{" "}
                       {formatDateCustom(item.dateStart, item.timeStart)}
                     </small>
                   </p>
-                  <div className="flex flex-col items-center justify-center bg-slate-200 w-[.2rem] h-4 rounded-full" />
-                  <p className="text-xs">
-                    <small>
+                  <div className="flex flex-col items-center justify-center bg-stone-200 w-[.2rem] h-8 rounded-full" />
+                  <p className="text-xs flex flex-col w-1/2 px-4 gap-1">
+                    <small className="flex flex-row gap-1">
+                      <CalendarDaysIcon className="size-4 text-stone-400" />
                       <strong>Finalizado:</strong>{" "}
+                    </small>
+                    <small>
                       {formatDateCustom(item.dateEnd, item.timeEnd)}
                     </small>
                   </p>

@@ -5,7 +5,26 @@ function getStatus(statusAcronym) {
     RE: () => {
       return "reservado";
     },
+    EX: () => {
+      return "execução";
+    },
+    PU: () => {
+      return "pausado";
+    },
+    FI: () => {
+      return "finalizado";
+    },
+    RV: () => {
+      return "reversível";
+    },
+    SU: () => {
+      return "sucata";
+    },
+    RO: () => {
+      return "romaneio";
+    },
   };
+
   const ex = status[statusAcronym];
 
   return ex();
@@ -27,19 +46,24 @@ function normalizeAlphanumeric(text) {
 }
 
 async function handlerObject(data) {
+  const statusArray = ["RE", "EX", "PU", "FI", "RV", "SU", "RO"];
   const results = await data?.objects.map((item) => {
+    const statusAcronym =
+      statusArray[Math.floor(Math.random() * statusArray.length)];
     return {
       sequence: item?.SEQ,
       codigo: item?.COD?.trim(),
-      status: getStatus(item?.STATUS?.trim()),
+      status: getStatus(statusAcronym), //getStatus(item?.STATUS?.trim()),
+      status_sigla: statusAcronym, //item?.STATUS?.trim(),
       dateStart: item?.DTENTR?.trim(),
       timeStart: item?.HRENT?.trim(),
       dateEnd: item?.DTSAID?.trim(),
       timeEnd: item?.HRSAID?.trim(),
       user: item?.USER?.trimStart()?.trimEnd(),
-      process: item?.PROCESS
-        ? getProcess(item?.PROCESS?.trim())
-        : getProcess(item?.PROCES?.trim()),
+      // process: item?.PROCESS
+      //   ? getProcess(item?.PROCESS?.trim())
+      //   : getProcess(item?.PROCES?.trim()),
+      process: getProcess(item?.PROCES?.trim()),
       descricao: "TESTES descrição produto",
     };
   });
