@@ -1,11 +1,16 @@
 import { Fragment } from "react";
 
-import { CheckCircleIcon, RefreshCcwDotIcon, SettingsIcon } from "lucide-react";
+import {
+  CheckCircleIcon,
+  Loader2Icon,
+  RefreshCcwDotIcon,
+  SettingsIcon,
+} from "lucide-react";
 
 import Button from "components/ui/button";
 
-export default function ListFlow({ titles, items, setOpenQRCode, setText }) {
-  console.log(titles);
+export default function ListFlow({ items, setOpenQRCode, setText }) {
+  //console.log(titles);
   //const [expandItem, setExpandItem] = useState(false);
   //const [expandItemIndex, setExpandItemIndex] = useState(null);
   // function onExpandDetails(e, index) {
@@ -24,6 +29,41 @@ export default function ListFlow({ titles, items, setOpenQRCode, setText }) {
 
   // useEffect(() => {}, [expandItemIndex]);
 
+  function formatCodeDefault(code) {
+    const result = code.replace(
+      /^([A-Z]{2})(\d{4})(\d{5})(\d{3})$/,
+      "$1-$2-$3-$4",
+    );
+    return result;
+  }
+
+  function formatDateCustom(date, time) {
+    if (date.length > 0) {
+      const dateFull = date.concat(" ").concat(time);
+      const result = dateFull.replace(
+        /(\d{4})(\d{2})(\d{2})\s(\d{2}:\d{2})/,
+        "$3/$2/$1 às $4",
+      );
+
+      return result;
+    }
+
+    return "-- / -- / ---- às -- : --";
+  }
+
+  function formatSixDigits(value) {
+    const result = String(value).padStart(4, "0");
+    return result;
+  }
+
+  if (items.length === 0) {
+    return (
+      <div className="flex flex-col justify-center items-center h-full w-full min-h-72">
+        <Loader2Icon className="size-28 animate-spin text-stone-300" />
+      </div>
+    );
+  }
+
   return (
     <div>
       <ul className="divide-y divide-stone-200 flex flex-col gap-4 px-2 py-2">
@@ -32,8 +72,10 @@ export default function ListFlow({ titles, items, setOpenQRCode, setText }) {
             <li className="hover:bg-stone-50 transition odd:bg-white px-2 py-2 border-2 border-stone-200 rounded-lg shadow-lg">
               <div className="flex flex-row w-full justify-between">
                 <div className="flex flex-row justify-center gap-1">
-                  <div className="flex flex-col px-4 py-2 justify-center items-center text-base sm:text-sm md:text-base text-center text-stone-800 bg-stone-300/50 rounded-full w-fit ">
-                    <small> {index + 1}</small>
+                  <div className="flex flex-col  justify-center items-center text-sm sm:text-sm md:text-base text-center text-stone-800  ">
+                    <small className="px-2 bg-stone-300/50 rounded-full w-fit">
+                      {formatSixDigits(index + 1)}
+                    </small>
                   </div>
                   {/* <div className="w-1/4 max-w-16 text-center px-4 py-3 text-xs sm:text-sm md:text-base text-stone-800">
                   <Button
@@ -61,7 +103,7 @@ export default function ListFlow({ titles, items, setOpenQRCode, setText }) {
                 </div> */}
                   <p className="flex flex-row justify-center items-center gap-1 px-2 py-2 text-xs sm:text-sm md:text-base text-stone-800">
                     <strong>Código: </strong>
-                    {item?.codigo}
+                    {formatCodeDefault(item?.codigo)}
                   </p>
                 </div>
                 <div className="capitalize px-2 py-2 text-center min-w-20 text-xs sm:text-sm md:text-base text-stone-800">
@@ -78,11 +120,28 @@ export default function ListFlow({ titles, items, setOpenQRCode, setText }) {
                 </div>
               </div>
               <div>
+                <div className="flex flex-row justify-between px-2 py-1">
+                  <p className="text-xs">
+                    <small>
+                      <strong>Início:</strong>{" "}
+                      {formatDateCustom(item.dateStart, item.timeStart)}
+                    </small>
+                  </p>
+                  <div className="flex flex-col items-center justify-center bg-slate-200 w-[.2rem] h-4 rounded-full" />
+                  <p className="text-xs">
+                    <small>
+                      <strong>Finalizado:</strong>{" "}
+                      {formatDateCustom(item.dateEnd, item.timeEnd)}
+                    </small>
+                  </p>
+                </div>
                 <p
                   colSpan={5}
                   className=" px-2 py-2 text-xs sm:text-sm md:text-base text-stone-800"
                 >
-                  <strong>Descrição:</strong> {item?.descricao}
+                  <small>
+                    <strong>Descrição:</strong> {item?.descricao}
+                  </small>
                 </p>
               </div>
               <div className="flex flex-row w-full gap-1">
@@ -152,7 +211,7 @@ export default function ListFlow({ titles, items, setOpenQRCode, setText }) {
       <div>
         <ul className="bg-stone-200 flex flex-row items-center px-2 mt-4">
           <span className="px-4 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600">
-            {items?.length || 0}
+            {formatSixDigits(items?.length) || 0}
           </span>
           <span
             colSpan={6}

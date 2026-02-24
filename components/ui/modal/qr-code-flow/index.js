@@ -5,7 +5,14 @@ import { CircleQuestionMarkIcon, FilePenLineIcon } from "lucide-react";
 import Input from "components/ui/input";
 import AlertInfo from "components/ui/alert/info";
 
-export default function QRCodeFlow({ isOpen, onClose, spool, setSpool, text }) {
+export default function QRCodeFlow({
+  isOpen,
+  onClose,
+  spool,
+  setSpool,
+  text,
+  action,
+}) {
   const qrRegionId = "qr-reader";
   const qrCodeRef = useRef(null);
 
@@ -49,11 +56,14 @@ export default function QRCodeFlow({ isOpen, onClose, spool, setSpool, text }) {
           setMessage(`Spool: ${parsedSpool.codigo} - ${parsedSpool.descricao}`);
           setOpenAlert(true);
           setSpool(parsedSpool);
+
+          action(parsedSpool.codigo);
         }
+
         return;
       }
     },
-    [scannerLocked, parseQrSpoolToJson, setSpool, spool],
+    [scannerLocked, parseQrSpoolToJson, setSpool, spool, action],
   );
 
   const stopScanner = async () => {
@@ -178,7 +188,7 @@ export default function QRCodeFlow({ isOpen, onClose, spool, setSpool, text }) {
         <h2 className="text-lg font-semibold">Leitor de QRCode</h2>
       </div>
 
-      <div className="flex flex-col border-2 border-stone-300/50 w-full" />
+      <div className="flex flex-col border-2 border-stone-300/50 w-full rounded-full" />
       {/* Camera */}
       <div className="bg-white rounded-md p-2 py-4 mt-4 w-full max-w-md aspect-square relative">
         {/* <div id={qrRegionId} className="w-[300px] h-[240px]" /> */}
@@ -197,7 +207,7 @@ export default function QRCodeFlow({ isOpen, onClose, spool, setSpool, text }) {
             processo produto.
           </p>
         </div>
-        <div className="flex flex-col border-2 border-stone-300/50 w-full" />
+        <div className="flex flex-col border-2 border-stone-300/50 w-full rounded-full" />
         {spool && (
           <div className="flex flex-col py-5">
             <p className="mt-2 text-md break-all ">Spool:</p>
@@ -215,7 +225,7 @@ export default function QRCodeFlow({ isOpen, onClose, spool, setSpool, text }) {
             </div>
             {String(text).toLowerCase() !== "iniciar" && (
               <div className="flex flex-col py-2">
-                <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-16 mr-16 mt-4 mb-4" />
+                <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-4 mb-4 rounded-full" />
                 <div className="flex flex-col justify-center gap-1 py-4">
                   <label className="w-full flex flex-row item-center gap-1">
                     <CircleQuestionMarkIcon
@@ -243,7 +253,7 @@ export default function QRCodeFlow({ isOpen, onClose, spool, setSpool, text }) {
                       onChange={() => {}}
                     ></Input>
                   </div>
-                  <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-16 mr-16 mt-8" />
+                  <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-8 rounded-full" />
                 </div>
                 <div className="flex flex-col justify-center gap-1 py-4">
                   <label className="w-full flex flex-row item-center gap-1">
@@ -272,7 +282,7 @@ export default function QRCodeFlow({ isOpen, onClose, spool, setSpool, text }) {
                       onChange={() => {}}
                     ></Input>
                   </div>
-                  <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-16 mr-16 mt-8" />
+                  <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-8 rounded-full" />
                 </div>
                 <Input
                   id="descrição"

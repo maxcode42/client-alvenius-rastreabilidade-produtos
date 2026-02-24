@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { QrCodeIcon, InfoIcon, Trash2Icon } from "lucide-react";
 
 import withAuth from "../../src/auth/auth-with";
@@ -10,53 +10,17 @@ import TableFlow from "components/ui/table-flow";
 import ListFlow from "components/ui/list-flow";
 import QRCodeFlow from "components/ui/modal/qr-code-flow";
 
+import api from "provider/api-web";
+
 function BoilerShop() {
   //const [openAlertInfo, setOpenAlertInfo] = useState(false);
   //const [loading, setLoading] = useState(false);
   const [openQRCode, setOpenQRCode] = useState(false);
   const [spool, setSpool] = useState(null);
+  const [itens, setItens] = useState([]);
   const [text, setText] = useState("");
 
   const isView = "list"; //table
-
-  const itens = [
-    {
-      codigo: "SP50K000311",
-      status: "reservado",
-      descricao:
-        "Tubo ASTMA134 PL 508MM x 6,30MM ASTM A 283 GRC DIMESOES CONF ASME B 36.10",
-    },
-    {
-      codigo: "SP5EK000311",
-      status: "execução",
-      descricao:
-        "Tubo ASTMA134 PL 508MM x 6,30MM ASTM A 283 GRC DIMESOES CONF ASME B 36.10",
-    },
-    {
-      codigo: "SP7EK000456",
-      status: "sucata",
-      descricao:
-        "Tubo ASTMA134 PL 508MM x 6,30MM ASTM A 283 GRC DIMESOES CONF ASME B 36.10",
-    },
-    {
-      codigo: "SP46K000322",
-      status: "reservado",
-      descricao:
-        "Tubo ASTMA134 PL 508MM x 6,30MM ASTM A 283 GRC DIMESOES CONF ASME B 36.10",
-    },
-    {
-      codigo: "SP44K000122",
-      status: "reservado",
-      descricao:
-        "Tubo ASTMA134 PL 508MM x 6,30MM ASTM A 283 GRC DIMESOES CONF ASME B 36.10",
-    },
-    {
-      codigo: "SP66K000544",
-      status: "finalizado",
-      descricao:
-        "Tubo ASTMA134 PL 508MM x 6,30MM ASTM A 283 GRC DIMESOES CONF ASME B 36.10",
-    },
-  ];
 
   const titles = useMemo(() => {
     return [
@@ -75,17 +39,31 @@ function BoilerShop() {
   //   descricao: "dafasdfasdfasdfas",
   // };
 
+  async function handleFindOnByCode(code) {
+    const results = await api.findOnByCodeBoilerShop({ code });
+
+    return results;
+  }
+
   function openModalQRCode(e) {
     e.preventDefault();
+    setText("para buscar o SPOOL e seguir fluxo do");
+    setOpenQRCode(true);
   }
 
   function handleConfirmClear(e) {
     e.preventDefault();
   }
 
-  // function handleCreateRegister(e) {
-  //   e.preventDefault();
-  // }
+  async function handleGetAllDataBoilerShop() {
+    const results = await api.getBoilerShop();
+
+    setItens(results);
+  }
+
+  useEffect(() => {
+    handleGetAllDataBoilerShop();
+  }, []);
 
   return (
     <div className="w-full h-full bg-zinc-100">
@@ -113,7 +91,6 @@ function BoilerShop() {
                   <TableFlow titles={titles} items={itens} />
                 ) : (
                   <ListFlow
-                    titles={titles}
                     items={itens}
                     setText={setText}
                     setOpenQRCode={setOpenQRCode}
@@ -162,12 +139,15 @@ function BoilerShop() {
       </Body>
       {openQRCode && (
         <QRCodeFlow
-          isOpen={openQRCode}
+          text={text}
           itens={itens}
           spool={spool}
           setSpool={setSpool}
-          text={text}
-          onClose={() => setOpenQRCode(false)}
+          isOpen={openQRCode}
+          action={handleFindOnByCode}
+          onClose={() => {
+            setOpenQRCode(false), setSpool(null);
+          }}
         />
       )}
     </div>
