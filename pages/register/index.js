@@ -61,12 +61,12 @@ function Register() {
 
       setOpenAlertInfo(true);
 
-      if (results?.status_code === STATUS_CODE.SERVER_ERROR) {
+      if (results?.status_code !== STATUS_CODE.CREATE) {
         setMessage(results?.message);
         return;
       }
 
-      setMessage(results?.Sucesso);
+      setMessage(results?.message);
       clearData();
     } catch (error) {
       setOpenAlertInfo(true);

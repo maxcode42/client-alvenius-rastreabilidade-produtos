@@ -1,75 +1,133 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+"use client";
 
-import { usePathname } from "next/navigation";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import useSWR from "swr";
+
 import { STATUS_CODE } from "types/status-code";
 import api from "provider/api-web";
+import AlertInfo from "components/ui/alert/info";
 
 const AuthContext = createContext(null);
 
+const fetchUser = async () => {
+  const result = await api.getUser();
+
+  if (result.status_code === STATUS_CODE.UNAUTHORIZED) {
+    const error = new Error(result.message || "Unauthorized");
+    error.status = result.status_code;
+    throw error;
+  }
+
+  return result;
+};
+
 export function AuthProvider({ children }) {
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
   const currentRoute = usePathname();
+  const router = useRouter();
 
-  const fetchGetUser = useCallback(async () => {
-    const results = await api.getUser();
+  const pagesPublic = useMemo(() => ["/login", "/status"], []);
 
-    if (results.status_code !== STATUS_CODE.UNAUTHORIZED && results?.id) {
-      setUser({ id: results.id, username: results.username });
+  const [openAlert, setOpenAlert] = useState(false);
+  const [message, setMessage] = useState("");
+  const [refreshInterval, setRefreshInterval] = useState(0);
+
+  const shouldFetch = !pagesPublic.includes(currentRoute); //&& refreshInterval > 0;
+
+  const { data, error, isLoading, mutate } = useSWR(
+    shouldFetch ? "/user" : null,
+    fetchUser,
+    {
+      refreshInterval: refreshInterval || 0,
+      revalidateOnFocus: true,
+      shouldRetryOnError: false,
+    },
+  );
+
+  const user = data?.id ? { id: data.id, username: data.username } : null;
+
+  const loading = shouldFetch ? isLoading : false;
+
+  useEffect(() => {
+    if (!shouldFetch) return;
+
+    if (error?.status === STATUS_CODE.UNAUTHORIZED) {
+      setMessage("Sessão expirou. Faça login novamente.");
+      setOpenAlert(true);
     }
+  }, [error, shouldFetch]);
 
-    setLoading(false);
+  function getRefreshInterval(expiresAt) {
+    if (!expiresAt) return 0;
 
-    return results;
-  }, []);
+    const expirationTime = new Date(expiresAt).getTime();
+    const now = Date.now();
 
-  const CheckLogin = useCallback(async () => {
-    const pagesPublic = ["/login", "/status"];
+    const diff = expirationTime - now;
 
-    if (pagesPublic.includes(currentRoute) || user !== null) {
-      setLoading(false);
-      return;
-    }
-
-    if (!pagesPublic.includes(currentRoute)) {
-      await fetchGetUser();
-    }
-  }, [fetchGetUser, currentRoute, user]);
+    return diff > 0 ? diff : 0;
+  }
 
   async function signIn({ username, password }) {
-    setLoading(true);
+    const result = await api.createSession({ username, password });
 
-    let results = await api.createSession({ username, password });
-
-    if (results.status_code !== STATUS_CODE.UNAUTHORIZED) {
-      results = await fetchGetUser();
+    if (result?.status_code === STATUS_CODE.SERVER_ERROR) {
+      setMessage(`${result.action} ${result.message}`);
+      setOpenAlert(true);
+      return result;
     }
 
-    setLoading(false);
+    if (result?.expires_at) {
+      const interval = getRefreshInterval(result?.expires_at);
 
-    return results;
+      setRefreshInterval(interval);
+
+      await mutate(
+        {
+          id: result.id,
+          username: result.username,
+        },
+        false,
+      );
+
+      router.replace("/");
+    }
+
+    return result;
+  }
+
+  async function clearLogout() {
+    setRefreshInterval(0);
+    await mutate(null, false);
+    router.push("/login");
   }
 
   async function signOut() {
-    const results = await api.deleteSession();
-
-    if (results.status !== STATUS_CODE.UNAUTHORIZED) {
-      setUser(null);
-    }
+    await api.deleteSession();
+    await clearLogout();
   }
 
-  useEffect(() => {
-    CheckLogin();
-  }, [CheckLogin]);
+  if (openAlert && !pagesPublic.includes(currentRoute)) {
+    return (
+      <AlertInfo
+        message={message}
+        openAlert={openAlert}
+        setOpenAlert={setOpenAlert}
+        setScannerLocked={() => {}}
+        action={clearLogout}
+      />
+    );
+  }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signOut }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        signIn,
+        signOut,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -79,7 +137,7 @@ export function useAuth() {
   const ctx = useContext(AuthContext);
 
   if (!ctx) {
-    throw new Error("Error: userAuth must be used inside AuthProvider");
+    throw new Error("useAuth must be used inside AuthProvider");
   }
 
   return ctx;

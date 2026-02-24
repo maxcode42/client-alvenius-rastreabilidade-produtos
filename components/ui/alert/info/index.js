@@ -10,12 +10,17 @@ export default function AlertInfo({
   setOpenAlert,
   setScannerLocked,
   message,
+  action = null,
 }) {
   async function handlerActionAlert(e) {
     e.preventDefault();
 
     await setOpenAlert(false);
     await setScannerLocked(false);
+
+    if (action) {
+      action();
+    }
   }
   return (
     <AlertPanel openAlert={openAlert}>

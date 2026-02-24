@@ -6,7 +6,7 @@ import apiProtheus from "provider/api-protheus";
 async function runInsertAPIProtheus(registerInputValues) {
   const results = await apiProtheus.createRegister(registerInputValues);
 
-  return results[0];
+  return results;
 }
 
 function normalizeAlphanumeric(text) {
@@ -17,19 +17,25 @@ function normalizeNumericFloat(text) {
   return Number(String(text).replace(",", "."));
 }
 
+function normalizedText(text) {
+  return new TextDecoder("utf-8")
+    .decode(new TextEncoder().encode(text))
+    .normalize("NFC");
+}
+
 async function create(registerInputValues, tokenProtheus) {
   const componentes = registerInputValues?.itens?.map((item) => ({
-    COD_PRODUTO: normalizeAlphanumeric(item?.codigo),
-    DESC: item?.descricao,
-    COD_FORNEC: item?.fornecedor,
-    CORRIDA: item?.fluxo,
+    COD_PRODUTO: String(normalizeAlphanumeric(item?.codigo)),
+    DESC: String(normalizedText(item?.descricao)),
+    COD_FORNEC: String(normalizedText(item?.fornecedor)),
+    CORRIDA: String(normalizedText(item?.fluxo)),
     QUANT: normalizeNumericFloat(item?.quantidade),
   }));
 
   const registerObject = {
     QrCode: {
-      SPOOL: normalizeAlphanumeric(registerInputValues?.spool?.codigo),
-      DESC: registerInputValues?.spool?.descricao,
+      SPOOL: String(normalizeAlphanumeric(registerInputValues?.spool?.codigo)),
+      DESC: String(normalizedText(registerInputValues?.spool?.descricao)),
       Componentes: componentes,
     },
   };

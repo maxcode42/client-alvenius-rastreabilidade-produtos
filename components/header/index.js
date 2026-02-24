@@ -12,6 +12,7 @@ import {
   PaintRollerIcon,
   ChevronRightIcon,
   PackagePlusIcon,
+  PaintBucketIcon,
 } from "lucide-react";
 
 import { useAuth } from "../../src/auth/auth-context";
@@ -138,7 +139,7 @@ export default function Header() {
                           >
                             <span className="flex flex-row gap-2 items-center">
                               <span className="md:hidden">
-                                <PackagePlusIcon className="w-auto" size={24} />
+                                <PaintBucketIcon className="w-auto" size={24} />
                               </span>
                               <span className="uppercase">Caldeiraria</span>
                             </span>

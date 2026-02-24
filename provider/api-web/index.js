@@ -6,6 +6,7 @@ async function handlerSend(path, method, dataObject) {
     },
     body: dataObject ? JSON.stringify(dataObject) : null,
   });
+
   const responseBody = await response.json();
 
   return responseBody;
@@ -35,10 +36,24 @@ async function createRegister({ data }) {
   return results;
 }
 
+async function getBoilerShop() {
+  const results = await handlerSend("boiler-shop", "GET", null);
+
+  return results;
+}
+
+async function findOnByCodeBoilerShop({ code }) {
+  const results = await handlerSend(`boiler-shop/${code}`, "GET", null);
+
+  return results;
+}
+
 const api = {
+  findOnByCodeBoilerShop,
   createRegister,
   createSession,
   deleteSession,
+  getBoilerShop,
   getUser,
 };
 

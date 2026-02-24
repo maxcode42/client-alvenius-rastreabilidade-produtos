@@ -18,14 +18,14 @@ async function postHandler(req, res) {
 
   const sessionObject = await session.findOneValidByToken(token);
 
-  const renewedSessionObject = await session.renew(sessionObject.id);
+  //const renewedSessionObject = await session.renew(sessionObject.id);
 
   const results = await register.create(
     registerInputValues,
-    renewedSessionObject.token_protheus,
+    sessionObject.token_protheus,
   );
 
-  await controller.setSessionCookie(res, renewedSessionObject.token);
+  await controller.setSessionCookie(res, sessionObject.token);
 
   res.setHeader(
     "Cache-Control",
