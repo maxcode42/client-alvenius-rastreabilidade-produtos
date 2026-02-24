@@ -31,6 +31,7 @@ export function AuthProvider({ children }) {
   const [openAlert, setOpenAlert] = useState(false);
   const [message, setMessage] = useState("");
   const [refreshInterval, setRefreshInterval] = useState(0);
+  const [hasAuthenticated, setHasAuthenticated] = useState(false);
 
   const shouldFetch = !pagesPublic.includes(currentRoute); //&& refreshInterval > 0;
 
@@ -47,15 +48,6 @@ export function AuthProvider({ children }) {
   const user = data?.id ? { id: data.id, username: data.username } : null;
 
   const loading = shouldFetch ? isLoading : false;
-
-  useEffect(() => {
-    if (!shouldFetch) return;
-
-    if (error?.status === STATUS_CODE.UNAUTHORIZED) {
-      setMessage("Sessão expirou. Faça login novamente.");
-      setOpenAlert(true);
-    }
-  }, [error, shouldFetch]);
 
   function getRefreshInterval(expiresAt) {
     if (!expiresAt) return 0;
@@ -81,6 +73,7 @@ export function AuthProvider({ children }) {
       const interval = getRefreshInterval(result?.expires_at);
 
       setRefreshInterval(interval);
+      setHasAuthenticated(true);
 
       await mutate(
         {
@@ -98,6 +91,7 @@ export function AuthProvider({ children }) {
 
   async function clearLogout() {
     setRefreshInterval(0);
+    setHasAuthenticated(true);
     await mutate(null, false);
     router.push("/login");
   }
@@ -106,6 +100,15 @@ export function AuthProvider({ children }) {
     await api.deleteSession();
     await clearLogout();
   }
+
+  useEffect(() => {
+    if (!shouldFetch) return;
+
+    if (hasAuthenticated && error?.status === STATUS_CODE.UNAUTHORIZED) {
+      setMessage("Sessão expirou. Faça login novamente.");
+      setOpenAlert(true);
+    }
+  }, [error, shouldFetch, hasAuthenticated]);
 
   if (openAlert && !pagesPublic.includes(currentRoute)) {
     return (
