@@ -1,3 +1,6 @@
+import { dispatchUnauthorized } from "@/auth/auth-events";
+import { STATUS_CODE } from "types/status-code";
+
 async function handlerSend(path, method, dataObject) {
   const response = await fetch(`/api/v1/${path}`, {
     method,
@@ -7,9 +10,17 @@ async function handlerSend(path, method, dataObject) {
     body: dataObject ? JSON.stringify(dataObject) : null,
   });
 
-  const responseBody = await response.json();
+  const responseBody = await handleResponse(response);
 
   return responseBody;
+}
+
+async function handleResponse(response) {
+  if (response.status === STATUS_CODE.UNAUTHORIZED) {
+    dispatchUnauthorized();
+  }
+
+  return await response.json();
 }
 
 async function createSession({ username, password }) {

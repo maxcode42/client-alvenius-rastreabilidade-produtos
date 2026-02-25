@@ -7,6 +7,7 @@ import useSWR from "swr";
 import { STATUS_CODE } from "types/status-code";
 import api from "provider/api-web";
 import AlertInfo from "components/ui/alert/info";
+import { AUTH_EVENTS } from "./auth-events";
 
 const AuthContext = createContext(null);
 
@@ -26,12 +27,12 @@ export function AuthProvider({ children }) {
   const currentRoute = usePathname();
   const router = useRouter();
 
-  const pagesPublic = useMemo(() => ["/login", "/status"], []);
-
-  const [openAlert, setOpenAlert] = useState(false);
   const [message, setMessage] = useState("");
+  const [openAlert, setOpenAlert] = useState(false);
   const [refreshInterval, setRefreshInterval] = useState(0);
   const [hasAuthenticated, setHasAuthenticated] = useState(false);
+
+  const pagesPublic = useMemo(() => ["/login", "/status"], []);
 
   const shouldFetch = !pagesPublic.includes(currentRoute); //&& refreshInterval > 0;
 
@@ -102,12 +103,21 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
-    if (!shouldFetch) return;
+    //if (!shouldFetch) return;
 
-    if (hasAuthenticated && error?.status === STATUS_CODE.UNAUTHORIZED) {
+    function handleUnauthorized() {
+      if (!hasAuthenticated) return;
+
+      // if (hasAuthenticated && error?.status === STATUS_CODE.UNAUTHORIZED) {
       setMessage("Sessão expirou. Faça login novamente.");
       setOpenAlert(true);
+      //}
     }
+    window.addEventListener(AUTH_EVENTS.UNAUTHORIZED, handleUnauthorized);
+
+    return () => {
+      window.removeEventListener(AUTH_EVENTS.UNAUTHORIZED, handleUnauthorized);
+    };
   }, [error, shouldFetch, hasAuthenticated]);
 
   if (openAlert && !pagesPublic.includes(currentRoute)) {
