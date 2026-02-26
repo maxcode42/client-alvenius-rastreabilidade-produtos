@@ -11,7 +11,12 @@ import {
 
 import Button from "components/ui/button";
 
-export default function CardItems({ items, setOpenQRCode, setText }) {
+export default function CardItems({
+  items,
+  setOpenQRCode,
+  setCurrentSpool,
+  setText,
+}) {
   function formatCodeDefault(code) {
     const result = code.replace(
       /^([A-Z]{2})(\d{4})(\d{5})(\d{3})$/,
@@ -143,7 +148,11 @@ export default function CardItems({ items, setOpenQRCode, setText }) {
                     type="button"
                     title="Incia processo produção"
                     disabled={item?.status_sigle !== "RE"}
-                    onClick={() => (setOpenQRCode(true), setText("INICIAR"))}
+                    onClick={() => (
+                      setOpenQRCode(true),
+                      setText("INICIAR"),
+                      setCurrentSpool(item)
+                    )}
                     className="
                   disabled:bg-stone-300 disable:cursor-none
                    truncate w-full min-w-20 text-xs py-2 px-1 rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-yellow-500 text-blue-100  hover:bg-yellow-800 hover:text-blue-100 hover:shadow-yellow-600 hover:shadow-md"
@@ -158,7 +167,11 @@ export default function CardItems({ items, setOpenQRCode, setText }) {
                     type="button"
                     title="Reiniciar processo produção"
                     disabled={item?.status_sigle !== "PU"}
-                    onClick={() => (setOpenQRCode(true), setText("REINICIAR"))}
+                    onClick={() => (
+                      setOpenQRCode(true),
+                      setText("REINICIAR"),
+                      setCurrentSpool(item)
+                    )}
                     className="
                   disabled:bg-stone-300 disable:cursor-none
                    truncate w-full min-w-20 text-xs py-2 px-1 rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-orange-500 text-orange-100  hover:bg-orange-800 hover:text-blue-100 hover:shadow-yellow-600 hover:shadow-md"
@@ -175,7 +188,11 @@ export default function CardItems({ items, setOpenQRCode, setText }) {
                   type="button"
                   title="Finaliza processo produção"
                   disabled={item?.status_sigle !== "EX"}
-                  onClick={() => (setOpenQRCode(true), setText("FINALIZAR"))}
+                  onClick={() => (
+                    setOpenQRCode(true),
+                    setText("FINALIZAR"),
+                    setCurrentSpool(item)
+                  )}
                   className="disabled:bg-stone-300 disable:cursor-none truncate w-full min-w-20 py-2 px-1 text-xs rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-green-500 text-blue-100  hover:bg-green-800 hover:text-green-100 hover:shadow-green-600 hover:shadow-md"
                 >
                   <CheckCircleIcon className="size-4" />
@@ -189,7 +206,11 @@ export default function CardItems({ items, setOpenQRCode, setText }) {
                   type="button"
                   title="Avaliar qualidade produto"
                   disabled={item?.status_sigle !== "FI"}
-                  onClick={() => (setOpenQRCode(true), setText("Qualidade"))}
+                  onClick={() => (
+                    setOpenQRCode(true),
+                    setText("Qualidade"),
+                    setCurrentSpool(item)
+                  )}
                   className="disabled:bg-stone-300 disable:cursor-none truncate w-full  min-w-20 py-2 px-1 text-xs rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-blue-500 text-blue-100  hover:bg-blue-800 hover:text-blue-100 hover:shadow-blue-600 hover:shadow-md"
                 >
                   <RefreshCcwDotIcon className="size-4" />

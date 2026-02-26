@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { SaveIcon, QrCodeIcon, ArrowBigRightDashIcon } from "lucide-react";
 
-import withAuth from "../../src/auth/auth-with";
+import withAuth from "../../auth/auth-with";
 
 import Header from "../../components/header";
 import Body from "../../components/body";

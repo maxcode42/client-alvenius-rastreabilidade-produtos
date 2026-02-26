@@ -10,8 +10,8 @@ import HeaderPageButtons from "components/header-page-buttons";
 
 import QRCodeFlow from "components/ui/modal/qr-code-flow";
 
-import withAuth from "../../src/auth/auth-with";
-import api from "provider/api-web";
+import withAuth from "../../auth/auth-with";
+import api from "infra/provider/api-web";
 
 function BoilerShop() {
   const [openQRCode, setOpenQRCode] = useState(false);
@@ -20,6 +20,7 @@ function BoilerShop() {
   const [itensFiltered, setItensFiltered] = useState([]);
   const [text, setText] = useState("");
   const [searchText, setSearchText] = useState("");
+  const [currentSpool, setCurrentSpool] = useState({});
 
   async function handleFindOnByCode(code) {
     const results = await api.findOnByCodeBoilerShop({ code });
@@ -119,6 +120,7 @@ function BoilerShop() {
               items={itensFiltered}
               setText={setText}
               setOpenQRCode={setOpenQRCode}
+              setCurrentSpool={setCurrentSpool}
             />
           </PanelPrimary>
         </PanelDefault>
@@ -129,6 +131,7 @@ function BoilerShop() {
           itens={itens}
           spool={spool}
           setSpool={setSpool}
+          currentSpool={currentSpool}
           isOpen={openQRCode}
           action={handleFindOnByCode}
           onClose={() => {

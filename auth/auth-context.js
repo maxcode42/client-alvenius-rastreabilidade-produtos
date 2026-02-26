@@ -1,13 +1,14 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
 import useSWR from "swr";
+import { usePathname, useRouter } from "next/navigation";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 import { STATUS_CODE } from "types/status-code";
-import api from "provider/api-web";
-import AlertInfo from "components/ui/alert/info";
 import { AUTH_EVENTS } from "./auth-events";
+import api from "infra/provider/api-web";
+
+import AlertInfo from "components/ui/alert/info";
 
 const AuthContext = createContext(null);
 
@@ -103,10 +104,12 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
-    //if (!shouldFetch) return;
+    // if (!shouldFetch) return;
+    // if (shouldFetch) return;
 
     function handleUnauthorized() {
-      if (!hasAuthenticated) return;
+      if (!shouldFetch) return;
+      //if (!hasAuthenticated) return;
 
       // if (hasAuthenticated && error?.status === STATUS_CODE.UNAUTHORIZED) {
       setMessage("Sessão expirou. Faça login novamente.");

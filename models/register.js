@@ -1,7 +1,7 @@
 //import database from "infra/database";
 //import password from "models/password";
 //import { ValidationError, NotFoundError } from "infra/errors";
-import apiProtheus from "provider/api-protheus";
+import apiProtheus from "infra/provider/api-protheus";
 
 async function runInsertAPIProtheus(registerInputValues) {
   const results = await apiProtheus.createRegister(registerInputValues);

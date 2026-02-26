@@ -2,7 +2,7 @@ import user from "models/user";
 //import password from "models/password";
 import { UnauthorizedError, NotFoundError } from "infra/errors";
 
-import apiProtheus from "provider/api-protheus";
+import apiProtheus from "infra/provider/api-protheus";
 
 // async function validatePassword(providedPassword, storedPassword) {
 //   const correctPasswordMatch = await password.compare(

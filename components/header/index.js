@@ -15,7 +15,7 @@ import {
   PaintBucketIcon,
 } from "lucide-react";
 
-import { useAuth } from "../../src/auth/auth-context";
+import { useAuth } from "../../auth/auth-context";
 import AlertInfo from "../ui/alert/info";
 
 import logo from "../../assets/imagens/logo.png";

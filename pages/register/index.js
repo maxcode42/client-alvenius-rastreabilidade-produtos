@@ -11,13 +11,13 @@ import AlertConfirm from "components/ui/alert/confirm";
 import PanelDefault from "components/ui/panel-default";
 import PanelPrimary from "components/ui/panel-primary";
 import HeaderPageTitle from "components/header-page-title";
-
-import QRCode from "components/ui/modal/qr-code";
-import { STATUS_CODE } from "types/status-code";
-
-import withAuth from "../../src/auth/auth-with";
-import api from "provider/api-web";
 import HeaderPageText from "components/header-page-text";
+import QRCode from "components/ui/modal/qr-code";
+
+import { STATUS_CODE } from "types/status-code";
+import withAuth from "../../auth/auth-with";
+
+import api from "infra/provider/api-web";
 
 function Register() {
   const [itens, setItens] = useState([]);

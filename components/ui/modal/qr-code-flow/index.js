@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CircleQuestionMarkIcon, FilePenLineIcon } from "lucide-react";
 
 import Input from "components/ui/input";
@@ -10,6 +10,7 @@ export default function QRCodeFlow({
   onClose,
   spool,
   setSpool,
+  currentSpool = {},
   text,
   action,
 }) {
@@ -28,19 +29,28 @@ export default function QRCodeFlow({
   const [reversible, setReversible] = useState(false);
   const [qualityText, setQualityText] = useState("");
   const [isMaxHeightText, setIsMaxHeightText] = useState(false);
+  const maxTextArea = useMemo(() => {
+    return {
+      characters: 180,
+      lines: 3,
+    };
+  }, []);
 
   function limitLines(e) {
     e.preventDefault();
-    setIsMaxHeightText(false);
     const textarea = e.target;
-    const lineHeight = parseInt(getComputedStyle(textarea).lineHeight);
-    const maxHeight = lineHeight * 3;
-    setQualityText(textarea.value);
-    console.log(textarea.scrollHeight);
-    if (textarea.scrollHeight >= maxHeight - 1) {
+    const lines = textarea.value.split("\n").length;
+
+    if (
+      lines > maxTextArea.lines ||
+      String(e.target.value).length === maxTextArea.characters
+    ) {
       setIsMaxHeightText(true);
       return;
     }
+
+    setQualityText(textarea.value);
+    setIsMaxHeightText(false);
   }
 
   useEffect(() => {}, [isMaxHeightText]);
@@ -205,7 +215,7 @@ export default function QRCodeFlow({
     permissionDenied,
     //startScanner,
   ]);
-
+  console.log(currentSpool);
   if (!isOpen) return null;
 
   return (
@@ -259,7 +269,7 @@ export default function QRCodeFlow({
                 </p>
               </div>
             </div>
-            {String(text).toLowerCase() !== "iniciar" && (
+            {String(currentSpool?.status_sigle).toUpperCase() === "FI" && (
               <div className="flex flex-col py-2">
                 <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-4 mb-4 rounded-full" />
                 <div className="flex flex-col justify-center gap-1 py-4">
@@ -335,34 +345,38 @@ export default function QRCodeFlow({
                     size={18}
                   />
                 </Input> */}
-                <label
-                  id="descrição"
-                  type="text"
-                  label="Descrição qualidade produto"
-                  placeholder="Digite disposição qualidade produto."
-                  className="flex flex-row w-full gap-1 py-2"
-                >
-                  <FilePenLineIcon
-                    className="text-stone-400 mr-2 mt-0.5"
-                    size={18}
+                <div className="flex flex-col justify-center gap-1 py-4">
+                  <label
+                    id="descrição"
+                    type="text"
+                    label="Descrição qualidade produto"
+                    placeholder="Digite disposição qualidade produto."
+                    className="flex flex-row w-full gap-1 py-2"
+                  >
+                    <FilePenLineIcon
+                      className="text-stone-400 mr-2 mt-0.5"
+                      size={18}
+                    />
+                    Disposição qualidade produto.
+                  </label>
+                  <p
+                    className={`text-xs text-red-600 mb-2 ${!isMaxHeightText ? "hidden" : ""}`}
+                  >
+                    <span>
+                      * Limite máximo de{" "}
+                      <strong>{maxTextArea.characters}</strong> caracteres ou{" "}
+                      <strong>{maxTextArea.lines}</strong> linhas.
+                    </span>
+                  </p>
+                  <textarea
+                    rows={maxTextArea.lines}
+                    value={qualityText}
+                    maxLength={maxTextArea.characters}
+                    onChange={(e) => limitLines(e)}
+                    placeholder="Digite texto direto e objetivo para disposição qualidade."
+                    className="overflow-y-scroll leading-6 w-full h-24 resize-none border-2 border-stone-300/50 placeholder:text-gray-400 outline-none focus:border-blue-400/50 focus:ring-0 focus:ring-blue-200 focus:shadow-md focus:shadow-blue-300/50 rounded-md px-1 py-1"
                   />
-                  Disposição qualidade produto.
-                </label>
-                <p
-                  class={`text-xs text-red-600 mb-2 ${!isMaxHeightText ?? "hidden"}`}
-                >
-                  * Limite máximo caracteres foi atingido.
-                </p>
-                <textarea
-                  rows={3}
-                  // maxLength={180}
-                  value={qualityText}
-                  // onKeyDown={(e) => limitLines(e)}
-                  // oninput={(e) => limitLines(e)}
-                  onChange={(e) => limitLines(e)}
-                  placeholder="Digite texto direto e objetivo para disposição qualidade."
-                  className="overflow-y-auto  leading-6 w-full h-20 resize-none border-2 border-stone-300/50 placeholder:text-gray-400 outline-none focus:border-blue-400/50 focus:ring-0 focus:ring-blue-200 focus:shadow-md focus:shadow-blue-300/50 rounded-md px-1 py-1"
-                />
+                </div>
               </div>
             )}
             <div className="flex flex-col border-2 border-stone-300/50 w-full mt-8" />

@@ -46,16 +46,17 @@ export default function Table({ titles, items }) {
           </tr>
         ))}
       </tbody>
-      <tfoot className={items?.length === 0 && "hidden"}>
+      <tfoot className={items?.length === 0 ? "hidden" : ""}>
         <tr className="bg-stone-200">
           <td className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600">
             {items?.length || 0}
           </td>
-          <td></td>
-          <td className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600"></td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td
+            colSpan={Number(titles?.length - 1)}
+            className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider text-stone-600"
+          >
+            TOTAL ITENS
+          </td>
         </tr>
       </tfoot>
     </table>

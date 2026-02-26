@@ -1,4 +1,4 @@
-import { dispatchUnauthorized } from "@/auth/auth-events";
+import { dispatchUnauthorized } from "auth/auth-events";
 import { STATUS_CODE } from "types/status-code";
 
 async function handlerSend(path, method, dataObject) {

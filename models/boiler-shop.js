@@ -1,4 +1,4 @@
-import apiProtheus from "provider/api-protheus";
+import apiProtheus from "infra/provider/api-protheus";
 
 function getStatus(statusAcronym) {
   const status = {

@@ -3,7 +3,7 @@ import { useState, useCallback } from "react";
 import { LockKeyhole, User2Icon } from "lucide-react";
 
 import { STATUS_CODE } from "types/status-code";
-import { useAuth } from "../../src/auth/auth-context";
+import { useAuth } from "../../auth/auth-context";
 
 import Body from "../../components/body";
 import Header from "../../components/header";

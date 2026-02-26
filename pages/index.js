@@ -10,7 +10,7 @@ import {
 import Header from "../components/header";
 import Body from "../components/body";
 
-import withAuth from "../src/auth/auth-with";
+import withAuth from "../auth/auth-with";
 import ButtonPanel from "components/ui/button-panel";
 import AlertInfo from "components/ui/alert/info";
 
