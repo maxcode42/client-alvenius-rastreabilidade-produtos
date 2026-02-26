@@ -54,7 +54,7 @@ async function handlerObject(data) {
       sequence: item?.SEQ,
       codigo: item?.COD?.trim(),
       status: getStatus(statusAcronym), //getStatus(item?.STATUS?.trim()),
-      status_sigla: statusAcronym, //item?.STATUS?.trim(),
+      status_sigle: statusAcronym, //item?.STATUS?.trim(),
       dateStart: item?.DTENTR?.trim(),
       timeStart: item?.HRENT?.trim(),
       dateEnd: item?.DTSAID?.trim(),

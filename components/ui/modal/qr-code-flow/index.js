@@ -24,6 +24,27 @@ export default function QRCodeFlow({
   const [hasAskedPermission, setHasAskedPermission] = useState(false);
   const [permissionDenied, setPermissionDenied] = useState(false);
 
+  const [accordance, setAccordance] = useState(false);
+  const [reversible, setReversible] = useState(false);
+  const [qualityText, setQualityText] = useState("");
+  const [isMaxHeightText, setIsMaxHeightText] = useState(false);
+
+  function limitLines(e) {
+    e.preventDefault();
+    setIsMaxHeightText(false);
+    const textarea = e.target;
+    const lineHeight = parseInt(getComputedStyle(textarea).lineHeight);
+    const maxHeight = lineHeight * 3;
+    setQualityText(textarea.value);
+    console.log(textarea.scrollHeight);
+    if (textarea.scrollHeight >= maxHeight - 1) {
+      setIsMaxHeightText(true);
+      return;
+    }
+  }
+
+  useEffect(() => {}, [isMaxHeightText]);
+
   function normalizedText(text) {
     return new TextDecoder("utf-8")
       .decode(new TextEncoder().encode(text))
@@ -109,12 +130,18 @@ export default function QRCodeFlow({
     await html5QrCode.start(
       { facingMode: "environment" },
       {
-        fps: 20,
+        fps: 15,
         aspectRatio: 1,
-        qrbox: (w, h) => {
-          const size = Math.min(w, h) * 0.8;
-          return { width: size, height: size };
-        },
+        disableFlip: false,
+        // qrbox: (w, h) => {
+        //   const base = Math.min(w, h);
+        //   const size = Math.min(Math.max(base * 0.8, 50), 400);
+
+        //   return {
+        //     width: size,
+        //     height: size,
+        //   };
+        // },
       },
       (decodedText) => {
         handleQrDecoded(decodedText);
@@ -194,6 +221,15 @@ export default function QRCodeFlow({
         {/* <div id={qrRegionId} className="w-[300px] h-[240px]" /> */}
 
         <div id={qrRegionId} className="w-full h-full" />
+
+        {/* Cantos  */}
+        <div className="absolute rounded-tl-md top-28 left-24 w-8 h-8 border-t-4 border-l-4 border-blue-500"></div>
+        <div className="absolute rounded-tr-md top-28 right-24 w-8 h-8 border-t-4 border-r-4 border-blue-500"></div>
+        <div className="absolute rounded-bl-md bottom-28 left-24 w-8 h-8 border-b-4 border-l-4 border-blue-500"></div>
+        <div className="absolute rounded-br-md bottom-28 right-24 w-8 h-8 border-b-4 border-r-4 border-blue-500"></div>
+
+        {/* Linha animada */}
+        <div className="absolute left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-scan"></div>
       </div>
 
       {/* Resultado */}
@@ -265,26 +301,28 @@ export default function QRCodeFlow({
                   </label>
                   <div className="flex flex-row justify-around">
                     <Input
-                      id="reversivel"
-                      name="reversivel"
+                      id="reversible"
+                      name="reversible"
                       type="radio"
-                      value={""}
+                      value={accordance}
                       label="Sim"
-                      onChange={() => {}}
+                      onChange={(e) => setAccordance(e.target.value)}
                       className="w-1/2 flex flex-row"
                     ></Input>
                     <Input
-                      id="reversivel"
-                      name="reversivel"
+                      id="reversible"
+                      name="reversible"
                       type="radio"
-                      value={""}
+                      value={reversible}
                       label="Não"
-                      onChange={() => {}}
+                      disabled={!accordance}
+                      onChange={(e) => setReversible(e.target.value)}
+                      className="disabled:cursor-not-allowed"
                     ></Input>
                   </div>
                   <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-8 rounded-full" />
                 </div>
-                <Input
+                {/* <Input
                   id="descrição"
                   type="text"
                   value={""}
@@ -296,7 +334,35 @@ export default function QRCodeFlow({
                     className="text-stone-400 mr-2 mt-0.5"
                     size={18}
                   />
-                </Input>
+                </Input> */}
+                <label
+                  id="descrição"
+                  type="text"
+                  label="Descrição qualidade produto"
+                  placeholder="Digite disposição qualidade produto."
+                  className="flex flex-row w-full gap-1 py-2"
+                >
+                  <FilePenLineIcon
+                    className="text-stone-400 mr-2 mt-0.5"
+                    size={18}
+                  />
+                  Disposição qualidade produto.
+                </label>
+                <p
+                  class={`text-xs text-red-600 mb-2 ${!isMaxHeightText ?? "hidden"}`}
+                >
+                  * Limite máximo caracteres foi atingido.
+                </p>
+                <textarea
+                  rows={3}
+                  // maxLength={180}
+                  value={qualityText}
+                  // onKeyDown={(e) => limitLines(e)}
+                  // oninput={(e) => limitLines(e)}
+                  onChange={(e) => limitLines(e)}
+                  placeholder="Digite texto direto e objetivo para disposição qualidade."
+                  className="overflow-y-auto  leading-6 w-full h-20 resize-none border-2 border-stone-300/50 placeholder:text-gray-400 outline-none focus:border-blue-400/50 focus:ring-0 focus:ring-blue-200 focus:shadow-md focus:shadow-blue-300/50 rounded-md px-1 py-1"
+                />
               </div>
             )}
             <div className="flex flex-col border-2 border-stone-300/50 w-full mt-8" />
@@ -304,9 +370,11 @@ export default function QRCodeFlow({
         )}
         <div className="flex flex-col py-4">
           <p className="text-sm font-semibold">Último QRCode lido:</p>
-          <p className="mt-2 text-xs break-all text-gray-700">
+          <p className="mt-2 text-xs break-all text-gray-700 w-full flex flex-row justify-center item-center">
             {result ?? (
-              <span className="animate-pulse">Aguardando leitura...</span>
+              <span className="animate-pulse mt-2 px-4 py-2 rounded-md w-fit">
+                Aguardando leitura...
+              </span>
             )}
           </p>
         </div>

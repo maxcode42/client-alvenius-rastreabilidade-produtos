@@ -239,20 +239,65 @@ export default function QRCode({
     const html5QrCode = new Html5Qrcode(qrRegionId);
     qrCodeRef.current = html5QrCode;
 
+    // QRBOX Dinâmico
+    // const qrboxFunction = (viewfinderWidth, viewfinderHeight) => {
+    //   const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+    //   const size = Math.floor(minEdge * 0.7);
+    //   return { width: size, height: size };
+    // };
+
+    //FUNCIONA
+    // await html5QrCode.start(
+    //   { facingMode: "environment" },
+    //   {
+    //     fps: 15,
+    //     aspectRatio: 1,
+    //     disableFlip: false,
+    //     qrbox: (w, h) => {
+    //       const base = Math.min(w, h);
+    //       const size = Math.min(Math.max(base * 0.8, 50), 400);
+
+    //       return {
+    //         width: size,
+    //         height: size,
+    //       };
+    //     },
+    //   },
+    //   (decodedText) => {
+    //     handleQrDecoded(decodedText);
+    //     stopScanner();
+    //   },
+    // );
+
     await html5QrCode.start(
       { facingMode: "environment" },
       {
-        fps: 20,
-        aspectRatio: 1,
-        qrbox: (w, h) => {
-          const base = Math.min(w, h);
-          const size = Math.min(Math.max(base * 0.8, 50), 400);
+        fps: 15,
+        //aspectRatio: 1,
+        //aspectRatio: 1.777, // 16:9
+        disableFlip: false,
+        // qrbox: (w, h) => {
+        //   const edge = Math.min(w, h);
+        //   return { width: edge * 0.75, height: edge * 0.75 };
+        // },
+        //qrbox: qrboxFunction,
+        // qrbox: (w, h) => {
+        //   const base = Math.min(w, h);
+        //   const size = Math.min(Math.max(base * 0.8, 50), 400);
 
-          return {
-            width: size,
-            height: size,
-          };
-        },
+        //   return {
+        //     width: size,
+        //     height: size,
+        //   };
+        // },
+        // qrbox: (w, h) => {
+        //   const minEdge = Math.min(w, h);
+        //   return {
+        //     width: minEdge * 0.5,
+        //     height: minEdge * 0.5,
+        //   };
+        // },
+        aspectRatio: 1,
       },
       (decodedText) => {
         handleQrDecoded(decodedText);
@@ -332,6 +377,8 @@ export default function QRCode({
         {/* <div id={qrRegionId} className="w-[300px] h-[240px]" /> */}
 
         <div id={qrRegionId} className="w-full h-full" />
+        <div className="scanner-overlay"></div>
+        <div className="scan-line"></div>
       </div>
 
       {/* Resultado */}
@@ -413,9 +460,11 @@ export default function QRCode({
         )}
         <div className="flex flex-col py-4">
           <p className="text-sm font-semibold">Último QRCode lido:</p>
-          <p className="mt-2 text-xs break-all text-gray-700">
+          <p className="mt-2 text-xs break-all text-gray-700 w-full flex flex-row justify-center item-center">
             {result ?? (
-              <span className="animate-pulse">Aguardando leitura...</span>
+              <span className="animate-pulse mt-2 px-4 py-2 rounded-md w-fit">
+                Aguardando leitura...
+              </span>
             )}
           </p>
         </div>

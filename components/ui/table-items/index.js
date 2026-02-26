@@ -10,7 +10,7 @@ import {
 
 import Button from "components/ui/button";
 
-export default function TableFlow({ titles, items }) {
+export default function TableItems({ titles, items }) {
   //const [expandItem, setExpandItem] = useState(false);
   const [expandItemIndex, setExpandItemIndex] = useState(null);
   function onExpandDetails(e, index) {

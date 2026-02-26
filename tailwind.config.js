@@ -14,6 +14,15 @@ module.exports = {
       gridTemplateRows: {
         layout: "7vh 1fr 17vh",
       },
+      keyframes: {
+        scan: {
+          "0%": { top: "0%" },
+          "100%": { top: "100%" },
+        },
+      },
+      animation: {
+        scan: "scan 2s linear infinite",
+      },
     },
   },
   plugins: [],
