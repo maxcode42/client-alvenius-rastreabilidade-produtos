@@ -1,22 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  CircleQuestionMarkIcon,
-  RefreshCcwDotIcon,
-  StepForwardIcon,
-  FilePenLineIcon,
-  CheckCircleIcon,
-  PackageOpenIcon,
-  XCircleIcon,
-  PauseIcon,
-  PlayIcon,
-} from "lucide-react";
+import { CircleQuestionMarkIcon, FilePenLineIcon } from "lucide-react";
 
 import Input from "components/ui/input";
-import Button from "components/ui/button";
 import Separator from "components/ui/separator";
 import QRCode from "components/ui/qr-code";
 import QRCodePanel from "components/ui/qr-code/qr-code-panel";
-import QRCodeButton from "components/ui/qr-code/qr-code-button";
 import TextSpool from "components/ui/text-spool";
 
 export default function QRCodeFlowCustom({
@@ -168,6 +156,9 @@ export default function QRCodeFlowCustom({
         result={result}
         message={message}
         openAlert={openAlert}
+        spool={spool}
+        currentSpool={currentSpool}
+        onClose={onClose}
       >
         <div className="flex flex-col py-2">
           <p className="text-sm font-semibold text-center">
@@ -303,15 +294,15 @@ export default function QRCodeFlowCustom({
           </div>
         )}
       </QRCode>
-      <QRCodeButton className="flex flex-row w-full h-full py-8 gap-4 sm:w-1/2">
-        {/* <button
+      {/* <QRCodeButton className="flex flex-row w-full h-full py-8 gap-4 sm:w-1/2"> */}
+      {/* <button
           onClick={onClose}
           className="w-1/2 text-sm bg-blue-700 px-3 py-1 rounded-md text-stone-100 h-16"
         >
           Confirmar
         </button> */}
 
-        {currentSpool?.status_sigle === "RE" && (
+      {/* {currentSpool?.status_sigle === "RE" && (
           <Button
             type="button"
             title="Incia processo produção"
@@ -394,8 +385,8 @@ export default function QRCodeFlowCustom({
             <PackageOpenIcon className="size-4" />
             <span className="text-sm sm:text-base truncate">Reservar</span>
           </Button>
-        )}
-
+        )} */}
+      {/* 
         <Button
           type="button"
           title="Fechar e cancelar a leitura QRCode"
@@ -404,8 +395,8 @@ export default function QRCodeFlowCustom({
         >
           <XCircleIcon className="size-4" />
           Fechar
-        </Button>
-      </QRCodeButton>
+        </Button> */}
+      {/* </QRCodeButton> */}
     </QRCodePanel>
   );
 }

@@ -4,6 +4,7 @@ import QRCodeCamera from "../qr-code-camera";
 import QRCodeBody from "./qr-code-body";
 import QRCodeFooter from "./qr-code-footer";
 import QRCodeHeader from "./qr-code-header";
+import QRCodeButton from "./qr-code-button";
 
 export default function QRCode({
   message,
@@ -16,6 +17,9 @@ export default function QRCode({
   setSpool,
   result,
   children,
+  currentSpool,
+  onClose,
+  spool,
 }) {
   return (
     <Fragment>
@@ -31,6 +35,13 @@ export default function QRCode({
       </QRCodeHeader>
       <QRCodeBody>{children}</QRCodeBody>
       <QRCodeFooter result={result} />
+
+      <QRCodeButton
+        spool={spool}
+        onClose={onClose}
+        currentSpool={currentSpool}
+        className="flex flex-row w-full h-full py-8 gap-4 sm:w-1/2"
+      />
 
       {/* Alert */}
       <AlertInfo
