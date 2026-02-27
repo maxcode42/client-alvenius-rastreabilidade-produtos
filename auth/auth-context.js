@@ -85,7 +85,8 @@ export function AuthProvider({ children }) {
         false,
       );
 
-      router.replace("/");
+      //router.replace("/");
+      router.push("/");
     }
 
     return result;
@@ -108,13 +109,16 @@ export function AuthProvider({ children }) {
     // if (shouldFetch) return;
 
     function handleUnauthorized() {
-      if (!shouldFetch) return;
-      //if (!hasAuthenticated) return;
+      setTimeout(() => {
+        if (!shouldFetch) return;
+        // if (!shouldFetch && !hasAuthenticated) return;
+        //if (!hasAuthenticated) return;
 
-      // if (hasAuthenticated && error?.status === STATUS_CODE.UNAUTHORIZED) {
-      setMessage("Sessão expirou. Faça login novamente.");
-      setOpenAlert(true);
-      //}
+        // if (hasAuthenticated && error?.status === STATUS_CODE.UNAUTHORIZED) {
+        setMessage("Sessão expirou. Faça login novamente.");
+        setOpenAlert(true);
+        //}
+      }, 600);
     }
     window.addEventListener(AUTH_EVENTS.UNAUTHORIZED, handleUnauthorized);
 

@@ -4,6 +4,7 @@ import { Html5Qrcode } from "html5-qrcode";
 
 import Input from "../../input";
 import AlertInfo from "components/ui/alert/info";
+import TextSpool from "components/ui/text-spool";
 
 export default function QRCode({
   isOpen,
@@ -392,7 +393,7 @@ export default function QRCode({
         <div className="flex flex-col border-2 border-stone-300/50 w-full rounded-full" />
         {spool && (
           <div className="flex flex-col py-4">
-            <p className="mt-2 text-md break-all ">Spool:</p>
+            {/* <p className="mt-2 text-md break-all ">Spool:</p>
             <div className="text-xs sm:text-lg">
               <div className="flex flex-col ">
                 <p>
@@ -406,7 +407,8 @@ export default function QRCode({
                   </span>
                 </p>
               </div>
-            </div>
+            </div> */}
+            <TextSpool spool={spool} />
             <div className="flex flex-col py-4 mb-4">
               <p className="mt-2 text-md break-all ">Componentes:</p>
               <div className="flex flex-col ">

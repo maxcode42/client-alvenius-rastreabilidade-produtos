@@ -220,28 +220,7 @@ export default function QRCodeFlow({
 
   return (
     <div className="fixed inset-0 z-50 h-screen overflow-y-auto bg-black/80 flex flex-col items-center justify-start gap-2 px-4 pb-16 sm:pb-0 ">
-      {/* Header */}
-      <div className="w-full max-w-md flex justify-center items-center p-4 text-white">
-        <h2 className="text-lg font-semibold">Leitor de QRCode</h2>
-      </div>
-
-      <div className="flex flex-col border-2 border-stone-300/50 w-full rounded-full" />
       {/* Camera */}
-      <div className="bg-white rounded-md p-2 py-4 mt-4 w-full max-w-md aspect-square relative">
-        {/* <div id={qrRegionId} className="w-[300px] h-[240px]" /> */}
-
-        <div id={qrRegionId} className="w-full h-full" />
-
-        {/* Cantos  */}
-        <div className="absolute rounded-tl-md top-28 left-24 w-8 h-8 border-t-4 border-l-4 border-blue-500"></div>
-        <div className="absolute rounded-tr-md top-28 right-24 w-8 h-8 border-t-4 border-r-4 border-blue-500"></div>
-        <div className="absolute rounded-bl-md bottom-28 left-24 w-8 h-8 border-b-4 border-l-4 border-blue-500"></div>
-        <div className="absolute rounded-br-md bottom-28 right-24 w-8 h-8 border-b-4 border-r-4 border-blue-500"></div>
-
-        {/* Linha animada */}
-        <div className="absolute left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-scan"></div>
-      </div>
-
       {/* Resultado */}
       <div className="mt-4 bg-white w-full max-w-md p-4 rounded-md">
         <div className="flex flex-col py-2">

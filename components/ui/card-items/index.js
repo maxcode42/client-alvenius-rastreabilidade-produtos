@@ -3,13 +3,15 @@ import { Fragment } from "react";
 import {
   CalendarDaysIcon,
   CheckCircleIcon,
-  CirclePlayIcon,
-  Loader2Icon,
+  PauseIcon,
+  PlayIcon,
   RefreshCcwDotIcon,
-  TimerResetIcon,
+  StepForwardIcon,
 } from "lucide-react";
 
 import Button from "components/ui/button";
+import Loading from "../loading";
+import Separator from "../separator";
 
 export default function CardItems({
   items,
@@ -75,18 +77,13 @@ export default function CardItems({
   }
 
   if (items.length === 0) {
-    return (
-      <div className="flex flex-col justify-center items-center h-full w-full min-h-72">
-        <Loader2Icon className="-mt-12 size-44 animate-spin text-blue-400/50" />
-        <p className="w-fit -mt-[11.5vh] text-stone-300 text-xs md:text-sm animate-pulse px-2 py-2 rounded-md  flex flex-col justify-center items-center">
-          Carregando...
-        </p>
-      </div>
-    );
+    return <Loading />;
   }
 
   return (
-    <ul className="divide-y divide-stone-200 flex flex-col gap-4 px-2 py-2">
+    <ul className="divide-y divide-stone-200 flex flex-col gap-4 py-2">
+      <Separator />
+
       {items?.map((item, index) => (
         <Fragment key={String(item?.codigo).concat(index)}>
           <li className="hover:bg-stone-50 transition odd:bg-white px-2 py-2 border-2 border-stone-200 rounded-lg shadow-lg">
@@ -135,15 +132,14 @@ export default function CardItems({
                 className=" px-2 py-2 text-xs sm:text-sm md:text-base text-stone-800"
               >
                 <small>
-                  <strong>Descrição:</strong> {item?.descricao} -{" "}
-                  {item?.status_sigle}
+                  <strong>Descrição:</strong> {item?.descricao}
                 </small>
               </p>
             </div>
             <div className="flex flex-col h-[.1vh] shadow-sm shadow-stone-200 bg-blue-300/50 w-full mb-2 rounded-full" />
             <div className="flex flex-row w-full gap-1 py-1">
               <div className="w-1/3">
-                {item?.status_sigle === "RE" ? (
+                {item?.status_sigle !== "PU" && item?.status_sigle !== "EX" && (
                   <Button
                     type="button"
                     title="Incia processo produção"
@@ -154,31 +150,52 @@ export default function CardItems({
                       setCurrentSpool(item)
                     )}
                     className="
-                  disabled:bg-stone-300 disable:cursor-none
+                  disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none
                    truncate w-full min-w-20 text-xs py-2 px-1 rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-yellow-500 text-blue-100  hover:bg-yellow-800 hover:text-blue-100 hover:shadow-yellow-600 hover:shadow-md"
                   >
-                    <CirclePlayIcon className="size-4" />
+                    <PlayIcon className="size-4" />
                     <span className="text-xs sm:text-base truncate">
                       Iniciar
                     </span>
                   </Button>
-                ) : (
+                )}
+                {item?.status_sigle === "EX" && (
                   <Button
                     type="button"
-                    title="Reiniciar processo produção"
-                    disabled={item?.status_sigle !== "PU"}
+                    title="Pausar processo produção"
+                    disabled={item?.status_sigle !== "EX"}
                     onClick={() => (
                       setOpenQRCode(true),
-                      setText("REINICIAR"),
+                      setText("PAUSAR"),
                       setCurrentSpool(item)
                     )}
                     className="
-                  disabled:bg-stone-300 disable:cursor-none
+                  disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none
                    truncate w-full min-w-20 text-xs py-2 px-1 rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-orange-500 text-orange-100  hover:bg-orange-800 hover:text-blue-100 hover:shadow-yellow-600 hover:shadow-md"
                   >
-                    <TimerResetIcon className="size-4" />
+                    <PauseIcon className="size-4" />
                     <span className="text-xs sm:text-base truncate">
-                      Reiniciar
+                      Pausar
+                    </span>
+                  </Button>
+                )}
+                {item?.status_sigle === "PU" && (
+                  <Button
+                    type="button"
+                    title="Continuar processo produção"
+                    disabled={item?.status_sigle !== "PU"}
+                    onClick={() => (
+                      setOpenQRCode(true),
+                      setText("Continuar"),
+                      setCurrentSpool(item)
+                    )}
+                    className="
+                  disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none
+                   truncate w-full min-w-20 text-xs py-2 px-1 rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-orange-400 text-orange-100  hover:bg-orange-600 hover:text-blue-100 hover:shadow-orange-700 hover:shadow-md"
+                  >
+                    <StepForwardIcon className="size-4" />
+                    <span className="text-xs sm:text-base truncate">
+                      Continuar
                     </span>
                   </Button>
                 )}
@@ -193,7 +210,7 @@ export default function CardItems({
                     setText("FINALIZAR"),
                     setCurrentSpool(item)
                   )}
-                  className="disabled:bg-stone-300 disable:cursor-none truncate w-full min-w-20 py-2 px-1 text-xs rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-green-500 text-blue-100  hover:bg-green-800 hover:text-green-100 hover:shadow-green-600 hover:shadow-md"
+                  className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none truncate w-full min-w-20 py-2 px-1 text-xs rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-green-500 text-blue-100  hover:bg-green-800 hover:text-green-100 hover:shadow-green-600 hover:shadow-md"
                 >
                   <CheckCircleIcon className="size-4" />
                   <span className="text-xs sm:text-base truncate">
@@ -211,7 +228,7 @@ export default function CardItems({
                     setText("Qualidade"),
                     setCurrentSpool(item)
                   )}
-                  className="disabled:bg-stone-300 disable:cursor-none truncate w-full  min-w-20 py-2 px-1 text-xs rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-blue-500 text-blue-100  hover:bg-blue-800 hover:text-blue-100 hover:shadow-blue-600 hover:shadow-md"
+                  className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none truncate w-full  min-w-20 py-2 px-1 text-xs rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-blue-500 text-blue-100  hover:bg-blue-800 hover:text-blue-100 hover:shadow-blue-600 hover:shadow-md"
                 >
                   <RefreshCcwDotIcon className="size-4" />
                   <span className="text-xs sm:text-base truncate">

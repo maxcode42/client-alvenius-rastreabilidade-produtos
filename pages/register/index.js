@@ -18,6 +18,8 @@ import { STATUS_CODE } from "types/status-code";
 import withAuth from "../../auth/auth-with";
 
 import api from "infra/provider/api-web";
+import Separator from "components/ui/separator";
+import TextSpool from "components/ui/text-spool";
 
 function Register() {
   const [itens, setItens] = useState([]);
@@ -94,9 +96,11 @@ function Register() {
             text={"Realizar o cadastro inicial do Spool e componentes."}
           />
 
+          <Separator />
+
           <HeaderPageText>
-            <p className="mt-2 text-sm sm:text-lg break-all font-semibold ">
-              Spool
+            {/* <p className="mt-2 text-sm sm:text-lg break-all font-semibold ">
+              SPOOL
             </p>
             <p>
               <span className="font-semibold">Código: </span>
@@ -105,7 +109,8 @@ function Register() {
             <p>
               <span className="font-semibold">Descrição: </span>
               <span className="font-normal truncate">{spool?.descricao}</span>
-            </p>
+            </p> */}
+            <TextSpool spool={spool} />
           </HeaderPageText>
 
           <PanelPrimary>

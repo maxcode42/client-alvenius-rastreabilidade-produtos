@@ -7,6 +7,7 @@ export default function HeaderPageButtons({
   searchText,
   setSearchText,
   openModalQRCode,
+  setCurrentSpool,
 }) {
   return (
     <section className="w-full h-16 flex gap-4 flex-row justify-end items-center">
@@ -15,7 +16,7 @@ export default function HeaderPageButtons({
       <div className="w-1/2 md:w-1/4 sm:w-full h-16 flex gap-4 flex-row">
         <Button
           type="button"
-          onClick={(e) => openModalQRCode(e)}
+          onClick={(e) => (setCurrentSpool(null), openModalQRCode(e))}
           title="Ler QRCode para buscar e iniciar, finalizar ou aprovar CQ."
         >
           <QrCodeIcon className="size-6 sm:size-8" />

@@ -2,9 +2,9 @@ export function AlertPanel({ openAlert, children }) {
   return (
     <div
       className={`
-          absolute top-0 z-40 h-full flex flex-col items-center justify-center
+          fixed top-0 z-40 h-full flex flex-col items-center justify-center
           bg-blue-950/50 w-full gap-2 px-4 
-          transform transition-all duration-300 ease-in-out
+          transform transition-all duration-300 ease-in-out 
           ${
             openAlert
               ? "opacity-100 translate-y-0"

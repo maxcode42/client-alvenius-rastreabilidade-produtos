@@ -6,11 +6,11 @@ import AlertBody from "../base/body";
 import AlertFooter from "../base/footer";
 
 export default function AlertInfo({
+  message,
   openAlert,
   setOpenAlert,
-  setScannerLocked,
-  message,
   action = null,
+  setScannerLocked,
 }) {
   async function handlerActionAlert(e) {
     e.preventDefault();

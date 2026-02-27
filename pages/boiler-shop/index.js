@@ -13,17 +13,29 @@ import QRCodeFlow from "components/ui/modal/qr-code-flow";
 import withAuth from "../../auth/auth-with";
 import api from "infra/provider/api-web";
 
+import CardItemsCustom from "components/ui/card-items-custom";
+import QRCodeFlowCustom from "components/ui/modal/qr-code-flow-custom";
+import AlertInfo from "components/ui/alert/info";
+
 function BoilerShop() {
-  const [openQRCode, setOpenQRCode] = useState(false);
-  const [spool, setSpool] = useState(null);
-  const [itens, setItens] = useState([]);
-  const [itensFiltered, setItensFiltered] = useState([]);
   const [text, setText] = useState("");
+  const [itens, setItens] = useState([]);
+  const [spool, setSpool] = useState(null);
   const [searchText, setSearchText] = useState("");
-  const [currentSpool, setCurrentSpool] = useState({});
+  const [openQRCode, setOpenQRCode] = useState(false);
+  const [itensFiltered, setItensFiltered] = useState([]);
+  const [currentSpool, setCurrentSpool] = useState(null);
+  const [openAlert, setOpenAlert] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const cardCustom = true;
+
+  const testeAPI = async (code) => {
+    return code;
+  };
 
   async function handleFindOnByCode(code) {
-    const results = await api.findOnByCodeBoilerShop({ code });
+    const results = await testeAPI(code); //api.findOnByCodeBoilerShop({ code });
 
     return results;
   }
@@ -112,31 +124,70 @@ function BoilerShop() {
           <HeaderPageButtons
             searchText={searchText}
             setSearchText={setSearchText}
+            setCurrentSpool={setCurrentSpool}
             openModalQRCode={openModalQRCode}
           />
 
-          <PanelPrimary>
-            <CardItems
-              items={itensFiltered}
-              setText={setText}
-              setOpenQRCode={setOpenQRCode}
-              setCurrentSpool={setCurrentSpool}
-            />
+          <PanelPrimary
+            // cssCustom={`${itensFiltered.length === 0 || cardCustom ? "border-none" : ""}`}
+            cssCustom={`border-none`}
+          >
+            {cardCustom ? (
+              <CardItemsCustom
+                setText={setText}
+                items={itensFiltered}
+                setMessage={setMessage}
+                setOpenAlert={setOpenAlert}
+                setOpenQRCode={setOpenQRCode}
+                setCurrentSpool={setCurrentSpool}
+              />
+            ) : (
+              <CardItems
+                setText={setText}
+                items={itensFiltered}
+                setOpenQRCode={setOpenQRCode}
+                setCurrentSpool={setCurrentSpool}
+              />
+            )}
           </PanelPrimary>
         </PanelDefault>
       </Body>
-      {openQRCode && (
+      {openQRCode && cardCustom && (
+        <QRCodeFlowCustom
+          itens={itens}
+          spool={spool}
+          setSpool={setSpool}
+          isOpen={openQRCode}
+          currentSpool={currentSpool}
+          action={handleFindOnByCode}
+          onClose={() => {
+            setOpenQRCode(false), setSpool(null);
+          }}
+        />
+      )}
+
+      {openQRCode && !cardCustom && (
         <QRCodeFlow
           text={text}
           itens={itens}
           spool={spool}
           setSpool={setSpool}
-          currentSpool={currentSpool}
           isOpen={openQRCode}
+          currentSpool={currentSpool}
           action={handleFindOnByCode}
           onClose={() => {
             setOpenQRCode(false), setSpool(null);
           }}
+        />
+      )}
+
+      {openAlert && (
+        <AlertInfo
+          action={null}
+          message={message}
+          openAlert={openAlert}
+          setOpenAlert={setOpenAlert}
+          setScannerLocked={() => {}}
         />
       )}
     </div>

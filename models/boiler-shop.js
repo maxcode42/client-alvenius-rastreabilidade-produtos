@@ -64,6 +64,7 @@ async function handlerObject(data) {
       //   ? getProcess(item?.PROCESS?.trim())
       //   : getProcess(item?.PROCES?.trim()),
       process: getProcess(item?.PROCES?.trim()),
+      process_sigle: item?.PROCES?.trim(),
       descricao: "TESTES descrição produto",
     };
   });
