@@ -14,6 +14,7 @@ export default function QRCodeButton({
   currentSpool,
   onClose,
   spool,
+  action,
   children,
 }) {
   return (
@@ -24,7 +25,7 @@ export default function QRCodeButton({
           type="button"
           title="Incia processo produção"
           disabled={currentSpool?.status_sigle !== "RE" || !spool}
-          onClick={() => {}}
+          onClick={action}
           className="
                   disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none
                   w-1/2 text-sm px-3 py-1 rounded-md h-16
@@ -39,7 +40,7 @@ export default function QRCodeButton({
           type="button"
           title="Pausar processo produção"
           disabled={currentSpool?.status_sigle !== "EX" || !spool}
-          onClick={() => {}}
+          onClick={action}
           className="
                   disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
 
@@ -54,7 +55,7 @@ export default function QRCodeButton({
           type="button"
           title="Continuar processo produção"
           disabled={currentSpool?.status_sigle !== "PU" || !spool}
-          onClick={() => {}}
+          onClick={action}
           className="
                   disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
 
@@ -69,7 +70,7 @@ export default function QRCodeButton({
           type="button"
           title="Finaliza processo produção"
           disabled={currentSpool?.status_sigle !== "EX" || !spool}
-          onClick={() => {}}
+          onClick={action}
           className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
                truncate min-w-20 text-center flex flex-row gap-1 justify-center items-center bg-green-500 text-blue-100  hover:bg-green-800 hover:text-green-100 hover:shadow-green-600 hover:shadow-md"
         >
@@ -82,7 +83,7 @@ export default function QRCodeButton({
           type="button"
           title="Avaliar qualidade produto"
           disabled={currentSpool?.status_sigle !== "FI" || !spool}
-          onClick={() => {}}
+          onClick={action}
           className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
                truncate min-w-20 text-center flex flex-row gap-1 justify-center items-center bg-blue-500 text-blue-100  hover:bg-blue-800 hover:text-blue-100 hover:shadow-blue-600 hover:shadow-md"
         >
@@ -95,7 +96,7 @@ export default function QRCodeButton({
           type="button"
           title="Avaliar qualidade produto"
           disabled={currentSpool?.status_sigle !== "RV" || !spool}
-          onClick={() => {}}
+          onClick={action}
           className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
                truncate min-w-20 text-center flex flex-row gap-1 justify-center items-center bg-lime-500 text-lime-100  hover:bg-lime-800 hover:text-lime-100 hover:shadow-lime-600 hover:shadow-md"
         >

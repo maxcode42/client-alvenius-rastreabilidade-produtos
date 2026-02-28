@@ -35,6 +35,15 @@ function getProcess(processAcronym) {
     CA: () => {
       return "Caldeiraria";
     },
+    RR: () => {
+      return "Revestimento";
+    },
+    PP: () => {
+      return "Pintura";
+    },
+    FA: () => {
+      return "Faturamento";
+    },
   };
   const ex = status[processAcronym];
 
@@ -48,13 +57,20 @@ function normalizeAlphanumeric(text) {
 async function handlerObject(data) {
   const statusArray = ["RE", "EX", "PU", "FI", "RV", "SU", "RO"];
   const results = await data?.objects.map((item) => {
+    // console.log(">> STATUS NEW");
+    // console.log(item?.COD);
+    // if (normalizeAlphanumeric(item?.COD) == "SP041500345003") {
+    //   console.log(">> STATUS NEW");
+    //   console.log(item);
+    // }
     const statusAcronym =
       statusArray[Math.floor(Math.random() * statusArray.length)];
+
     return {
       sequence: item?.SEQ,
       codigo: item?.COD?.trim(),
-      status: getStatus(statusAcronym), //getStatus(item?.STATUS?.trim()),
-      status_sigle: statusAcronym, //item?.STATUS?.trim(),
+      status: getStatus(statusAcronym), //getStatus(item?.STATUS?.trim()), //
+      status_sigle: statusAcronym, //item?.STATUS?.trim(), //statusAcronym,
       dateStart: item?.DTENTR?.trim(),
       timeStart: item?.HRENT?.trim(),
       dateEnd: item?.DTSAID?.trim(),
@@ -93,9 +109,18 @@ async function findOnByCode(tokenProtheus, code) {
   return results;
 }
 
+async function create(data, tokenProtheus) {
+  console.log(">> MODAL CREATE");
+  console.log(data);
+  const response = await apiProtheus.createBoilerShop({ data, tokenProtheus });
+
+  return response;
+}
+
 const boilerShop = {
   findOnByCode,
   findAll,
+  create,
 };
 
 export default boilerShop;

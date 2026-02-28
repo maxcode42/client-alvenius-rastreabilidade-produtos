@@ -3,16 +3,19 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CircleQuestionMarkIcon, FilePenLineIcon } from "lucide-react";
 
 import Input from "components/ui/input";
-import AlertInfo from "components/ui/alert/info";
+import QRCode from "components/ui/qr-code";
+import TextSpool from "components/ui/text-spool";
+import QRCodePanel from "components/ui/qr-code/qr-code-panel";
+// import AlertInfo from "components/ui/alert/info";
 
 export default function QRCodeFlow({
-  isOpen,
-  onClose,
-  spool,
+  currentSpool = null,
   setSpool,
-  currentSpool = {},
-  text,
+  onClose,
+  isOpen,
   action,
+  spool,
+  text,
 }) {
   const qrRegionId = "qr-reader";
   const qrCodeRef = useRef(null);
@@ -53,8 +56,6 @@ export default function QRCodeFlow({
     setIsMaxHeightText(false);
   }
 
-  useEffect(() => {}, [isMaxHeightText]);
-
   function normalizedText(text) {
     return new TextDecoder("utf-8")
       .decode(new TextEncoder().encode(text))
@@ -62,10 +63,12 @@ export default function QRCodeFlow({
   }
 
   const parseQrSpoolToJson = useCallback((text) => {
+    const regex = /^(SP(?:-[A-Za-z0-9]+)+)\s+([\s\S]*)$/;
     const normalized = normalizedText(text);
-    const match = normalized
-      .trim()
-      .match(/^(SP-[A-Za-z0-9]{4}-[A-Za-z0-9]{5}-[A-Za-z0-9]{3})\s+(.*)$/);
+    const match = normalized.match(regex);
+    // const match = normalized
+    //   .trim()
+    //   .match(/^(SP-[A-Za-z0-9]{4}-[A-Za-z0-9]{5}-[A-Za-z0-9]{3})\s+(.*)$/);
     if (!match) {
       setMessage("Escanear um QRCode do SPOOL, ou este QRCODE é inválido!");
       setOpenAlert(true);
@@ -160,7 +163,37 @@ export default function QRCodeFlow({
     );
   };
 
+  const handleQrDecodedCustom = useCallback(async () => {
+    if ((!spool && !result) || spool !== null) {
+      return;
+    }
+
+    const parsedSpool = parseQrSpoolToJson(result);
+    if (parsedSpool) {
+      setMessage(`Spool: ${parsedSpool.codigo} - ${parsedSpool.descricao}`);
+      setSpool(parsedSpool);
+      setOpenAlert(true);
+
+      //await action(parsedSpool.codigo);
+      //await checkIfCodeExists(parsedSpool.codigo);
+    }
+  }, [parseQrSpoolToJson, setSpool, spool, result]);
+
+  async function handlerData() {
+    await action(
+      {
+        data: {
+          accordance,
+          reversible,
+          qualityText,
+        },
+      },
+      currentSpool,
+    );
+  }
+
   useEffect(() => {
+    if (isOpen) return;
     if (scannerLocked) return;
 
     let isMounted = true;
@@ -215,14 +248,38 @@ export default function QRCodeFlow({
     permissionDenied,
     //startScanner,
   ]);
-  console.log(currentSpool);
+
+  useEffect(() => {}, [isMaxHeightText]);
+
+  useEffect(() => {
+    handleQrDecodedCustom();
+  }, [handleQrDecodedCustom]);
+
+  useEffect(() => {}, [isMaxHeightText]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 h-screen overflow-y-auto bg-black/80 flex flex-col items-center justify-start gap-2 px-4 pb-16 sm:pb-0 ">
+    <QRCodePanel>
+      {/* <div className="fixed inset-0 z-50 h-screen overflow-y-auto bg-black/80 flex flex-col items-center justify-start gap-2 px-4 pb-16 sm:pb-0 "> */}
       {/* Camera */}
-      {/* Resultado */}
-      <div className="mt-4 bg-white w-full max-w-md p-4 rounded-md">
+      <QRCode
+        setScannerLocked={setScannerLocked}
+        scannerLocked={scannerLocked}
+        setOpenAlert={setOpenAlert}
+        setMessage={setMessage}
+        setResult={setResult}
+        setSpool={setSpool}
+        result={result}
+        message={message}
+        openAlert={openAlert}
+        spool={spool}
+        currentSpool={currentSpool}
+        onClose={onClose}
+        action={handlerData}
+      >
+        {/* Resultado */}
+        {/* <div className="mt-4 bg-white w-full max-w-md p-4 rounded-md"> */}
         <div className="flex flex-col py-2">
           <p className="text-sm font-semibold text-center">
             Ler o QRCode do Spool.
@@ -235,7 +292,7 @@ export default function QRCodeFlow({
         <div className="flex flex-col border-2 border-stone-300/50 w-full rounded-full" />
         {spool && (
           <div className="flex flex-col py-5">
-            <p className="mt-2 text-md break-all ">Spool:</p>
+            {/* <p className="mt-2 text-md break-all ">Spool:</p>
             <div className="text-xs sm:text-lg">
               <div className="flex flex-col ">
                 <p>
@@ -247,7 +304,9 @@ export default function QRCodeFlow({
                   <span className="font-normal">{spool?.descricao}</span>
                 </p>
               </div>
-            </div>
+            </div> */}
+            <TextSpool spool={spool} />
+
             {String(currentSpool?.status_sigle).toUpperCase() === "FI" && (
               <div className="flex flex-col py-2">
                 <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-4 mb-4 rounded-full" />
@@ -361,7 +420,8 @@ export default function QRCodeFlow({
             <div className="flex flex-col border-2 border-stone-300/50 w-full mt-8" />
           </div>
         )}
-        <div className="flex flex-col py-4">
+      </QRCode>
+      {/* <div className="flex flex-col py-4">
           <p className="text-sm font-semibold">Último QRCode lido:</p>
           <p className="mt-2 text-xs break-all text-gray-700 w-full flex flex-row justify-center item-center">
             {result ?? (
@@ -370,9 +430,9 @@ export default function QRCodeFlow({
               </span>
             )}
           </p>
-        </div>
-      </div>
-      <div className="flex flex-row w-full h-full py-8 gap-4 sm:w-1/2">
+        </div> */}
+      {/* </div> */}
+      {/* <div className="flex flex-row w-full h-full py-8 gap-4 sm:w-1/2">
         <button
           onClick={onClose}
           className="w-1/2 text-sm bg-blue-700 px-3 py-1 rounded-md text-stone-100 h-16"
@@ -385,15 +445,16 @@ export default function QRCodeFlow({
         >
           Fechar
         </button>
-      </div>
+      </div> */}
 
       {/* Alert */}
-      <AlertInfo
+      {/* <AlertInfo
         message={message}
         openAlert={openAlert}
         setOpenAlert={setOpenAlert}
         setScannerLocked={setScannerLocked}
-      />
-    </div>
+      /> */}
+      {/* </div> */}
+    </QRCodePanel>
   );
 }

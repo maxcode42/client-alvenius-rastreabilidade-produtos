@@ -15,7 +15,7 @@ export default function CardItemsCustom({
 }) {
   function formatCodeDefault(code) {
     const result = code.replace(
-      /^([A-Z]{2})(\d{4})(\d{5})(\d{3})$/,
+      /^([A-Z]{2})(\d{4})(\d{5})(\d{4})$/,
       "$1-$2-$3-$4",
     );
     return result;
@@ -94,7 +94,7 @@ export default function CardItemsCustom({
 
       <div className="w-full border-2 border-stone-300 rounded-lg bg-stone-100 shadow-sm shadow-blue-500/50">
         <h3 className="text-md text-center font-semibold py-2">
-          Clique no card para ler QRCode
+          Clique no card para continuar
         </h3>
       </div>
 

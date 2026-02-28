@@ -17,6 +17,7 @@ export default function CardItems({
   items,
   setOpenQRCode,
   setCurrentSpool,
+  setNewStatus,
   setText,
 }) {
   function formatCodeDefault(code) {
@@ -74,6 +75,15 @@ export default function CardItems({
     const ex = statusStyle[sigle];
 
     return ex();
+  }
+
+  async function handlerData(text, newStatus, item) {
+    // console.log(">> CARD_ITEMS handlerData");
+    // console.log(item);
+    setText(text);
+    setCurrentSpool(item);
+    setNewStatus(newStatus);
+    setOpenQRCode(true);
   }
 
   if (items.length === 0) {
@@ -144,11 +154,7 @@ export default function CardItems({
                     type="button"
                     title="Incia processo produção"
                     disabled={item?.status_sigle !== "RE"}
-                    onClick={() => (
-                      setOpenQRCode(true),
-                      setText("INICIAR"),
-                      setCurrentSpool(item)
-                    )}
+                    onClick={() => handlerData("INICIAR", "EX", item)}
                     className="
                   disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none
                    truncate w-full min-w-20 text-xs py-2 px-1 rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-yellow-500 text-blue-100  hover:bg-yellow-800 hover:text-blue-100 hover:shadow-yellow-600 hover:shadow-md"
@@ -164,11 +170,7 @@ export default function CardItems({
                     type="button"
                     title="Pausar processo produção"
                     disabled={item?.status_sigle !== "EX"}
-                    onClick={() => (
-                      setOpenQRCode(true),
-                      setText("PAUSAR"),
-                      setCurrentSpool(item)
-                    )}
+                    onClick={() => handlerData("PAUSAR", "PU", item)}
                     className="
                   disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none
                    truncate w-full min-w-20 text-xs py-2 px-1 rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-orange-500 text-orange-100  hover:bg-orange-800 hover:text-blue-100 hover:shadow-yellow-600 hover:shadow-md"
@@ -184,11 +186,7 @@ export default function CardItems({
                     type="button"
                     title="Continuar processo produção"
                     disabled={item?.status_sigle !== "PU"}
-                    onClick={() => (
-                      setOpenQRCode(true),
-                      setText("Continuar"),
-                      setCurrentSpool(item)
-                    )}
+                    onClick={() => handlerData("Continuar", "CO", item)}
                     className="
                   disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none
                    truncate w-full min-w-20 text-xs py-2 px-1 rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-orange-400 text-orange-100  hover:bg-orange-600 hover:text-blue-100 hover:shadow-orange-700 hover:shadow-md"
@@ -205,11 +203,7 @@ export default function CardItems({
                   type="button"
                   title="Finaliza processo produção"
                   disabled={item?.status_sigle !== "EX"}
-                  onClick={() => (
-                    setOpenQRCode(true),
-                    setText("FINALIZAR"),
-                    setCurrentSpool(item)
-                  )}
+                  onClick={() => handlerData("FINALIZAR", "FI", item)}
                   className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none truncate w-full min-w-20 py-2 px-1 text-xs rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-green-500 text-blue-100  hover:bg-green-800 hover:text-green-100 hover:shadow-green-600 hover:shadow-md"
                 >
                   <CheckCircleIcon className="size-4" />
@@ -223,11 +217,7 @@ export default function CardItems({
                   type="button"
                   title="Avaliar qualidade produto"
                   disabled={item?.status_sigle !== "FI"}
-                  onClick={() => (
-                    setOpenQRCode(true),
-                    setText("Qualidade"),
-                    setCurrentSpool(item)
-                  )}
+                  onClick={() => handlerData("Qualidade", "RO", item)}
                   className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none truncate w-full  min-w-20 py-2 px-1 text-xs rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-blue-500 text-blue-100  hover:bg-blue-800 hover:text-blue-100 hover:shadow-blue-600 hover:shadow-md"
                 >
                   <RefreshCcwDotIcon className="size-4" />

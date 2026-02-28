@@ -7,14 +7,14 @@ import {
   GlobeIcon,
 } from "lucide-react";
 
-import Header from "../components/header";
 import Body from "../components/body";
+import Header from "../components/header";
+import Separator from "components/ui/separator";
+import AlertInfo from "components/ui/alert/info";
+import ButtonPanel from "components/ui/button-panel";
+import PanelDefault from "components/ui/panel-default";
 
 import withAuth from "../auth/auth-with";
-import ButtonPanel from "components/ui/button-panel";
-import AlertInfo from "components/ui/alert/info";
-import PanelDefault from "components/ui/panel-default";
-import Separator from "components/ui/separator";
 
 function Home() {
   const [openAlert, setOpenAlert] = useState(false);

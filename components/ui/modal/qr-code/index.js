@@ -41,13 +41,16 @@ export default function QRCode({
   }
 
   const parseQrSpoolToJson = useCallback((text) => {
+    const regex = /^(SP(?:-[A-Za-z0-9]+)+)\s+([\s\S]*)$/;
     const normalized = normalizedText(text);
-    const match = normalized
-      .trim()
-      .match(/^(SP-[A-Za-z0-9]{4}-[A-Za-z0-9]{5}-[A-Za-z0-9]{3})\s+(.*)$/);
+    const match = normalized.match(regex);
+    // const match = normalized
+    //   .trim()
+    //   .match(/^(SP-[A-Za-z0-9]{4}-[A-Za-z0-9]{5}-[A-Za-z0-9]{3})\s+(.*)$/);
+
     if (!match) {
       setMessage(
-        "Escanear primeiro o QRCode do SPOOL, ou este QRCODE é inválido!",
+        "Escanear primeiro o QRCode do SPOOL, ou este QRCODE é inválido MATCH 2!",
       );
       setOpenAlert(true);
       return null;

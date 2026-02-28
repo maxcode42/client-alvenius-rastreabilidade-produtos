@@ -20,6 +20,7 @@ export default function QRCode({
   currentSpool,
   onClose,
   spool,
+  action,
 }) {
   return (
     <Fragment>
@@ -38,6 +39,7 @@ export default function QRCode({
 
       <QRCodeButton
         spool={spool}
+        action={action}
         onClose={onClose}
         currentSpool={currentSpool}
         className="flex flex-row w-full h-full py-8 gap-4 sm:w-1/2"

@@ -2,10 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { CircleQuestionMarkIcon, FilePenLineIcon } from "lucide-react";
 
 import Input from "components/ui/input";
-import Separator from "components/ui/separator";
 import QRCode from "components/ui/qr-code";
-import QRCodePanel from "components/ui/qr-code/qr-code-panel";
 import TextSpool from "components/ui/text-spool";
+import QRCodePanel from "components/ui/qr-code/qr-code-panel";
+import Separator from "components/ui/separator";
 
 export default function QRCodeFlowCustom({
   currentSpool = null,
@@ -89,10 +89,12 @@ export default function QRCodeFlowCustom({
   }
 
   const parseQrSpoolToJson = useCallback((text) => {
+    const regex = /^(SP(?:-[A-Za-z0-9]+)+)\s+([\s\S]*)$/;
     const normalized = normalizedText(text);
-    const match = normalized
-      .trim()
-      .match(/^(SP-[A-Za-z0-9]{4}-[A-Za-z0-9]{5}-[A-Za-z0-9]{3})\s+(.*)$/);
+    const match = normalized.match(regex);
+    // const match = normalized
+    //   .trim()
+    //   .match(/^(SP-[A-Za-z0-9]{4}-[A-Za-z0-9]{5}-[A-Za-z0-9]{3})\s+(.*)$/);
     if (!match) {
       setMessage("Escanear um QRCode do SPOOL, ou este QRCODE é inválido!");
       setOpenAlert(true);
