@@ -59,8 +59,18 @@ async function findOnByCodeBoilerShop({ code }) {
   return results;
 }
 
+async function sendBoilerShop({ data }) {
+  console.log(">> WEB API");
+  console.log(data);
+
+  const results = await handlerSend(`boiler-shop/`, "POST", data);
+
+  return results;
+}
+
 const api = {
   findOnByCodeBoilerShop,
+  sendBoilerShop,
   createRegister,
   createSession,
   deleteSession,

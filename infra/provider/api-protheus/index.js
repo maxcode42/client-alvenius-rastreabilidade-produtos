@@ -8,6 +8,8 @@ import { STATUS_CODE } from "types/status-code";
 const baseURL = process.env.API_PROTHEUS_BASE_URL;
 
 async function handlerSend(path, method, dataObject, token) {
+  console.log(">> API PROTHEUS REQUEST");
+  console.log(dataObject);
   try {
     const response = await fetch(`${baseURL}/${path}`, {
       method,
@@ -17,8 +19,13 @@ async function handlerSend(path, method, dataObject, token) {
       },
       body: dataObject ? JSON.stringify(dataObject) : null,
     });
+    // console.log(">> API PROTHEUS RESPONSE");
+    //console.log(response);
+
     const responseBody = await response?.json();
 
+    // console.log(">> API PROTHEUS RESPONSE_BODY");
+    //console.log(responseBody);
     if (Number(responseBody?.Status_Code) === STATUS_CODE.UNAUTHORIZED) {
       throw new UnauthorizedError({
         message: `PROTHEUS API => ${responseBody?.Message}`,
@@ -164,10 +171,24 @@ async function findOnByCode({ tokenProtheus, code }) {
   return results;
 }
 
+async function createBoilerShop({ data, tokenProtheus }) {
+  console.log(">> API PROTHEUS");
+  console.log(data);
+  const results = await handlerSend(
+    "WsRastreio/new",
+    "POST",
+    data,
+    tokenProtheus,
+  );
+
+  return results;
+}
+
 const apiProtheus = {
   sendAuthenticateUser,
   getRegisterStatus,
   findAllBoilerShop,
+  createBoilerShop,
   createRegister,
   findOnByCode,
 };

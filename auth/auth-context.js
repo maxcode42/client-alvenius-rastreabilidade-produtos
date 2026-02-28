@@ -48,7 +48,6 @@ export function AuthProvider({ children }) {
   );
 
   const user = data?.id ? { id: data.id, username: data.username } : null;
-
   const loading = shouldFetch ? isLoading : false;
 
   function getRefreshInterval(expiresAt) {
@@ -85,8 +84,7 @@ export function AuthProvider({ children }) {
         false,
       );
 
-      //router.replace("/");
-      router.push("/");
+      router.replace("/");
     }
 
     return result;
@@ -94,9 +92,10 @@ export function AuthProvider({ children }) {
 
   async function clearLogout() {
     setRefreshInterval(0);
-    setHasAuthenticated(true);
+    setHasAuthenticated(false);
     await mutate(null, false);
-    router.push("/login");
+
+    router.replace("/login");
   }
 
   async function signOut() {
@@ -109,16 +108,17 @@ export function AuthProvider({ children }) {
     // if (shouldFetch) return;
 
     function handleUnauthorized() {
-      setTimeout(() => {
-        if (!shouldFetch) return;
-        // if (!shouldFetch && !hasAuthenticated) return;
-        //if (!hasAuthenticated) return;
+      //if (!shouldFetch) return;
 
-        // if (hasAuthenticated && error?.status === STATUS_CODE.UNAUTHORIZED) {
-        setMessage("Sessão expirou. Faça login novamente.");
-        setOpenAlert(true);
-        //}
-      }, 600);
+      if (!shouldFetch && !hasAuthenticated) {
+        return;
+      }
+      //if (!hasAuthenticated) return;
+
+      // if (hasAuthenticated && error?.status === STATUS_CODE.UNAUTHORIZED) {
+      setMessage("Sessão expirou. Faça login novamente.");
+      setOpenAlert(true);
+      //}
     }
     window.addEventListener(AUTH_EVENTS.UNAUTHORIZED, handleUnauthorized);
 

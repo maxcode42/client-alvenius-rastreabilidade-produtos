@@ -15,12 +15,14 @@ export default function withAuth(Page) {
         return;
       }
 
-      if (!user?.id) {
+      // if (!user?.id) {
+      if (!user) {
         router.replace("/login");
       }
     }, [loading, user, router]);
 
-    if (loading || !user?.id) {
+    // if (loading || !user?.id) {
+    if (loading || !user) {
       return null;
     }
 
