@@ -63,7 +63,9 @@ function Register() {
     try {
       e.preventDefault();
       setLoading(true);
-      const results = await api.createRegister({ data: { spool, itens } });
+      const results = await api.execute.register.create({
+        data: { spool, itens },
+      });
 
       setOpenAlertInfo(true);
 

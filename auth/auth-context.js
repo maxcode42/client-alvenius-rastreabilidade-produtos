@@ -13,7 +13,8 @@ import AlertInfo from "components/ui/alert/info";
 const AuthContext = createContext(null);
 
 const fetchUser = async () => {
-  const result = await api.getUser();
+  // const result = await api.getUser();
+  const result = await api?.execute?.user?.read();
 
   if (result.status_code === STATUS_CODE.UNAUTHORIZED) {
     const error = new Error(result.message || "Unauthorized");
@@ -62,7 +63,10 @@ export function AuthProvider({ children }) {
   }
 
   async function signIn({ username, password }) {
-    const result = await api.createSession({ username, password });
+    // const result = await api.createSession({ username, password });
+    const result = await api.execute.session.create({
+      data: { username, password },
+    });
 
     if (result?.status_code === STATUS_CODE.SERVER_ERROR) {
       setMessage(`${result.action} ${result.message}`);
@@ -99,7 +103,8 @@ export function AuthProvider({ children }) {
   }
 
   async function signOut() {
-    await api.deleteSession();
+    //await api.deleteSession();
+    await api.execute.session.delete();
     await clearLogout();
   }
 

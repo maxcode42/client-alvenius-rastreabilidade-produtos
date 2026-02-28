@@ -16,11 +16,10 @@ import AlertInfo from "../../ui/alert/info";
 import api from "infra/provider/api-web";
 
 export default function ProcessFlow({
+  textModal = "",
   title = "",
   info = "",
-  textModal = "",
-  apiFetchData,
-  apiHandlerData,
+  route,
 }) {
   const [text, setText] = useState("");
   const [itens, setItens] = useState([]);
@@ -33,15 +32,16 @@ export default function ProcessFlow({
   const [message, setMessage] = useState("");
   const [newStatus, setNewStatus] = useState("");
 
-  const cardCustom = true;
+  const cardCustom = false;
 
   const testeAPI = async (code) => {
     return code;
   };
 
   async function findOnByCode(code) {
-    const results = await testeAPI(code); //api.findOnByCodeBoilerShop({ code });
-
+    const results = await testeAPI(code); //await api.execute[route].find({ params: code });
+    //
+    console.log(results);
     return results;
   }
 
@@ -53,20 +53,13 @@ export default function ProcessFlow({
   }
 
   async function fetchData() {
-    //const results = await api.getBoilerShop();
-    const ex = api[apiFetchData];
-    const results = await ex();
+    const results = await api.execute[route].read();
+
     setItens(results);
   }
 
   async function handlerData(data, item) {
-    console.log(">>INDEX BOILERSHOP");
-    console.log({
-      data,
-      item,
-      newStatus,
-    });
-    const handlerData = {
+    const objectData = {
       codigo: item?.codigo,
       status: newStatus,
       processo: "CA",
@@ -75,10 +68,9 @@ export default function ProcessFlow({
       disposicao_qualidade: data?.qualityText || "",
     };
 
-    const ex = api[apiHandlerData];
-    await ex({ data: handlerData });
-
-    //setItens([]);
+    await api.execute[route].create({
+      data: objectData,
+    });
   }
 
   function formatToPtBR(dateStr) {
@@ -129,6 +121,8 @@ export default function ProcessFlow({
 
   useEffect(() => {
     fetchData();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

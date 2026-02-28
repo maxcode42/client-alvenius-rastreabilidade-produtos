@@ -5,8 +5,7 @@ function BoilerShop() {
   return (
     <ProcessFlow
       title={"Caldeiraria"}
-      apiFetchData={"getBoilerShop"}
-      apiHandlerData={"sendBoilerShop"}
+      route={"boilerShop"}
       textModal={"para buscar o SPOOL e seguir fluxo do"}
       info={"Leitura Spool, iniciar, finalizar e executar processo produção."}
     />
