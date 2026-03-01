@@ -115,7 +115,10 @@ export function AuthProvider({ children }) {
     function handleUnauthorized() {
       //if (!shouldFetch) return;
 
-      if (!shouldFetch && !hasAuthenticated) {
+      if (
+        (!shouldFetch && !hasAuthenticated) ||
+        (!hasAuthenticated && currentRoute === "/")
+      ) {
         return;
       }
       //if (!hasAuthenticated) return;
@@ -130,7 +133,7 @@ export function AuthProvider({ children }) {
     return () => {
       window.removeEventListener(AUTH_EVENTS.UNAUTHORIZED, handleUnauthorized);
     };
-  }, [error, shouldFetch, hasAuthenticated]);
+  }, [error, shouldFetch, hasAuthenticated, currentRoute]);
 
   if (openAlert && !pagesPublic.includes(currentRoute)) {
     return (

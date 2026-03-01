@@ -96,7 +96,9 @@ export default function QRCodeFlowCustom({
     //   .trim()
     //   .match(/^(SP-[A-Za-z0-9]{4}-[A-Za-z0-9]{5}-[A-Za-z0-9]{3})\s+(.*)$/);
     if (!match) {
-      setMessage("Escanear um QRCode do SPOOL, ou este QRCODE é inválido!");
+      setMessage(
+        "QRCODE-FLOW-CUSTOM: Escanear um QRCode do SPOOL, ou este QRCODE é inválido!",
+      );
       setOpenAlert(true);
       return null;
     }
@@ -114,7 +116,7 @@ export default function QRCodeFlowCustom({
 
       if (currentSpool?.codigo !== code) {
         setMessage(
-          `O código escaneado é diferente, escanei o QRCode do SPOOL código: ${currentSpool?.codigo}`,
+          `QRCODE-FLOW-CUSTOM: O código escaneado é diferente, escanei o QRCode do SPOOL código: ${currentSpool?.codigo}`,
         );
         setOpenAlert(true);
       }
@@ -129,7 +131,9 @@ export default function QRCodeFlowCustom({
 
     const parsedSpool = parseQrSpoolToJson(result);
     if (parsedSpool) {
-      setMessage(`Spool: ${parsedSpool.codigo} - ${parsedSpool.descricao}`);
+      setMessage(
+        `QRCODE-FLOW-CUSTOM Spool: ${parsedSpool.codigo} - ${parsedSpool.descricao}`,
+      );
       setSpool(parsedSpool);
       setOpenAlert(true);
 

@@ -1,9 +1,9 @@
 import { Fragment } from "react";
 import AlertInfo from "../alert/info";
-import QRCodeCamera from "../qr-code-camera";
 import QRCodeBody from "./qr-code-body";
-import QRCodeFooter from "./qr-code-footer";
 import QRCodeHeader from "./qr-code-header";
+import QRCodeFooter from "./qr-code-footer";
+import QRCodeCamera from "./qr-code-camera";
 import QRCodeButton from "./qr-code-button";
 
 export default function QRCode({

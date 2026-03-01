@@ -65,9 +65,9 @@ function Home() {
           <div className="w-full h-1/2 flex flex-col sm:flex-row gap-4">
             <div className="w-full sm:w-1/2 h-32">
               <ButtonPanel
-                href=""
-                onClick={() => setOpenAlert(true)}
-                // href={"/coating"}
+                //href=""
+                //onClick={() => setOpenAlert(true)}
+                href={"/coating"}
                 key={"coating"}
                 text="Escanear componentes para revestimento / proxima etapa"
               >
@@ -79,9 +79,9 @@ function Home() {
             </div>
             <div className="w-full sm:w-1/2 h-32">
               <ButtonPanel
-                href=""
-                onClick={() => setOpenAlert(true)}
-                // href={"/painting"}
+                // href=""
+                // onClick={() => setOpenAlert(true)}
+                href={"/painting"}
                 key={"painting"}
                 text="Escanear componentes para pintura / encerrar etapas"
               >

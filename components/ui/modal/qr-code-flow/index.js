@@ -70,7 +70,9 @@ export default function QRCodeFlow({
     //   .trim()
     //   .match(/^(SP-[A-Za-z0-9]{4}-[A-Za-z0-9]{5}-[A-Za-z0-9]{3})\s+(.*)$/);
     if (!match) {
-      setMessage("Escanear um QRCode do SPOOL, ou este QRCODE é inválido!");
+      setMessage(
+        "QRCODE-FLOW: Escanear um QRCode do SPOOL, ou este QRCODE é inválido!",
+      );
       setOpenAlert(true);
       return null;
     }
@@ -87,11 +89,13 @@ export default function QRCodeFlow({
       if (!spool) {
         const parsedSpool = parseQrSpoolToJson(decodedText);
         if (parsedSpool) {
-          setMessage(`Spool: ${parsedSpool.codigo} - ${parsedSpool.descricao}`);
+          setMessage(
+            `QRCODE-FLOW Spool: ${parsedSpool.codigo} - ${parsedSpool.descricao}`,
+          );
           setOpenAlert(true);
           setSpool(parsedSpool);
 
-          action(parsedSpool.codigo);
+          //action(parsedSpool.codigo);
         }
 
         return;
@@ -170,7 +174,9 @@ export default function QRCodeFlow({
 
     const parsedSpool = parseQrSpoolToJson(result);
     if (parsedSpool) {
-      setMessage(`Spool: ${parsedSpool.codigo} - ${parsedSpool.descricao}`);
+      setMessage(
+        `QRCODE-FLOW Spool: ${parsedSpool.codigo} - ${parsedSpool.descricao}`,
+      );
       setSpool(parsedSpool);
       setOpenAlert(true);
 

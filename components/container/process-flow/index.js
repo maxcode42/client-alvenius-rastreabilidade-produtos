@@ -32,7 +32,7 @@ export default function ProcessFlow({
   const [message, setMessage] = useState("");
   const [newStatus, setNewStatus] = useState("");
 
-  const cardCustom = false;
+  const cardCustom = true;
 
   const testeAPI = async (code) => {
     return code;
@@ -41,7 +41,7 @@ export default function ProcessFlow({
   async function findOnByCode(code) {
     const results = await testeAPI(code); //await api.execute[route].find({ params: code });
     //
-    console.log(results);
+    //console.log(results);
     return results;
   }
 
