@@ -15,7 +15,7 @@ async function handlerObject(data) {
     return {
       sequence: item?.SEQ,
       codigo: item?.COD?.trim(),
-      status: PROCESS_STATUS.name[statusAcronym], //getStatus(item?.STATUS?.trim()), //
+      status: PROCESS_STATUS.name[statusAcronym], //getStatus(item?.STATUS?.trim()), )/
       status_sigle: statusAcronym, //item?.STATUS?.trim(), //statusAcronym,
       dateStart: item?.DTENTR?.trim(),
       timeStart: item?.HRENT?.trim(),
@@ -24,7 +24,7 @@ async function handlerObject(data) {
       user: item?.USER?.trimStart()?.trimEnd(),
       process: PROCESS_FLOW.name[item?.PROCES?.trim()],
       process_sigle: item?.PROCES?.trim(),
-      descricao: "CALDEIRARIA: TESTES descrição produto",
+      descricao: "PINTURA: TESTES descrição produto",
     };
   });
 
@@ -32,7 +32,7 @@ async function handlerObject(data) {
 }
 
 async function findAll(tokenProtheus) {
-  const response = await apiProtheus.execute.boilermaking.read({
+  const response = await apiProtheus.execute.painting.read({
     tokenProtheus,
   });
 
@@ -44,7 +44,7 @@ async function findAll(tokenProtheus) {
 async function findOnByCode(tokenProtheus, code) {
   const formatCode = normalizeAlphanumeric(code);
 
-  const response = await apiProtheus.execute.boilermaking.find({
+  const response = await apiProtheus.execute.painting.find({
     tokenProtheus,
     params: formatCode,
   });
@@ -55,7 +55,7 @@ async function findOnByCode(tokenProtheus, code) {
 }
 
 async function create(data, tokenProtheus) {
-  const response = await apiProtheus.execute.boilermaking.create({
+  const response = await apiProtheus.execute.painting.create({
     data,
     tokenProtheus,
   });
@@ -63,10 +63,10 @@ async function create(data, tokenProtheus) {
   return response;
 }
 
-const boilermaking = {
+const painting = {
   findOnByCode,
   findAll,
   create,
 };
 
-export default boilermaking;
+export default painting;

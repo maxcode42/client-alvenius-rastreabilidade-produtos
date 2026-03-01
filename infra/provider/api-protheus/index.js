@@ -123,6 +123,48 @@ const execute = {
       );
     },
   },
+  coating: {
+    read: async ({ tokenProtheus }) => {
+      return await handleSend(
+        "WSRASTREIO/process?CA",
+        "GET",
+        null,
+        tokenProtheus,
+      );
+    },
+    create: async ({ data, tokenProtheus }) => {
+      return await handleSend("WsRastreio/new", "POST", data, tokenProtheus);
+    },
+    find: async ({ params, tokenProtheus }) => {
+      return await handleSend(
+        `WSRASTREIO/id?${params}`,
+        "GET",
+        null,
+        tokenProtheus,
+      );
+    },
+  },
+  painting: {
+    read: async ({ tokenProtheus }) => {
+      return await handleSend(
+        "WSRASTREIO/process?CA",
+        "GET",
+        null,
+        tokenProtheus,
+      );
+    },
+    create: async ({ data, tokenProtheus }) => {
+      return await handleSend("WsRastreio/new", "POST", data, tokenProtheus);
+    },
+    find: async ({ params, tokenProtheus }) => {
+      return await handleSend(
+        `WSRASTREIO/id?${params}`,
+        "GET",
+        null,
+        tokenProtheus,
+      );
+    },
+  },
 };
 
 const apiProtheus = {

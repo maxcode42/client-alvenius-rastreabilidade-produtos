@@ -47,10 +47,32 @@ const execute = {
       return await handleSend("boilermaking", "GET", null);
     },
     create: async ({ data }) => {
-      return await handleSend(`boilermaking/`, "POST", data);
+      return await handleSend(`boilermaking`, "POST", data);
     },
     find: async ({ params }) => {
       return await handleSend(`boilermaking/${params}`, "GET", null);
+    },
+  },
+  coating: {
+    read: async () => {
+      return await handleSend("coating", "GET", null);
+    },
+    create: async ({ data }) => {
+      return await handleSend(`coating`, "POST", data);
+    },
+    find: async ({ params }) => {
+      return await handleSend(`coating/${params}`, "GET", null);
+    },
+  },
+  painting: {
+    read: async () => {
+      return await handleSend("painting", "GET", null);
+    },
+    create: async ({ data }) => {
+      return await handleSend(`painting`, "POST", data);
+    },
+    find: async ({ params }) => {
+      return await handleSend(`painting/${params}`, "GET", null);
     },
   },
 };
