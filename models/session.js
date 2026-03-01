@@ -9,6 +9,7 @@ const ONE_HOUR = 60 * 60 * 1_000; // 1 time in milliseconds
 const SAFETY_MARGIN = 1 * 60 * 1_000; // 1 minute in milliseconds
 const EXPIRATION_IN_MILLISECONDS = ONE_HOUR - SAFETY_MARGIN; // 59 minutes in milliseconds
 //const EXPIRATION_IN_MILLISECONDS = 60 * 1_000;
+
 function createDateExpiresAt() {
   const result = new Date(Date.now() + EXPIRATION_IN_MILLISECONDS); // add 1 time
 
@@ -97,7 +98,7 @@ async function runSelectQuery(token) {
 }
 
 async function sendSessionProtheus(tokenProtheus) {
-  const results = await apiProtheus.getRegisterStatus({ tokenProtheus });
+  const results = await apiProtheus.execute.register.status({ tokenProtheus });
 
   if (!results[0]?.Status) {
     throw new UnauthorizedError({

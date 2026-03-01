@@ -57,12 +57,6 @@ function normalizeAlphanumeric(text) {
 async function handlerObject(data) {
   const statusArray = ["RE", "EX", "PU", "FI", "RV", "SU", "RO"];
   const results = await data?.objects.map((item) => {
-    // console.log(">> STATUS NEW");
-    // console.log(item?.COD);
-    // if (normalizeAlphanumeric(item?.COD) == "SP041500345003") {
-    //   console.log(">> STATUS NEW");
-    //   console.log(item);
-    // }
     const statusAcronym =
       statusArray[Math.floor(Math.random() * statusArray.length)];
 
@@ -76,9 +70,6 @@ async function handlerObject(data) {
       dateEnd: item?.DTSAID?.trim(),
       timeEnd: item?.HRSAID?.trim(),
       user: item?.USER?.trimStart()?.trimEnd(),
-      // process: item?.PROCESS
-      //   ? getProcess(item?.PROCESS?.trim())
-      //   : getProcess(item?.PROCES?.trim()),
       process: getProcess(item?.PROCES?.trim()),
       process_sigle: item?.PROCES?.trim(),
       descricao: "TESTES descrição produto",
@@ -89,7 +80,7 @@ async function handlerObject(data) {
 }
 
 async function findAll(tokenProtheus) {
-  const response = await apiProtheus.findAllBoilerShop({ tokenProtheus });
+  const response = await apiProtheus.execute.boilerShop.read({ tokenProtheus });
 
   const results = await handlerObject(response);
 
@@ -99,9 +90,9 @@ async function findAll(tokenProtheus) {
 async function findOnByCode(tokenProtheus, code) {
   const formatCode = normalizeAlphanumeric(code);
 
-  const response = await apiProtheus.findOnByCode({
+  const response = await apiProtheus.execute.boilerShop.find({
     tokenProtheus,
-    code: formatCode,
+    params: formatCode,
   });
 
   const results = await handlerObject({ objects: [response] });
@@ -110,9 +101,10 @@ async function findOnByCode(tokenProtheus, code) {
 }
 
 async function create(data, tokenProtheus) {
-  console.log(">> MODAL CREATE");
-  console.log(data);
-  const response = await apiProtheus.createBoilerShop({ data, tokenProtheus });
+  const response = await apiProtheus.execute.boilerShop.create({
+    data,
+    tokenProtheus,
+  });
 
   return response;
 }

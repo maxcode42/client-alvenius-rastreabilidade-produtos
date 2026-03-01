@@ -43,7 +43,14 @@ async function findUserByUsername(providedUsername, providedPassword) {
 
 async function sendUserByUsernameProtheus(providedUsername, providedPassword) {
   // try {
-  const response = await apiProtheus.sendAuthenticateUser({
+  // const response = await apiProtheus.sendAuthenticateUser({
+  //   data: {
+  //     grant_type: "password",
+  //     username: providedUsername,
+  //     password: providedPassword,
+  //   },
+  // });
+  const response = await apiProtheus.execute.session.create({
     data: {
       grant_type: "password",
       username: providedUsername,

@@ -7,25 +7,23 @@ import { STATUS_CODE } from "types/status-code";
 
 const baseURL = process.env.API_PROTHEUS_BASE_URL;
 
-async function handlerSend(path, method, dataObject, token) {
-  console.log(">> API PROTHEUS REQUEST");
-  console.log(dataObject);
+async function handleSend(path, method, dataObject, token) {
+  const response = await fetch(`${baseURL}/${path}`, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+    body: dataObject ? JSON.stringify(dataObject) : null,
+  });
+
+  return await handlerResponse(response);
+}
+
+async function handlerResponse(response) {
   try {
-    const response = await fetch(`${baseURL}/${path}`, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token ? `Bearer ${token}` : "",
-      },
-      body: dataObject ? JSON.stringify(dataObject) : null,
-    });
-    // console.log(">> API PROTHEUS RESPONSE");
-    //console.log(response);
+    const responseBody = await response.json();
 
-    const responseBody = await response?.json();
-
-    // console.log(">> API PROTHEUS RESPONSE_BODY");
-    //console.log(responseBody);
     if (Number(responseBody?.Status_Code) === STATUS_CODE.UNAUTHORIZED) {
       throw new UnauthorizedError({
         message: `PROTHEUS API => ${responseBody?.Message}`,
@@ -84,113 +82,51 @@ async function handlerSend(path, method, dataObject, token) {
   }
 }
 
-async function createRegister({ data, tokenProtheus }) {
-  const results = await handlerSend("WSRASTREIO", "POST", data, tokenProtheus);
-
-  return results;
-}
-
-async function getRegisterStatus({ tokenProtheus }) {
-  const results = await handlerSend("WSRASTREIO", "GET", null, tokenProtheus);
-
-  return results;
-}
-
-async function sendAuthenticateUser({ data }) {
-  const params = new URLSearchParams(data);
-
-  const results = await handlerSend(
-    `api/oauth2/v1/token?${params}`,
-    "POST",
-    data,
-    null,
-  );
-
-  return results;
-}
-
-async function findAllBoilerShop({ tokenProtheus }) {
-  const results = await handlerSend(
-    `WSRASTREIO/process?CA`,
-    "GET",
-    null,
-    tokenProtheus,
-  );
-  // console.log(">>API PROTHEUS");
-  // console.log(results);
-  // const results = [
-  //   {
-  //     codigo: "SP50K000311",
-  //     status: "reservado",
-  //     descricao:
-  //       "Tubo ASTMA134 PL 508MM x 6,30MM ASTM A 283 GRC DIMESOES CONF ASME B 36.10",
-  //   },
-  //   {
-  //     codigo: "SP5EK000311",
-  //     status: "execução",
-  //     descricao:
-  //       "Tubo ASTMA134 PL 508MM x 6,30MM ASTM A 283 GRC DIMESOES CONF ASME B 36.10",
-  //   },
-  //   {
-  //     codigo: "SP7EK000456",
-  //     status: "sucata",
-  //     descricao:
-  //       "Tubo ASTMA134 PL 508MM x 6,30MM ASTM A 283 GRC DIMESOES CONF ASME B 36.10",
-  //   },
-  //   {
-  //     codigo: "SP46K000322",
-  //     status: "reservado",
-  //     descricao:
-  //       "Tubo ASTMA134 PL 508MM x 6,30MM ASTM A 283 GRC DIMESOES CONF ASME B 36.10",
-  //   },
-  //   {
-  //     codigo: "SP44K000122",
-  //     status: "reservado",
-  //     descricao:
-  //       "Tubo ASTMA134 PL 508MM x 6,30MM ASTM A 283 GRC DIMESOES CONF ASME B 36.10",
-  //   },
-  //   {
-  //     codigo: "SP66K000544",
-  //     status: "finalizado",
-  //     descricao:
-  //       "Tubo ASTMA134 PL 508MM x 6,30MM ASTM A 283 GRC DIMESOES CONF ASME B 36.10",
-  //   },
-  // ];
-
-  return results;
-}
-
-async function findOnByCode({ tokenProtheus, code }) {
-  const results = await handlerSend(
-    `WSRASTREIO/id?${code}`,
-    "GET",
-    null,
-    tokenProtheus,
-  );
-
-  return results;
-}
-
-async function createBoilerShop({ data, tokenProtheus }) {
-  console.log(">> API PROTHEUS");
-  console.log(data);
-  const results = await handlerSend(
-    "WsRastreio/new",
-    "POST",
-    data,
-    tokenProtheus,
-  );
-
-  return results;
-}
+const execute = {
+  session: {
+    create: async ({ data }) => {
+      const params = new URLSearchParams(data);
+      return await handleSend(
+        `api/oauth2/v1/token?${params}`,
+        "POST",
+        null,
+        null,
+      );
+    },
+  },
+  register: {
+    create: async ({ data, tokenProtheus }) => {
+      return await handleSend("WSRASTREIO", "POST", data, tokenProtheus);
+    },
+    status: async ({ tokenProtheus }) => {
+      return await handleSend("WSRASTREIO", "GET", null, tokenProtheus);
+    },
+  },
+  boilerShop: {
+    read: async ({ tokenProtheus }) => {
+      return await handleSend(
+        "WSRASTREIO/process?CA",
+        "GET",
+        null,
+        tokenProtheus,
+      );
+    },
+    create: async ({ data, tokenProtheus }) => {
+      return await handleSend("WsRastreio/new", "POST", data, tokenProtheus);
+    },
+    find: async ({ params, tokenProtheus }) => {
+      return await handleSend(
+        `WSRASTREIO/id?${params}`,
+        "GET",
+        null,
+        tokenProtheus,
+      );
+    },
+  },
+};
 
 const apiProtheus = {
-  sendAuthenticateUser,
-  getRegisterStatus,
-  findAllBoilerShop,
-  createBoilerShop,
-  createRegister,
-  findOnByCode,
+  execute,
 };
 
 export default apiProtheus;
