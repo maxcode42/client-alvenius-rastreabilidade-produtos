@@ -5,7 +5,7 @@ function Painting() {
   return (
     <ProcessFlow
       title={"Pintura"}
-      route={"boilerShop"}
+      route={"boilermaking"}
       textModal={"para buscar o SPOOL e seguir fluxo do"}
       info={"Leitura Spool, iniciar, finalizar e executar processo produção."}
     />

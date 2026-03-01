@@ -32,7 +32,7 @@ export default function ProcessFlow({
   const [message, setMessage] = useState("");
   const [newStatus, setNewStatus] = useState("");
 
-  const cardCustom = true;
+  const cardCustom = false;
 
   const testeAPI = async (code) => {
     return code;

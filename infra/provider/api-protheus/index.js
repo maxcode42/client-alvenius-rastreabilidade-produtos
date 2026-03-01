@@ -102,7 +102,7 @@ const execute = {
       return await handleSend("WSRASTREIO", "GET", null, tokenProtheus);
     },
   },
-  boilerShop: {
+  boilermaking: {
     read: async ({ tokenProtheus }) => {
       return await handleSend(
         "WSRASTREIO/process?CA",

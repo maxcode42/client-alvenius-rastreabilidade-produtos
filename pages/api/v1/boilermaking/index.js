@@ -3,7 +3,7 @@ import { createRouter } from "next-connect";
 import { STATUS_CODE } from "/types/status-code";
 
 import controller from "infra/controller";
-import boilerShop from "models/boiler-shop";
+import boilermaking from "models/boilermaking";
 import session from "models/session";
 
 const router = createRouter();
@@ -20,7 +20,7 @@ async function getHandler(req, res) {
 
   //const renewedSessionObject = await session.renew(sessionObject.id);
 
-  const results = await boilerShop.findAll(sessionObject.token_protheus);
+  const results = await boilermaking.findAll(sessionObject.token_protheus);
 
   if (results === true) {
     await controller.clearSessionCookie(res);
@@ -39,16 +39,16 @@ async function getHandler(req, res) {
 }
 
 async function postHandler(req, res) {
-  const boilerShopInputValues = req.body;
+  const boilermakingInputValues = req.body;
   const token = req.cookies[process.env.COOKIE_NAME];
   console.log(">>BACKEND CONTROLLER");
-  console.log(boilerShopInputValues);
+  console.log(boilermakingInputValues);
   const sessionObject = await session.findOneValidByToken(token);
 
   const renewedSessionObject = await session.renew(sessionObject.id);
 
-  const results = await boilerShop.create(
-    boilerShopInputValues,
+  const results = await boilermaking.create(
+    boilermakingInputValues,
     renewedSessionObject.token_protheus,
   );
 

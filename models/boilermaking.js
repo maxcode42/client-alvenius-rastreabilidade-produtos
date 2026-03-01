@@ -80,7 +80,9 @@ async function handlerObject(data) {
 }
 
 async function findAll(tokenProtheus) {
-  const response = await apiProtheus.execute.boilerShop.read({ tokenProtheus });
+  const response = await apiProtheus.execute.boilermaking.read({
+    tokenProtheus,
+  });
 
   const results = await handlerObject(response);
 
@@ -90,7 +92,7 @@ async function findAll(tokenProtheus) {
 async function findOnByCode(tokenProtheus, code) {
   const formatCode = normalizeAlphanumeric(code);
 
-  const response = await apiProtheus.execute.boilerShop.find({
+  const response = await apiProtheus.execute.boilermaking.find({
     tokenProtheus,
     params: formatCode,
   });
@@ -101,7 +103,7 @@ async function findOnByCode(tokenProtheus, code) {
 }
 
 async function create(data, tokenProtheus) {
-  const response = await apiProtheus.execute.boilerShop.create({
+  const response = await apiProtheus.execute.boilermaking.create({
     data,
     tokenProtheus,
   });
@@ -109,10 +111,10 @@ async function create(data, tokenProtheus) {
   return response;
 }
 
-const boilerShop = {
+const boilermaking = {
   findOnByCode,
   findAll,
   create,
 };
 
-export default boilerShop;
+export default boilermaking;

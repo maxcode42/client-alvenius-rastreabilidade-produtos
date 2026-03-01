@@ -42,15 +42,15 @@ const execute = {
       return await handleSend("register", "POST", data);
     },
   },
-  boilerShop: {
+  boilermaking: {
     read: async () => {
-      return await handleSend("boiler-shop", "GET", null);
+      return await handleSend("boilermaking", "GET", null);
     },
     create: async ({ data }) => {
-      return await handleSend(`boiler-shop/`, "POST", data);
+      return await handleSend(`boilermaking/`, "POST", data);
     },
     find: async ({ params }) => {
-      return await handleSend(`boiler-shop/${params}`, "GET", null);
+      return await handleSend(`boilermaking/${params}`, "GET", null);
     },
   },
 };

@@ -16,7 +16,7 @@ import AlertInfo from "components/ui/alert/info";
 import withAuth from "../../auth/auth-with";
 import api from "infra/provider/api-web";
 
-function BoilerShop() {
+function BoilermakingBkp() {
   const [text, setText] = useState("");
   const [itens, setItens] = useState([]);
   const [spool, setSpool] = useState(null);
@@ -35,7 +35,7 @@ function BoilerShop() {
   };
 
   async function handleFindOnByCode(code) {
-    const results = await testeAPI(code); //api.findOnByCodeBoilerShop({ code });
+    const results = await testeAPI(code); //api.findOnByCodeboilermaking({ code });
 
     return results;
   }
@@ -46,14 +46,14 @@ function BoilerShop() {
     setOpenQRCode(true);
   }
 
-  async function handleGetAllDataBoilerShop() {
-    const results = await api.getBoilerShop();
+  async function handleGetAllDataboilermaking() {
+    const results = await api.getboilermaking();
 
     setItens(results);
   }
 
-  async function handlerBoilerShop(data, item) {
-    console.log(">>INDEX BOILERSHOP");
+  async function handlerboilermaking(data, item) {
+    console.log(">>INDEX boilermaking");
     console.log({
       data,
       item,
@@ -67,7 +67,7 @@ function BoilerShop() {
       reversivel: data?.reversible ? "S" : "N",
       disposicao_qualidade: data?.qualityText || "",
     };
-    await api.sendBoilerShop({ data: handlerData });
+    await api.sendboilermaking({ data: handlerData });
 
     //setItens([]);
   }
@@ -119,7 +119,7 @@ function BoilerShop() {
   );
 
   useEffect(() => {
-    handleGetAllDataBoilerShop();
+    handleGetAllDataboilermaking();
   }, []);
 
   useEffect(() => {
@@ -195,7 +195,7 @@ function BoilerShop() {
           setSpool={setSpool}
           isOpen={openQRCode}
           currentSpool={currentSpool}
-          action={(handleFindOnByCode, handlerBoilerShop)}
+          action={(handleFindOnByCode, handlerboilermaking)}
           onClose={() => {
             setOpenQRCode(false), setSpool(null);
           }}
@@ -215,4 +215,4 @@ function BoilerShop() {
   );
 }
 
-export default withAuth(BoilerShop);
+export default withAuth(BoilermakingBkp);

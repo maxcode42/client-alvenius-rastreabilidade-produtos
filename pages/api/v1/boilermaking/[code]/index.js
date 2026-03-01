@@ -3,7 +3,7 @@ import { createRouter } from "next-connect";
 import { STATUS_CODE } from "/types/status-code";
 
 import controller from "infra/controller";
-import boilerShop from "models/boiler-shop";
+import boilermaking from "models/boilermaking";
 import session from "models/session";
 
 const router = createRouter();
@@ -21,7 +21,7 @@ async function getHandler(req, res) {
 
   //const renewedSessionObject = await session.renew(sessionObject.id);
 
-  const results = await boilerShop.findOnByCode(
+  const results = await boilermaking.findOnByCode(
     sessionObject.token_protheus,
     code,
   );

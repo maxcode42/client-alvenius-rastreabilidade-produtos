@@ -51,8 +51,8 @@ function Home() {
               <ButtonPanel
                 // href=""
                 // onClick={() => setOpenAlert(true)}
-                href={"/boiler-shop"}
-                key={"boiler-shop"}
+                href={"/boilermaking"}
+                key={"boilermaking"}
                 text="Escanear componentes reservado / proxima etapa"
               >
                 <span className="text-sm">
