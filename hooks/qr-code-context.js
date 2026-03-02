@@ -1,0 +1,77 @@
+"use client";
+
+import { createContext, useContext, useState } from "react";
+
+const QRCodeContext = createContext();
+
+export function QRCodeProvider({ children }) {
+  const [scannerLocked, setScannerLocked] = useState(false);
+  const [currentSpool, setCurrentSpool] = useState(null);
+  const [openQRCode, setOpenQRCode] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
+  const [onClose, setOnClose] = useState(() => {});
+  const [action, setAction] = useState(() => {});
+  const [newStatus, setNewStatus] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [result, setResult] = useState(null);
+  const [spool, setSpool] = useState(null);
+  const [text, setText] = useState("");
+  // const [accordance, setAccordance] = useState(false);
+  // const [reversible, setReversible] = useState(false);
+  // const [qualityText, setQualityText] = useState("");
+  console.count(">> HOOK QRCODE");
+  return (
+    <QRCodeContext.Provider
+      value={{
+        message,
+        setMessage,
+
+        scannerLocked,
+        setScannerLocked,
+
+        openAlert,
+        setOpenAlert,
+
+        result,
+        setResult,
+
+        onClose,
+        setOnClose,
+
+        spool,
+        setSpool,
+
+        action,
+        setAction,
+
+        isOpen,
+        setIsOpen,
+
+        openQRCode,
+        setOpenQRCode,
+
+        currentSpool,
+        setCurrentSpool,
+
+        newStatus,
+        setNewStatus,
+
+        text,
+        setText,
+      }}
+    >
+      {children}
+    </QRCodeContext.Provider>
+  );
+}
+
+export function useQRCode() {
+  const ctx = useContext(QRCodeContext);
+
+  if (!ctx) {
+    throw new Error("useAuth must be used inside AuthProvider");
+  }
+
+  return ctx;
+}

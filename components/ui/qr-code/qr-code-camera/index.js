@@ -1,14 +1,26 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 
-export default function QRCodeCamera({
-  setScannerLocked,
-  scannerLocked,
-  setOpenAlert,
-  setMessage,
-  setResult,
-  setSpool,
-}) {
+import { useQRCode } from "hooks/qr-code-context";
+
+export default function QRCodeCamera() {
+  //   {
+  //   setScannerLocked,
+  //   scannerLocked,
+  //   setOpenAlert,
+  //   setMessage,
+  //   setResult,
+  //   setSpool,
+  // }
+  console.count(">>QR-CODE-CAMERA");
+  const {
+    setScannerLocked,
+    scannerLocked,
+    setOpenAlert,
+    setMessage,
+    setResult,
+    setSpool,
+  } = useQRCode();
   const [permissionDenied, setPermissionDenied] = useState(false);
   const [hasAskedPermission, setHasAskedPermission] = useState(false);
   const qrRegionId = "qr-reader";

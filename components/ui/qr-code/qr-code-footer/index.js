@@ -1,4 +1,8 @@
-export default function QRCodeFooter({ result }) {
+import { useQRCode } from "hooks/qr-code-context";
+
+export default function QRCodeFooter() {
+  const { result } = useQRCode();
+
   return (
     <section className="flex flex-col py-4 bg-white w-full max-w-md p-4 rounded-md">
       <p className="text-sm font-semibold">Último QRCode lido:</p>

@@ -1,4 +1,5 @@
 import Button from "components/ui/button";
+import { useQRCode } from "hooks/qr-code-context";
 
 import {
   CheckCircleIcon,
@@ -11,12 +12,14 @@ import {
 } from "lucide-react";
 
 export default function QRCodeButton({
-  currentSpool,
-  onClose,
-  spool,
-  action,
+  // currentSpool,
+  // onClose,
+  // spool,
+  // action,
   children,
 }) {
+  const { currentSpool, onClose, spool, action } = useQRCode();
+
   return (
     <section className="flex flex-row w-full h-full py-8 gap-4 sm:w-1/2">
       {children}
@@ -108,6 +111,7 @@ export default function QRCodeButton({
         type="button"
         title="Fechar e cancelar a leitura QRCode"
         onClick={onClose}
+        // onClick={() => testeClick()}
         className={`${currentSpool ? "w-1/2" : "w-full"} text-sm bg-red-600 px-3 py-1 rounded-md text-stone-100 h-16 text-center flex flex-row gap-1 justify-center items-center`}
       >
         <XCircleIcon className="size-4" />

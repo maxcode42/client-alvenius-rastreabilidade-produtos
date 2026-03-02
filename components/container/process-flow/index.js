@@ -14,6 +14,7 @@ import QRCodeFlow from "../../ui/modal/qr-code-flow";
 import AlertInfo from "../../ui/alert/info";
 
 import api from "infra/provider/api-web";
+import { useQRCode } from "hooks/qr-code-context";
 
 export default function ProcessFlow({
   textModal = "",
@@ -21,18 +22,41 @@ export default function ProcessFlow({
   info = "",
   route,
 }) {
-  const [text, setText] = useState("");
-  const [itens, setItens] = useState([]);
-  const [spool, setSpool] = useState(null);
-  const [searchText, setSearchText] = useState("");
-  const [openQRCode, setOpenQRCode] = useState(false);
-  const [itensFiltered, setItensFiltered] = useState([]);
-  const [currentSpool, setCurrentSpool] = useState(null);
-  const [openAlert, setOpenAlert] = useState(false);
-  const [message, setMessage] = useState("");
-  const [newStatus, setNewStatus] = useState("");
+  // const [text, setText] = useState("");
+  // const [spool, setSpool] = useState(null);
+  // const [currentSpool, setCurrentSpool] = useState(null);
+  //const [openQRCode, setOpenQRCode] = useState(false);
+  //const [openAlert, setOpenAlert] = useState(false);
 
-  const cardCustom = false;
+  const {
+    //itens,
+    //spool,
+    setSpool,
+    //isOpen,
+    //currentSpool,
+    //action,
+    //onClose,
+    setOnClose,
+    setOpenQRCode,
+    setCurrentSpool,
+    openAlert,
+    setOpenAlert,
+    setText,
+    setAction,
+    openQRCode,
+    setScannerLocked,
+    message,
+  } = useQRCode();
+
+  const cardCustom = true;
+
+  console.count(">>CONTAINER QR-CODE");
+
+  const [itens, setItens] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [itensFiltered, setItensFiltered] = useState([]);
+  //const [message, setMessage] = useState("");
+  const [newStatus, setNewStatus] = useState("");
 
   const testeAPI = async (code) => {
     return code;
@@ -133,6 +157,26 @@ export default function ProcessFlow({
     return () => clearTimeout(time);
   }, [searchText, handleSearch]);
 
+  const assignDefaultStandards = useCallback(() => {
+    setOnClose(() => {
+      return () => {
+        setOpenQRCode(false), setSpool(null), setScannerLocked(true);
+      };
+    });
+
+    setAction(() => {
+      return () => {
+        findOnByCode, handlerData;
+      };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    assignDefaultStandards();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="w-full h-full bg-zinc-100">
       <Header />
@@ -156,10 +200,10 @@ export default function ProcessFlow({
               <CardItemsCustom
                 setText={setText}
                 items={itensFiltered}
-                setMessage={setMessage}
-                setOpenAlert={setOpenAlert}
-                setOpenQRCode={setOpenQRCode}
-                setCurrentSpool={setCurrentSpool}
+                //setMessage={setMessage}
+                //setOpenAlert={setOpenAlert}
+                // setOpenQRCode={setOpenQRCode}
+                // setCurrentSpool={setCurrentSpool}
               />
             ) : (
               <CardItems
@@ -175,33 +219,31 @@ export default function ProcessFlow({
       </Body>
       {openQRCode && cardCustom && (
         <QRCodeFlowCustom
-          itens={itens}
-          spool={spool}
-          setSpool={setSpool}
-          isOpen={openQRCode}
-          currentSpool={currentSpool}
-          action={findOnByCode}
-          onClose={() => {
-            setOpenQRCode(false), setSpool(null);
-          }}
+        // // itens={itens}
+        // // spool={spool}
+        // // setSpool={setSpool}
+        // // isOpen={openQRCode}
+        // // currentSpool={currentSpool}
+        // // action={findOnByCode}
+        // // onClose={() => {
+        // //   setOpenQRCode(false), setSpool(null);
+        // }}
         />
       )}
-
       {openQRCode && !cardCustom && (
         <QRCodeFlow
-          text={text}
-          itens={itens}
-          spool={spool}
-          setSpool={setSpool}
-          isOpen={openQRCode}
-          currentSpool={currentSpool}
-          action={(findOnByCode, handlerData)}
-          onClose={() => {
-            setOpenQRCode(false), setSpool(null);
-          }}
+        // text={text}
+        // itens={itens}
+        // spool={spool}
+        // setSpool={setSpool}
+        // isOpen={openQRCode}
+        // currentSpool={currentSpool}
+        // action={(findOnByCode, handlerData)}
+        // onClose={() => {
+        //   setOpenQRCode(false), setSpool(null);
+        // }}
         />
       )}
-
       {openAlert && (
         <AlertInfo
           action={null}

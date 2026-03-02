@@ -1,30 +1,54 @@
 import { Html5Qrcode } from "html5-qrcode";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { CircleQuestionMarkIcon, FilePenLineIcon } from "lucide-react";
 
 import Input from "components/ui/input";
 import QRCode from "components/ui/qr-code";
 import TextSpool from "components/ui/text-spool";
-import QRCodePanel from "components/ui/qr-code/qr-code-panel";
+
+import { useQRCode } from "hooks/qr-code-context";
+
 // import AlertInfo from "components/ui/alert/info";
 
 export default function QRCodeFlow({
-  currentSpool = null,
-  setSpool,
-  onClose,
-  isOpen,
-  action,
-  spool,
+  //   currentSpool = null,
+  //   setSpool,
+  //   onClose,
+  //   isOpen,
+  //   action,
+  //   spool,
   text,
 }) {
+  // const [message, setMessage] = useState("");
+  // const [result, setResult] = useState(null);
+  // const [openAlert, setOpenAlert] = useState(false);
+  // const [scannerLocked, setScannerLocked] = useState(false);
+
+  const {
+    action,
+    setOpenAlert,
+    setMessage,
+    setSpool,
+    result,
+    spool,
+    currentSpool,
+    openQRCode,
+    setResult,
+    scannerLocked,
+    setScannerLocked,
+    //isOpen,
+  } = useQRCode();
+
   const qrRegionId = "qr-reader";
   const qrCodeRef = useRef(null);
 
-  const [message, setMessage] = useState("");
-  const [result, setResult] = useState(null);
-  const [openAlert, setOpenAlert] = useState(false);
-
-  const [scannerLocked, setScannerLocked] = useState(false);
   const [hasAskedPermission, setHasAskedPermission] = useState(false);
   const [permissionDenied, setPermissionDenied] = useState(false);
 
@@ -77,6 +101,7 @@ export default function QRCodeFlow({
       return null;
     }
     return { codigo: match[1], descricao: match[2] };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleQrDecoded = useCallback(
@@ -101,6 +126,7 @@ export default function QRCodeFlow({
         return;
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [scannerLocked, parseQrSpoolToJson, setSpool, spool, action],
   );
 
@@ -185,21 +211,22 @@ export default function QRCodeFlow({
     }
   }, [parseQrSpoolToJson, setSpool, spool, result]);
 
-  async function handlerData() {
-    await action(
-      {
-        data: {
-          accordance,
-          reversible,
-          qualityText,
-        },
-      },
-      currentSpool,
-    );
-  }
+  // async function handlerData() {
+  //   await action(
+  //     {
+  //       data: {
+  //         accordance,
+  //         reversible,
+  //         qualityText,
+  //       },
+  //     },
+  //     currentSpool,
+  //   );
+  // }
 
   useEffect(() => {
-    if (isOpen) return;
+    //if (isOpen) return;
+    if (openQRCode) return;
     if (scannerLocked) return;
 
     let isMounted = true;
@@ -248,7 +275,8 @@ export default function QRCodeFlow({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    isOpen,
+    //isOpen,
+    openQRCode,
     scannerLocked,
     hasAskedPermission,
     permissionDenied,
@@ -263,32 +291,33 @@ export default function QRCodeFlow({
 
   useEffect(() => {}, [isMaxHeightText]);
 
-  if (!isOpen) return null;
+  // if (!isOpen) return null;
+  if (!openQRCode) return null;
 
   return (
-    <QRCodePanel>
+    <Fragment>
       {/* <div className="fixed inset-0 z-50 h-screen overflow-y-auto bg-black/80 flex flex-col items-center justify-start gap-2 px-4 pb-16 sm:pb-0 "> */}
       {/* Camera */}
       <QRCode
-        setScannerLocked={setScannerLocked}
-        scannerLocked={scannerLocked}
-        setOpenAlert={setOpenAlert}
-        setMessage={setMessage}
-        setResult={setResult}
-        setSpool={setSpool}
-        result={result}
-        message={message}
-        openAlert={openAlert}
-        spool={spool}
-        currentSpool={currentSpool}
-        onClose={onClose}
-        action={handlerData}
+      // setScannerLocked={setScannerLocked}
+      // scannerLocked={scannerLocked}
+      // setOpenAlert={setOpenAlert}
+      // setMessage={setMessage}
+      // setResult={setResult}
+      // setSpool={setSpool}
+      // result={result}
+      // message={message}
+      // openAlert={openAlert}
+      // spool={spool}
+      // currentSpool={currentSpool}
+      // onClose={onClose}
+      // action={handlerData}
       >
         {/* Resultado */}
         {/* <div className="mt-4 bg-white w-full max-w-md p-4 rounded-md"> */}
         <div className="flex flex-col py-2">
           <p className="text-sm font-semibold text-center">
-            Ler o QRCode do Spool.
+            Ler o QRCode do Spool - FLOW.
           </p>
           <p className="text-sm font-semibold text-center">
             <strong className="text-md font-bold uppercase">{text}</strong>{" "}
@@ -461,6 +490,6 @@ export default function QRCodeFlow({
         setScannerLocked={setScannerLocked}
       /> */}
       {/* </div> */}
-    </QRCodePanel>
+    </Fragment>
   );
 }

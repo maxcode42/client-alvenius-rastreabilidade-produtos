@@ -1,25 +1,41 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, Fragment } from "react";
 import { CircleQuestionMarkIcon, FilePenLineIcon } from "lucide-react";
 
 import Input from "components/ui/input";
 import QRCode from "components/ui/qr-code";
 import TextSpool from "components/ui/text-spool";
-import QRCodePanel from "components/ui/qr-code/qr-code-panel";
 import Separator from "components/ui/separator";
 
-export default function QRCodeFlowCustom({
-  currentSpool = null,
-  setSpool,
-  onClose,
-  isOpen,
-  action,
-  spool,
-}) {
-  const [message, setMessage] = useState("");
-  const [result, setResult] = useState(null);
-  const [openAlert, setOpenAlert] = useState(false);
+import { useQRCode } from "hooks/qr-code-context";
 
-  const [scannerLocked, setScannerLocked] = useState(false);
+export default function QRCodeFlowCustom() {
+  //{
+  // currentSpool = null,
+  // setSpool,
+  // onClose,
+  // isOpen,
+  // action,
+  // spool,
+  //},
+  // const [message, setMessage] = useState("");
+  // const [result, setResult] = useState(null);
+  // const [openAlert, setOpenAlert] = useState(false);
+
+  // const [scannerLocked, setScannerLocked] = useState(false);
+
+  const {
+    action,
+    setOpenAlert,
+    setMessage,
+    setSpool,
+    result,
+    spool,
+    currentSpool,
+    openQRCode,
+    //isOpen,
+  } = useQRCode();
+
+  console.count(">>QR-CODE-FLOW-CUSTOM");
 
   const [accordance, setAccordance] = useState(false);
   const [reversible, setReversible] = useState(false);
@@ -103,11 +119,11 @@ export default function QRCodeFlowCustom({
       return null;
     }
     return { codigo: match[1], descricao: match[2] };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkIfCodeExists = useCallback(
     async (code) => {
-      //console.log(`[checkCODE]: ${code}`);
       if (!currentSpool) {
         await action(code);
 
@@ -121,7 +137,7 @@ export default function QRCodeFlowCustom({
         setOpenAlert(true);
       }
     },
-    [action, currentSpool],
+    [action, currentSpool, setOpenAlert, setMessage],
   );
 
   const handleQrDecoded = useCallback(async () => {
@@ -140,6 +156,7 @@ export default function QRCodeFlowCustom({
       //await action(parsedSpool.codigo);
       await checkIfCodeExists(parsedSpool.codigo);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parseQrSpoolToJson, checkIfCodeExists, setSpool, spool, result]);
 
   useEffect(() => {}, [isMaxHeightText]);
@@ -148,27 +165,27 @@ export default function QRCodeFlowCustom({
     handleQrDecoded();
   }, [handleQrDecoded]);
 
-  if (!isOpen) return null;
+  if (!openQRCode) return null;
 
   return (
-    <QRCodePanel>
+    <Fragment>
       <QRCode
-        setScannerLocked={setScannerLocked}
-        scannerLocked={scannerLocked}
-        setOpenAlert={setOpenAlert}
-        setMessage={setMessage}
-        setResult={setResult}
-        setSpool={setSpool}
-        result={result}
-        message={message}
-        openAlert={openAlert}
-        spool={spool}
-        currentSpool={currentSpool}
-        onClose={onClose}
+      // setScannerLocked={setScannerLocked}
+      // scannerLocked={scannerLocked}
+      // setOpenAlert={setOpenAlert}
+      // setMessage={setMessage}
+      // setResult={setResult}
+      // setSpool={setSpool}
+      // result={result}
+      // message={message}
+      // openAlert={openAlert}
+      // spool={spool}
+      // currentSpool={currentSpool}
+      // onClose={onClose}
       >
         <div className="flex flex-col py-2">
           <p className="text-sm font-semibold text-center">
-            Ler o QRCode do Spool.
+            Ler o QRCode do Spool - CUSTOM.
           </p>
           <p className="text-sm font-semibold text-center">
             <strong className="text-md font-bold uppercase">
@@ -403,6 +420,6 @@ export default function QRCodeFlowCustom({
           Fechar
         </Button> */}
       {/* </QRCodeButton> */}
-    </QRCodePanel>
+    </Fragment>
   );
 }

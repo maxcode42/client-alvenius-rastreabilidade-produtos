@@ -1,18 +1,22 @@
-import { Fragment } from "react";
-
 import { CalendarDaysIcon } from "lucide-react";
 
 import Button from "components/ui/button";
-import Loading from "../loading";
 import Separator from "../separator";
+import Loading from "../loading";
+
+import { useQRCode } from "hooks/qr-code-context";
 
 export default function CardItemsCustom({
   items,
-  setMessage,
-  setOpenAlert,
-  setOpenQRCode,
-  setCurrentSpool,
+  //setMessage,
+  //setOpenAlert,
+  //setOpenQRCode,
+  //setCurrentSpool,
 }) {
+  console.count(">>CARD-ITEMS-CUSTOM");
+  const { setOpenAlert, setOpenQRCode, setMessage, setCurrentSpool } =
+    useQRCode();
+
   function normalizeAlphanumeric(text) {
     return text.replace(/[^A-Za-z0-9]/g, "").trim();
   }
@@ -141,74 +145,75 @@ export default function CardItemsCustom({
       </div>
 
       {items?.map((item, index) => (
-        <Fragment key={String(item?.codigo).concat(index)}>
-          <li className="hover:bg-stone-50 transition bg-white border-2 border-stone-200 rounded-lg shadow-lg">
-            {/* <li className="hover:bg-stone-50 transition odd:bg-white border-2 border-stone-200 rounded-lg shadow-lg"> */}
-            <Button
-              type="button"
-              title={`Ler QRCode produto código ${item?.codigo}`}
-              // disabled={
-              //   item?.status_sigle === "SU" || item?.status_sigle === "RO"
-              // }
-              onClick={(e) => openModalQRCode(e, item)}
-              className={`
+        // <Fragment key={String(item?.codigo).concat(index)}>
+        <li
+          key={String(item?.codigo).concat(index)}
+          className="hover:bg-stone-50 transition bg-white border-2 border-stone-200 rounded-lg shadow-lg"
+        >
+          {/* <li className="hover:bg-stone-50 transition odd:bg-white border-2 border-stone-200 rounded-lg shadow-lg"> */}
+          <Button
+            type="button"
+            title={`Ler QRCode produto código ${item?.codigo}`}
+            // disabled={
+            //   item?.status_sigle === "SU" || item?.status_sigle === "RO"
+            // }
+            onClick={(e) => openModalQRCode(e, item)}
+            className={`
                   //disabled:bg-stone-300/50 disabled:cursor-not-allowed disabled:shadow-none text-stone-800
                    w-full min-w-full rounded-md px-2 py-2 hover:bg-stone-100 hover:shadow-blue-600/50 hover:shadow-md
                    ${item?.status_sigle === "SU" || item?.status_sigle === "RO" ? "bg-stone-300/50 shadow-none text-stone-800" : "bg-transparent"}
                    `}
-            >
-              <div className="flex flex-row w-full justify-between px-2">
-                <div className="flex flex-col  justify-center items-center text-sm sm:text-sm md:text-base text-center text-stone-800  ">
-                  <small className="px-2 bg-stone-300/50 rounded-full w-fit">
-                    {formatSixDigits(index + 1)}
-                  </small>
-                </div>
-                <div className="capitalize py-2 text-center min-w-20 text-xs sm:text-sm md:text-base text-stone-800">
-                  <span
-                    className={`${String(getStyleStatus(item?.status_sigle))} p-1 text-xs rounded-full flex flex-row justify-center items-center`}
-                  >
-                    <small> {item?.status}</small>
-                  </span>
-                </div>
+          >
+            <div className="flex flex-row w-full justify-between px-2">
+              <div className="flex flex-col  justify-center items-center text-sm sm:text-sm md:text-base text-center text-stone-800  ">
+                <small className="px-2 bg-stone-300/50 rounded-full w-fit">
+                  {formatSixDigits(index + 1)}
+                </small>
               </div>
-              <div className="flex flex-col">
-                <p className="text-left px-2 py-2 text-xs sm:text-sm md:text-base">
-                  <strong>Código: </strong>
-                  {formatCodeDefault(item?.codigo)}
-                </p>
-                <div className="flex flex-row justify-between px-2 py-1">
-                  <p className="text-xs flex flex-col w-1/2 gap-1 items-start">
-                    <small className="flex flex-row gap-1">
-                      <CalendarDaysIcon className="size-4 text-slate-400" />
-                      <strong>Início:</strong>
-                    </small>
-                    <small>
-                      {formatDateCustom(item.dateStart, item.timeStart)}
-                    </small>
-                  </p>
-                  <div className="flex flex-col items-center justify-center bg-stone-200 w-[.2rem] h-8 rounded-full" />
-                  <p className="text-xs flex flex-col w-1/2 px-4 gap-1 items-start">
-                    <small className="flex flex-row gap-1">
-                      <CalendarDaysIcon className="size-4 text-stone-400" />
-                      <strong>Finalizado:</strong>{" "}
-                    </small>
-                    <small>
-                      {formatDateCustom(item.dateEnd, item.timeEnd)}
-                    </small>
-                  </p>
-                </div>
-                <p
-                  colSpan={5}
-                  className=" px-2 py-2 text-xs sm:text-sm md:text-base text-left"
+              <div className="capitalize py-2 text-center min-w-20 text-xs sm:text-sm md:text-base text-stone-800">
+                <span
+                  className={`${String(getStyleStatus(item?.status_sigle))} p-1 text-xs rounded-full flex flex-row justify-center items-center`}
                 >
+                  <small> {item?.status}</small>
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <p className="text-left px-2 py-2 text-xs sm:text-sm md:text-base">
+                <strong>Código: </strong>
+                {formatCodeDefault(item?.codigo)}
+              </p>
+              <div className="flex flex-row justify-between px-2 py-1">
+                <p className="text-xs flex flex-col w-1/2 gap-1 items-start">
+                  <small className="flex flex-row gap-1">
+                    <CalendarDaysIcon className="size-4 text-slate-400" />
+                    <strong>Início:</strong>
+                  </small>
                   <small>
-                    <strong>Descrição:</strong> {item?.descricao}
+                    {formatDateCustom(item.dateStart, item.timeStart)}
                   </small>
                 </p>
+                <div className="flex flex-col items-center justify-center bg-stone-200 w-[.2rem] h-8 rounded-full" />
+                <p className="text-xs flex flex-col w-1/2 px-4 gap-1 items-start">
+                  <small className="flex flex-row gap-1">
+                    <CalendarDaysIcon className="size-4 text-stone-400" />
+                    <strong>Finalizado:</strong>{" "}
+                  </small>
+                  <small>{formatDateCustom(item.dateEnd, item.timeEnd)}</small>
+                </p>
               </div>
-            </Button>
-          </li>
-        </Fragment>
+              <p
+                colSpan={5}
+                className=" px-2 py-2 text-xs sm:text-sm md:text-base text-left"
+              >
+                <small>
+                  <strong>Descrição:</strong> {item?.descricao}
+                </small>
+              </p>
+            </div>
+          </Button>
+        </li>
+        // </Fragment>
       ))}
       <li className="rounded-md bg-stone-200 flex flex-row items-center px-4 py-2 mt-4">
         <p className="text-xs text-stone-600 font-bold tracking-wider flex flex-row gap-2">
