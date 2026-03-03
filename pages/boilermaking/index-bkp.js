@@ -53,12 +53,6 @@ function BoilermakingBkp() {
   }
 
   async function handlerboilermaking(data, item) {
-    console.log(">>INDEX boilermaking");
-    console.log({
-      data,
-      item,
-      newStatus,
-    });
     const handlerData = {
       codigo: item?.codigo,
       status: newStatus,

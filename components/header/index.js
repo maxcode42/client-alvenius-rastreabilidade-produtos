@@ -132,9 +132,8 @@ export default function Header() {
                           {/* <div className="hidden md:block border-l-2 border-blue-950/50 w-full h-4 px-4" /> */}
                           <div className="md:hidden order-2 flex flex-col border-2 border-blue-950/50 w-full" />
                           <Link
-                            href=""
-                            // href="/boilermaking"
-                            onClick={() => (setOpen(false), setOpenAlert(true))}
+                            href="/boilermaking"
+                            onClick={() => setOpen(false)}
                             className="w-full flex flex-row items-center justify-between px-4 md:px-0  pt-3 md:pt-5 pb-4  min-w-[9vh] text-center text-lg md:text-md md:inline-block border-b-4 border-transparent transition-all duration-300 hover:scale-120 hover:font-extrabold hover:border-zinc-500 hover:text-zinc-500 cursor-pointer"
                           >
                             <span className="flex flex-row gap-2 items-center">
@@ -155,9 +154,8 @@ export default function Header() {
                           {/* <div className="hidden md:block border-l-2 border-blue-950/50 w-full h-4 px-4" /> */}
                           <div className="md:hidden order-2 flex flex-col border-2 border-blue-950/50 w-full" />
                           <Link
-                            href=""
-                            // href="/coating"
-                            onClick={() => (setOpen(false), setOpenAlert(true))}
+                            href="/coating"
+                            onClick={() => setOpen(false)}
                             className="w-full flex flex-row items-center justify-between px-4 md:px-0  pt-3 md:pt-5 pb-4  min-w-[9vh] text-center text-lg md:text-md md:inline-block border-b-4 border-transparent transition-all duration-300 hover:scale-120 hover:font-extrabold hover:border-zinc-500 hover:text-zinc-500 cursor-pointer"
                           >
                             <span className="flex flex-row gap-2 items-center">
@@ -177,9 +175,8 @@ export default function Header() {
                           {/* <div className="hidden md:block border-l-2 border-blue-950/50 w-full h-4 px-4" /> */}
                           <div className="md:hidden order-2 flex flex-col border-2 border-blue-950/50 w-full" />
                           <Link
-                            href=""
-                            // href="/painting"
-                            onClick={() => (setOpen(false), setOpenAlert(true))}
+                            href="/painting"
+                            onClick={() => setOpen(false)}
                             className="w-full flex flex-row items-center justify-between px-4 md:px-0  pt-3 md:pt-5 pb-4  min-w-[9vh] text-center text-lg md:text-md md:inline-block border-b-4 border-transparent transition-all duration-300 hover:scale-120 hover:font-extrabold hover:border-zinc-500 hover:text-zinc-500 cursor-pointer"
                           >
                             <span className="flex flex-row gap-2 items-center">

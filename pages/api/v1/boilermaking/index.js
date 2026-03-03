@@ -22,6 +22,11 @@ async function getHandler(req, res) {
 
   const results = await boilermaking.findAll(sessionObject.token_protheus);
 
+  // console.log("======================================");
+  // console.log(">>CONTROLLER boilermaking");
+  // console.log(results);
+  // console.log("======================================");
+
   if (results === true) {
     await controller.clearSessionCookie(res);
 
@@ -41,8 +46,7 @@ async function getHandler(req, res) {
 async function postHandler(req, res) {
   const boilermakingInputValues = req.body;
   const token = req.cookies[process.env.COOKIE_NAME];
-  console.log(">>BACKEND CONTROLLER");
-  console.log(boilermakingInputValues);
+
   const sessionObject = await session.findOneValidByToken(token);
 
   const renewedSessionObject = await session.renew(sessionObject.id);

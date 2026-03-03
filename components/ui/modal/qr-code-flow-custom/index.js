@@ -35,8 +35,6 @@ export default function QRCodeFlowCustom() {
     //isOpen,
   } = useQRCode();
 
-  console.count(">>QR-CODE-FLOW-CUSTOM");
-
   const [accordance, setAccordance] = useState(false);
   const [reversible, setReversible] = useState(false);
   const [qualityText, setQualityText] = useState("");

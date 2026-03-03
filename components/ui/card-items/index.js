@@ -10,16 +10,12 @@ import {
 } from "lucide-react";
 
 import Button from "components/ui/button";
-import Loading from "../loading";
-import Separator from "../separator";
 
-export default function CardItems({
-  items,
-  setOpenQRCode,
-  setCurrentSpool,
-  setNewStatus,
-  setText,
-}) {
+import { useQRCode } from "hooks/qr-code-context";
+
+export default function CardItems({ items, setText }) {
+  const { setCurrentSpool, setOpenQRCode, setScannerLocked, setResult } =
+    useQRCode();
   function normalizeAlphanumeric(text) {
     return text.replace(/[^A-Za-z0-9]/g, "").trim();
   }
@@ -116,22 +112,17 @@ export default function CardItems({
   }
 
   async function handlerData(text, newStatus, item) {
-    // console.log(">> CARD_ITEMS handlerData");
-    // console.log(item);
+    setResult(null);
     setText(text);
     setCurrentSpool(item);
-    setNewStatus(newStatus);
+    setScannerLocked(false);
     setOpenQRCode(true);
   }
 
-  if (items.length === 0) {
-    return <Loading />;
-  }
+  if (!items || items.length === 0) return null;
 
   return (
     <ul className="divide-y divide-stone-200 flex flex-col gap-4 py-2">
-      <Separator />
-
       {items?.map((item, index) => (
         <Fragment key={String(item?.codigo).concat(index)}>
           <li className="hover:bg-stone-50 transition odd:bg-white px-2 py-2 border-2 border-stone-200 rounded-lg shadow-lg">

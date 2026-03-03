@@ -1,84 +1,52 @@
-import { Html5Qrcode } from "html5-qrcode";
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { CircleQuestionMarkIcon, FilePenLineIcon } from "lucide-react";
+import { Fragment, useCallback, useEffect } from "react";
+//import { CircleQuestionMarkIcon, FilePenLineIcon } from "lucide-react";
 
-import Input from "components/ui/input";
+//import Input from "components/ui/input";
 import QRCode from "components/ui/qr-code";
 import TextSpool from "components/ui/text-spool";
 
 import { useQRCode } from "hooks/qr-code-context";
 
-// import AlertInfo from "components/ui/alert/info";
-
-export default function QRCodeFlow({
-  //   currentSpool = null,
-  //   setSpool,
-  //   onClose,
-  //   isOpen,
-  //   action,
-  //   spool,
-  text,
-}) {
-  // const [message, setMessage] = useState("");
-  // const [result, setResult] = useState(null);
-  // const [openAlert, setOpenAlert] = useState(false);
-  // const [scannerLocked, setScannerLocked] = useState(false);
-
+export default function QRCodeFlow({ text }) {
   const {
-    action,
     setOpenAlert,
     setMessage,
     setSpool,
     result,
     spool,
+    //setData,
+    setItem,
+    //newStatus,
     currentSpool,
     openQRCode,
-    setResult,
-    scannerLocked,
-    setScannerLocked,
-    //isOpen,
   } = useQRCode();
+  // const [accordance, setAccordance] = useState(false);
+  // const [reversible, setReversible] = useState(false);
+  // const [qualityText, setQualityText] = useState("");
+  // const [isMaxHeightText, setIsMaxHeightText] = useState(false);
+  // const maxTextArea = useMemo(() => {
+  //   return {
+  //     characters: 180,
+  //     lines: 3,
+  //   };
+  // }, []);
 
-  const qrRegionId = "qr-reader";
-  const qrCodeRef = useRef(null);
+  //function limitLines(e) {
+  //   e.preventDefault();
+  //   const textarea = e.target;
+  //   const lines = textarea.value.split("\n").length;
 
-  const [hasAskedPermission, setHasAskedPermission] = useState(false);
-  const [permissionDenied, setPermissionDenied] = useState(false);
+  //   if (
+  //     lines > maxTextArea.lines ||
+  //     String(e.target.value).length === maxTextArea.characters
+  //   ) {
+  //     setIsMaxHeightText(true);
+  //     return;
+  //   }
 
-  const [accordance, setAccordance] = useState(false);
-  const [reversible, setReversible] = useState(false);
-  const [qualityText, setQualityText] = useState("");
-  const [isMaxHeightText, setIsMaxHeightText] = useState(false);
-  const maxTextArea = useMemo(() => {
-    return {
-      characters: 180,
-      lines: 3,
-    };
-  }, []);
-
-  function limitLines(e) {
-    e.preventDefault();
-    const textarea = e.target;
-    const lines = textarea.value.split("\n").length;
-
-    if (
-      lines > maxTextArea.lines ||
-      String(e.target.value).length === maxTextArea.characters
-    ) {
-      setIsMaxHeightText(true);
-      return;
-    }
-
-    setQualityText(textarea.value);
-    setIsMaxHeightText(false);
-  }
+  //   setQualityText(textarea.value);
+  //   setIsMaxHeightText(false);
+  // }
 
   function normalizedText(text) {
     return new TextDecoder("utf-8")
@@ -104,95 +72,6 @@ export default function QRCodeFlow({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleQrDecoded = useCallback(
-    (decodedText) => {
-      if (scannerLocked) return;
-
-      setResult(decodedText);
-      setScannerLocked(true);
-
-      if (!spool) {
-        const parsedSpool = parseQrSpoolToJson(decodedText);
-        if (parsedSpool) {
-          setMessage(
-            `QRCODE-FLOW Spool: ${parsedSpool.codigo} - ${parsedSpool.descricao}`,
-          );
-          setOpenAlert(true);
-          setSpool(parsedSpool);
-
-          //action(parsedSpool.codigo);
-        }
-
-        return;
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [scannerLocked, parseQrSpoolToJson, setSpool, spool, action],
-  );
-
-  const stopScanner = async () => {
-    if (!qrCodeRef.current) return;
-
-    try {
-      await qrCodeRef.current.stop();
-      await qrCodeRef.current.clear();
-    } catch (error) {
-      console.error(error);
-    }
-    qrCodeRef.current = null;
-  };
-
-  const checkCameraSupport = () => {
-    return !!navigator.mediaDevices?.getUserMedia;
-  };
-
-  const requestCameraPermission = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
-
-      stream.getTracks().forEach((track) => track.stop());
-
-      setPermissionDenied(false);
-      return true;
-    } catch (error) {
-      if (error.name === "NotAllowedError") {
-        setPermissionDenied(true);
-      }
-      return false;
-    }
-  };
-
-  const startScanner = async () => {
-    if (qrCodeRef.current) return;
-
-    const html5QrCode = new Html5Qrcode(qrRegionId);
-    qrCodeRef.current = html5QrCode;
-
-    await html5QrCode.start(
-      { facingMode: "environment" },
-      {
-        fps: 15,
-        aspectRatio: 1,
-        disableFlip: false,
-        // qrbox: (w, h) => {
-        //   const base = Math.min(w, h);
-        //   const size = Math.min(Math.max(base * 0.8, 50), 400);
-
-        //   return {
-        //     width: size,
-        //     height: size,
-        //   };
-        // },
-      },
-      (decodedText) => {
-        handleQrDecoded(decodedText);
-        stopScanner();
-      },
-    );
-  };
-
   const handleQrDecodedCustom = useCallback(async () => {
     if ((!spool && !result) || spool !== null) {
       return;
@@ -203,13 +82,29 @@ export default function QRCodeFlow({
       setMessage(
         `QRCODE-FLOW Spool: ${parsedSpool.codigo} - ${parsedSpool.descricao}`,
       );
-      setSpool(parsedSpool);
-      setOpenAlert(true);
+
+      // setData({
+      //   accordance: true,
+      //   reversible: true,
+      //   qualityText: "TESTES",
+      // });
+      //setItem(parsedSpool);
+      await setItem(currentSpool);
+      await setSpool(parsedSpool);
+      // console.log(currentSpool, {
+      //   accordance,
+      //   reversible,
+      //   qualityText,
+      // });
+      await setOpenAlert(true);
 
       //await action(parsedSpool.codigo);
       //await checkIfCodeExists(parsedSpool.codigo);
     }
-  }, [parseQrSpoolToJson, setSpool, spool, result]);
+    // }, [parseQrSpoolToJson, setSpool, spool, result]);
+    //}, [result, spool]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result]);
 
   // async function handlerData() {
   //   await action(
@@ -225,72 +120,10 @@ export default function QRCodeFlow({
   // }
 
   useEffect(() => {
-    //if (isOpen) return;
-    if (openQRCode) return;
-    if (scannerLocked) return;
-
-    let isMounted = true;
-
-    const initCamera = async () => {
-      // Verifica suporte
-      if (!checkCameraSupport()) {
-        setMessage("Câmera não suportada neste dispositivo.");
-        setOpenAlert(true);
-        return;
-      }
-
-      // Se já negou antes → mostra alerta direto
-      if (permissionDenied) {
-        setMessage(
-          "Permissão de câmera negada. Ative nas configurações do navegador.",
-        );
-        setOpenAlert(true);
-        return;
-      }
-
-      // Primeira vez → solicitar permissão sem alertar antes
-      if (!hasAskedPermission) {
-        setHasAskedPermission(true);
-
-        const granted = await requestCameraPermission();
-
-        if (!granted) {
-          // usuário negou agora → não mostrar alerta neste primeiro ciclo
-          return;
-        }
-      }
-
-      // Se permissão concedida → inicia scanner
-      if (isMounted) {
-        await startScanner();
-      }
-    };
-
-    initCamera();
-
-    return () => {
-      isMounted = false;
-      //setScannerLocked(false);
-      //stopScanner();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    //isOpen,
-    openQRCode,
-    scannerLocked,
-    hasAskedPermission,
-    permissionDenied,
-    //startScanner,
-  ]);
-
-  useEffect(() => {}, [isMaxHeightText]);
-
-  useEffect(() => {
     handleQrDecodedCustom();
-  }, [handleQrDecodedCustom]);
+  }, [handleQrDecodedCustom, result]);
 
-  useEffect(() => {}, [isMaxHeightText]);
-
+  // useEffect(() => {}, [isMaxHeightText]);
   // if (!isOpen) return null;
   if (!openQRCode) return null;
 
@@ -342,7 +175,7 @@ export default function QRCodeFlow({
             </div> */}
             <TextSpool spool={spool} />
 
-            {String(currentSpool?.status_sigle).toUpperCase() === "FI" && (
+            {/* {String(currentSpool?.status_sigle).toUpperCase() === "FI" && (
               <div className="flex flex-col py-2">
                 <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-4 mb-4 rounded-full" />
                 <div className="flex flex-col justify-center gap-1 py-4">
@@ -358,18 +191,19 @@ export default function QRCodeFlow({
                       id="conforme"
                       name="conforme"
                       type="radio"
-                      value={""}
+                      value={true}
+                      // disabled={!reversible}
                       label="Sim"
-                      onChange={() => {}}
+                      onChange={() => setAccordance(true)}
                       className="w-1/2 flex flex-row"
                     ></Input>
                     <Input
                       id="conforme"
                       name="conforme"
                       type="radio"
-                      value={""}
+                      value={false}
                       label="Não"
-                      onChange={() => {}}
+                      onChange={() => setAccordance(false)}
                     ></Input>
                   </div>
                   <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-8 rounded-full" />
@@ -387,37 +221,26 @@ export default function QRCodeFlow({
                       id="reversible"
                       name="reversible"
                       type="radio"
-                      value={accordance}
+                      value={true}
+                      disabled={!accordance}
                       label="Sim"
-                      onChange={(e) => setAccordance(e.target.value)}
+                      onChange={() => setReversible(true)}
                       className="w-1/2 flex flex-row"
                     ></Input>
                     <Input
                       id="reversible"
                       name="reversible"
                       type="radio"
-                      value={reversible}
+                      value={false}
                       label="Não"
-                      disabled={!accordance}
-                      onChange={(e) => setReversible(e.target.value)}
+                      // disabled={accordance}
+                      onChange={() => setReversible(false)}
                       className="disabled:cursor-not-allowed"
                     ></Input>
                   </div>
                   <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-8 rounded-full" />
                 </div>
-                {/* <Input
-                  id="descrição"
-                  type="text"
-                  value={""}
-                  label="Descrição qualidade produto"
-                  placeholder="Digite breve descrição qualidade produto."
-                  onChange={() => {}}
-                >
-                  <FilePenLineIcon
-                    className="text-stone-400 mr-2 mt-0.5"
-                    size={18}
-                  />
-                </Input> */}
+               
                 <div className="flex flex-col justify-center gap-1 py-4">
                   <label
                     id="descrição"
@@ -451,7 +274,7 @@ export default function QRCodeFlow({
                   />
                 </div>
               </div>
-            )}
+            )} */}
             <div className="flex flex-col border-2 border-stone-300/50 w-full mt-8" />
           </div>
         )}

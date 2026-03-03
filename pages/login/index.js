@@ -63,8 +63,7 @@ export default function Login() {
         await setUsernameMessage(response?.message || "Usuário inválido");
         await setPasswordMessage(response?.action || "Senha inválida");
         setIsSubmitting(false);
-        await console.log(">>VIEW LOGIN");
-        await console.log(usernameMessage, passwordMessage);
+
         return;
       }
 

@@ -17,39 +17,49 @@ async function handleSend(path, method, dataObject, token) {
     body: dataObject ? JSON.stringify(dataObject) : null,
   });
 
-  return await handlerResponse(response);
+  const result = await handlerResponse(response);
+  return result;
 }
 
 async function handlerResponse(response) {
   try {
-    const responseBody = await response.json();
+    const responseBody = await response?.json();
 
-    if (Number(responseBody?.Status_Code) === STATUS_CODE.UNAUTHORIZED) {
+    if (Number(responseBody?.status_code) === STATUS_CODE.UNAUTHORIZED) {
       throw new UnauthorizedError({
-        message: `PROTHEUS API => ${responseBody?.Message}`,
+        message: `PROTHEUS API => ${responseBody?.message}`,
         action: "Verifique se os dados de login enviados estão corretos.",
       });
     }
 
-    if (Number(responseBody?.Status_Code) === STATUS_CODE.NOT_FOUND) {
+    if (Number(responseBody?.status_code) === STATUS_CODE.NOT_FOUND) {
       throw new NotFoundError({
-        message: `PROTHEUS API => ${responseBody?.Message}`,
+        message: `PROTHEUS API => ${responseBody?.message}`,
         action: "Verifique se os dados enviados estão corretos ou cadastrado.",
       });
     }
 
-    if (Number(responseBody?.Status_Code) === STATUS_CODE.SERVER_ERROR) {
+    if (
+      Number(responseBody?.status_code) === STATUS_CODE.SERVER_ERROR ||
+      Number(responseBody?.code) === STATUS_CODE.SERVER_ERROR
+    ) {
       throw new InternalServerError({
-        message: `PROTHEUS API => ${responseBody?.Message}`,
+        message: `PROTHEUS API => ${responseBody?.message}`,
         action:
           "Ocorreu erro no servidor de API do Protheus, entre contato suporte.",
       });
     }
 
-    if (Number(responseBody?.Status_Code) === STATUS_CODE.CREATE) {
+    //FOI RECOMENDADO RETORNO DE UM ARRAY VAZIO,
+    //mas equipe interna definiu esse retorno JSON de ERROR
+    if (Number(responseBody?.status_code) === STATUS_CODE.NOT_ALLOWED) {
+      return { objects: [] };
+    }
+
+    if (Number(responseBody?.status_code) === STATUS_CODE.CREATE) {
       const responseBodyDefault = {
-        status_code: Number(responseBody?.Status_Code),
-        message: responseBody?.Message,
+        status_code: Number(responseBody?.status_code),
+        message: responseBody?.message,
       };
 
       return responseBodyDefault;
@@ -106,6 +116,7 @@ const execute = {
     read: async ({ tokenProtheus }) => {
       return await handleSend(
         "WSRASTREIO/process?CA",
+        //"WSRASTREIO/process?RR",
         "GET",
         null,
         tokenProtheus,
@@ -126,7 +137,7 @@ const execute = {
   coating: {
     read: async ({ tokenProtheus }) => {
       return await handleSend(
-        "WSRASTREIO/process?CA",
+        "WSRASTREIO/process?RR",
         "GET",
         null,
         tokenProtheus,
@@ -147,7 +158,7 @@ const execute = {
   painting: {
     read: async ({ tokenProtheus }) => {
       return await handleSend(
-        "WSRASTREIO/process?CA",
+        "WSRASTREIO/process?PI",
         "GET",
         null,
         tokenProtheus,

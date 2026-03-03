@@ -33,7 +33,6 @@ export default function QRCode({
     () => ["TB", "TJ", "TK", "TU", "TV", "TW", "TI"],
     [],
   );
-
   function normalizedText(text) {
     return new TextDecoder("utf-8")
       .decode(new TextEncoder().encode(text))
@@ -372,7 +371,7 @@ export default function QRCode({
     <div className="fixed inset-0 z-50 h-screen overflow-y-auto bg-black/80 flex flex-col items-center justify-start gap-2 px-4 pb-16 sm:pb-0 ">
       {/* Header */}
       <div className="w-full max-w-md flex justify-center items-center p-4 text-white">
-        <h2 className="text-lg font-semibold">Leitor de QRCode</h2>
+        <h2 className="text-lg font-semibold">Leitor de QRCode BASE</h2>
       </div>
 
       <div className="flex flex-col border-2 border-stone-300/50 w-full rounded-full" />

@@ -12,7 +12,6 @@ export default function AlertInfo({
   action = null,
   setScannerLocked,
 }) {
-  console.count(">>ALERT INFO");
   async function handlerActionAlert(e) {
     e.preventDefault();
 

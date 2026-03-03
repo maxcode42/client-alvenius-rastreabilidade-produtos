@@ -26,9 +26,6 @@ async function getHandler(req, res) {
     code,
   );
 
-  console.log(">> CONTROLLER COATING [code]");
-  console.log(results);
-
   await controller.setSessionCookie(res, sessionObject.token);
 
   res.setHeader(

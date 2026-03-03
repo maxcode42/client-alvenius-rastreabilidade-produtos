@@ -4,13 +4,14 @@ import { Html5Qrcode } from "html5-qrcode";
 import { useQRCode } from "hooks/qr-code-context";
 
 export default function QRCodeCamera() {
+  console.count(">>QR-CODE-CAMERA");
   const {
     setScannerLocked,
     scannerLocked,
     setOpenAlert,
     setMessage,
     setResult,
-    setSpool,
+    //setSpool,
     openQRCode,
     result,
   } = useQRCode();
@@ -86,17 +87,23 @@ export default function QRCodeCamera() {
     (decodedText) => {
       if (scannerLocked) return;
       if (result !== null) {
+        console.log(result);
+        console.log("RESULT");
         setResult(null);
       }
 
       setResult(decodedText);
       setScannerLocked(true);
+      console.log(">> RESULT");
+      console.log(decodedText);
     },
     // [scannerLocked, setResult, setScannerLocked, setSpool],
     [setResult, result, scannerLocked, setScannerLocked],
   );
 
   useEffect(() => {
+    console.log(">>QRCODE-CAMERA");
+    console.log(scannerLocked);
     if (scannerLocked) return;
 
     let isMounted = true;
@@ -146,19 +153,20 @@ export default function QRCodeCamera() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     //isOpen,
-    //openQRCode,
+    openQRCode,
     scannerLocked,
     hasAskedPermission,
     permissionDenied,
-    //startScanner,
+    startScanner,
   ]);
 
-  useEffect(() => {
-    setScannerLocked(false);
-    setResult(null);
-    setSpool(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openQRCode]);
+  // useEffect(() => {
+  //   console.log(">>QRCODE-CAMERA INIT");
+  //   console.log(scannerLocked);
+  //   setScannerLocked(false);
+  //   setResult(null);
+  //   setSpool(null);
+  // }, [openQRCode]);
 
   return (
     <div className="bg-white rounded-md p-2 py-4 mt-4 w-full max-w-md aspect-square relative">

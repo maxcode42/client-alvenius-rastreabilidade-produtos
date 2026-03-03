@@ -1,21 +1,18 @@
 import { CalendarDaysIcon } from "lucide-react";
 
 import Button from "components/ui/button";
-import Separator from "../separator";
-import Loading from "../loading";
 
 import { useQRCode } from "hooks/qr-code-context";
 
-export default function CardItemsCustom({
-  items,
-  //setMessage,
-  //setOpenAlert,
-  //setOpenQRCode,
-  //setCurrentSpool,
-}) {
-  console.count(">>CARD-ITEMS-CUSTOM");
-  const { setOpenAlert, setOpenQRCode, setMessage, setCurrentSpool } =
-    useQRCode();
+export default function CardItemsCustom({ items }) {
+  const {
+    setOpenAlert,
+    setOpenQRCode,
+    setMessage,
+    setCurrentSpool,
+    setScannerLocked,
+    setResult,
+  } = useQRCode();
 
   function normalizeAlphanumeric(text) {
     return text.replace(/[^A-Za-z0-9]/g, "").trim();
@@ -126,18 +123,16 @@ export default function CardItemsCustom({
       return;
     }
 
+    await setResult(null);
     await setCurrentSpool(item);
+    await setScannerLocked(false);
     await setOpenQRCode(true);
   }
 
-  if (items.length === 0) {
-    return <Loading />;
-  }
+  if (!items) return null;
 
   return (
     <ul className="divide-y divide-stone-200 flex flex-col gap-4 py-2">
-      <Separator />
-
       <div className="w-full border-2 border-stone-300 rounded-lg bg-stone-100 shadow-sm shadow-blue-500/50">
         <h3 className="text-md text-center font-semibold py-2">
           Clique no card para continuar
@@ -145,7 +140,6 @@ export default function CardItemsCustom({
       </div>
 
       {items?.map((item, index) => (
-        // <Fragment key={String(item?.codigo).concat(index)}>
         <li
           key={String(item?.codigo).concat(index)}
           className="hover:bg-stone-50 transition bg-white border-2 border-stone-200 rounded-lg shadow-lg"
@@ -213,7 +207,6 @@ export default function CardItemsCustom({
             </div>
           </Button>
         </li>
-        // </Fragment>
       ))}
       <li className="rounded-md bg-stone-200 flex flex-row items-center px-4 py-2 mt-4">
         <p className="text-xs text-stone-600 font-bold tracking-wider flex flex-row gap-2">

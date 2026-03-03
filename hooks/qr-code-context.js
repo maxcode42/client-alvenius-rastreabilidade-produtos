@@ -1,77 +1,87 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useMemo } from "react";
 
-const QRCodeContext = createContext();
+const QRCodeContext = createContext(null);
 
 export function QRCodeProvider({ children }) {
   const [scannerLocked, setScannerLocked] = useState(false);
   const [currentSpool, setCurrentSpool] = useState(null);
   const [openQRCode, setOpenQRCode] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
-  const [onClose, setOnClose] = useState(() => {});
-  const [action, setAction] = useState(() => {});
+
+  // 👇 Estados que armazenam funções
+  const [onClose, setOnClose] = useState(() => () => {});
+  const [action, setAction] = useState(() => () => {});
+
   const [newStatus, setNewStatus] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [result, setResult] = useState(null);
   const [spool, setSpool] = useState(null);
   const [text, setText] = useState("");
-  // const [accordance, setAccordance] = useState(false);
-  // const [reversible, setReversible] = useState(false);
-  // const [qualityText, setQualityText] = useState("");
-  console.count(">> HOOK QRCODE");
+  const [data, setData] = useState(null);
+  const [item, setItem] = useState(null);
+
+  // Opcional: memorizar contexto para evitar re-render global desnecessário
+  const value = useMemo(
+    () => ({
+      data,
+      setData,
+      item,
+      setItem,
+      message,
+      setMessage,
+      scannerLocked,
+      setScannerLocked,
+      openAlert,
+      setOpenAlert,
+      result,
+      setResult,
+      onClose,
+      setOnClose,
+      spool,
+      setSpool,
+      action,
+      setAction,
+      isOpen,
+      setIsOpen,
+      openQRCode,
+      setOpenQRCode,
+      currentSpool,
+      setCurrentSpool,
+      newStatus,
+      setNewStatus,
+      text,
+      setText,
+    }),
+    [
+      data,
+      item,
+      message,
+      scannerLocked,
+      openAlert,
+      result,
+      onClose,
+      spool,
+      action,
+      isOpen,
+      openQRCode,
+      currentSpool,
+      newStatus,
+      text,
+    ],
+  );
+
   return (
-    <QRCodeContext.Provider
-      value={{
-        message,
-        setMessage,
-
-        scannerLocked,
-        setScannerLocked,
-
-        openAlert,
-        setOpenAlert,
-
-        result,
-        setResult,
-
-        onClose,
-        setOnClose,
-
-        spool,
-        setSpool,
-
-        action,
-        setAction,
-
-        isOpen,
-        setIsOpen,
-
-        openQRCode,
-        setOpenQRCode,
-
-        currentSpool,
-        setCurrentSpool,
-
-        newStatus,
-        setNewStatus,
-
-        text,
-        setText,
-      }}
-    >
-      {children}
-    </QRCodeContext.Provider>
+    <QRCodeContext.Provider value={value}>{children}</QRCodeContext.Provider>
   );
 }
 
 export function useQRCode() {
   const ctx = useContext(QRCodeContext);
-
   if (!ctx) {
-    throw new Error("useAuth must be used inside AuthProvider");
+    throw new Error("useQRCode must be used inside QRCodeProvider");
   }
-
   return ctx;
 }

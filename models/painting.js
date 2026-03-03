@@ -7,24 +7,23 @@ function normalizeAlphanumeric(text) {
 }
 
 async function handlerObject(data) {
-  const statusArray = Object.keys(PROCESS_STATUS.name);
   const results = await data?.objects.map((item) => {
-    const statusAcronym =
-      statusArray[Math.floor(Math.random() * statusArray.length)];
-
+    // const statusAcronym =
+    //   statusArray[Math.floor(Math.random() * statusArray.length)];
+    // console.log(data);
     return {
       sequence: item?.SEQ,
-      codigo: item?.COD?.trim(),
-      status: PROCESS_STATUS.name[statusAcronym], //getStatus(item?.STATUS?.trim()), )/
-      status_sigle: statusAcronym, //item?.STATUS?.trim(), //statusAcronym,
-      dateStart: item?.DTENTR?.trim(),
-      timeStart: item?.HRENT?.trim(),
+      codigo: normalizeAlphanumeric(item?.COD?.trim()),
+      status: PROCESS_STATUS.name[item?.STATUS?.trim()], //PROCESS_STATUS.name[statusAcronym],
+      status_sigle: item?.STATUS?.trim(), //statusAcronym,statusAcronym, //
+      dateStart: item?.DTINIC?.trim(), //item?.DTENTR?.trim(),
+      timeStart: item?.HRINIC?.trim(),
       dateEnd: item?.DTSAID?.trim(),
       timeEnd: item?.HRSAID?.trim(),
       user: item?.USER?.trimStart()?.trimEnd(),
       process: PROCESS_FLOW.name[item?.PROCES?.trim()],
       process_sigle: item?.PROCES?.trim(),
-      descricao: "PINTURA: TESTES descrição produto",
+      descricao: item?.DESC_QUALID ?? "", //"CALDEIRARIA: TESTES descrição produto",
     };
   });
 

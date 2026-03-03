@@ -1,4 +1,4 @@
-import AlertInfo from "../alert/info";
+//import AlertInfo from "../alert/info";
 import QRCodeBody from "./qr-code-body";
 import QRCodePanel from "./qr-code-panel";
 import QRCodeHeader from "./qr-code-header";
@@ -6,7 +6,7 @@ import QRCodeFooter from "./qr-code-footer";
 import QRCodeCamera from "./qr-code-camera";
 import QRCodeButton from "./qr-code-button";
 
-import { useQRCode } from "hooks/qr-code-context";
+//import { useQRCode } from "hooks/qr-code-context";
 
 export default function QRCode({
   //   message,
@@ -24,22 +24,21 @@ export default function QRCode({
   //   spool,
   //   action,
 }) {
-  console.count(">>QR-CODE-CUSTOM");
-  const {
-    message,
-    openAlert,
-    setScannerLocked,
-    //scannerLocked,
-    setOpenAlert,
-    //setMessage,
-    //setResult,
-    //setSpool,
-    // result,
-    // currentSpool,
-    // onClose,
-    // spool,
-    // action,
-  } = useQRCode();
+  //const {
+  //message,
+  //openAlert,
+  //setScannerLocked,
+  //scannerLocked,
+  //setOpenAlert,
+  //setMessage,
+  //setResult,
+  //setSpool,
+  // result,
+  // currentSpool,
+  // onClose,
+  // spool,
+  // action,
+  //} = useQRCode();
   return (
     <QRCodePanel>
       <QRCodeHeader>
@@ -66,12 +65,13 @@ export default function QRCode({
       />
 
       {/* Alert */}
-      <AlertInfo
+      {/* <AlertInfo
         message={message}
         openAlert={openAlert}
         setOpenAlert={setOpenAlert}
-        setScannerLocked={setScannerLocked}
-      />
+        // setScannerLocked={setScannerLocked}
+        setScannerLocked={() => {}}
+      /> */}
     </QRCodePanel>
   );
 }

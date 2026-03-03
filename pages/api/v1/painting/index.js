@@ -41,8 +41,7 @@ async function getHandler(req, res) {
 async function postHandler(req, res) {
   const paintingInputValues = req.body;
   const token = req.cookies[process.env.COOKIE_NAME];
-  console.log(">>BACKEND CONTROLLER");
-  console.log(paintingInputValues);
+
   const sessionObject = await session.findOneValidByToken(token);
 
   const renewedSessionObject = await session.renew(sessionObject.id);

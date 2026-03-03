@@ -11,15 +11,25 @@ import {
   XCircleIcon,
 } from "lucide-react";
 
-export default function QRCodeButton({
-  // currentSpool,
-  // onClose,
-  // spool,
-  // action,
-  children,
-}) {
-  const { currentSpool, onClose, spool, action } = useQRCode();
-
+export default function QRCodeButton({ children }) {
+  const {
+    currentSpool,
+    onClose,
+    spool,
+    action,
+    setSpool,
+    setNewStatus,
+    setScannerLocked,
+  } = useQRCode();
+  console.log("QRCODE_BUTTON");
+  console.log(currentSpool);
+  async function execute(status) {
+    await setScannerLocked(true);
+    await setNewStatus(status);
+    await action();
+    // await setSpool(null);
+    await onClose();
+  }
   return (
     <section className="flex flex-row w-full h-full py-8 gap-4 sm:w-1/2">
       {children}
@@ -27,8 +37,13 @@ export default function QRCodeButton({
         <Button
           type="button"
           title="Incia processo produção"
-          disabled={currentSpool?.status_sigle !== "RE" || !spool}
-          onClick={action}
+          disabled={
+            (currentSpool?.status_sigle !== "RE" || !spool) &&
+            currentSpool?.status_sigle !== "PU" &&
+            currentSpool?.status_sigle !== "EX"
+          }
+          onClick={() => execute("EX")}
+          //onClick={action}
           className="
                   disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none
                   w-1/2 text-sm px-3 py-1 rounded-md h-16
@@ -43,7 +58,7 @@ export default function QRCodeButton({
           type="button"
           title="Pausar processo produção"
           disabled={currentSpool?.status_sigle !== "EX" || !spool}
-          onClick={action}
+          onClick={() => execute("PU")}
           className="
                   disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
 
@@ -58,7 +73,7 @@ export default function QRCodeButton({
           type="button"
           title="Continuar processo produção"
           disabled={currentSpool?.status_sigle !== "PU" || !spool}
-          onClick={action}
+          onClick={() => execute("CO")}
           className="
                   disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
 
@@ -73,7 +88,7 @@ export default function QRCodeButton({
           type="button"
           title="Finaliza processo produção"
           disabled={currentSpool?.status_sigle !== "EX" || !spool}
-          onClick={action}
+          onClick={() => execute("FI")}
           className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
                truncate min-w-20 text-center flex flex-row gap-1 justify-center items-center bg-green-500 text-blue-100  hover:bg-green-800 hover:text-green-100 hover:shadow-green-600 hover:shadow-md"
         >
@@ -86,7 +101,7 @@ export default function QRCodeButton({
           type="button"
           title="Avaliar qualidade produto"
           disabled={currentSpool?.status_sigle !== "FI" || !spool}
-          onClick={action}
+          onClick={() => execute("RO")}
           className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
                truncate min-w-20 text-center flex flex-row gap-1 justify-center items-center bg-blue-500 text-blue-100  hover:bg-blue-800 hover:text-blue-100 hover:shadow-blue-600 hover:shadow-md"
         >
@@ -99,7 +114,7 @@ export default function QRCodeButton({
           type="button"
           title="Avaliar qualidade produto"
           disabled={currentSpool?.status_sigle !== "RV" || !spool}
-          onClick={action}
+          onClick={() => execute("RE")}
           className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
                truncate min-w-20 text-center flex flex-row gap-1 justify-center items-center bg-lime-500 text-lime-100  hover:bg-lime-800 hover:text-lime-100 hover:shadow-lime-600 hover:shadow-md"
         >
@@ -110,8 +125,12 @@ export default function QRCodeButton({
       <Button
         type="button"
         title="Fechar e cancelar a leitura QRCode"
-        onClick={onClose}
-        // onClick={() => testeClick()}
+        // onClick={() => {
+        //   onClose(), setScannerLocked(true), setSpool(null);
+        // }}
+        onClick={() => {
+          onClose(), setScannerLocked(true), setSpool(null);
+        }}
         className={`${currentSpool ? "w-1/2" : "w-full"} text-sm bg-red-600 px-3 py-1 rounded-md text-stone-100 h-16 text-center flex flex-row gap-1 justify-center items-center`}
       >
         <XCircleIcon className="size-4" />
