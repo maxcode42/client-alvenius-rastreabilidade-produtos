@@ -142,7 +142,17 @@ export default function CardItemsCustom({ items }) {
       {items?.map((item, index) => (
         <li
           key={String(item?.codigo).concat(index)}
-          className="hover:bg-stone-50 transition bg-white border-2 border-stone-200 rounded-lg shadow-lg"
+          className={`
+            hover:bg-stone-50 transition  border-2 border-stone-200 rounded-lg shadow-lg
+              opacity-0
+              translate-y-4
+              animate-fadeInUp
+              //animate-fadeInDown
+              //[animation-delay:${index * 120}ms]
+              [animation-delay:${Math.min(index * 80, 800)}ms]
+              animation-fill-mode:forwards
+              ${item?.status_sigle === "SU" || item?.status_sigle === "RO" ? "bg-stone-300/50 shadow-none text-stone-800" : "bg-white"}
+            `}
         >
           {/* <li className="hover:bg-stone-50 transition odd:bg-white border-2 border-stone-200 rounded-lg shadow-lg"> */}
           <Button
@@ -154,10 +164,9 @@ export default function CardItemsCustom({ items }) {
             onClick={(e) => openModalQRCode(e, item)}
             className={`
                   //disabled:bg-stone-300/50 disabled:cursor-not-allowed disabled:shadow-none text-stone-800
-                  flex flex-col items-start justify-center 
-                   w-full min-w-full rounded-md px-2 py-2 hover:bg-stone-100 hover:shadow-blue-600/50 hover:shadow-md
-                   ${item?.status_sigle === "SU" || item?.status_sigle === "RO" ? "bg-stone-300/50 shadow-none text-stone-800" : "bg-transparent"}
-                   `}
+                  flex flex-col items-start justify-center bg-transparent
+                   w-full min-w-full rounded-md px-2 py-2 hover:bg-stone-100 hover:shadow-blue-600/50 hover:shadow-md hover:text-stone-800
+                  `}
           >
             <div className="flex flex-row w-full justify-between px-2">
               <div className="flex flex-col  justify-center items-center text-sm sm:text-sm md:text-base text-center text-stone-800  ">

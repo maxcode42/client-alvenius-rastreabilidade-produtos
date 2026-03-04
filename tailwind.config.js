@@ -19,9 +19,25 @@ module.exports = {
           "0%": { top: "0%" },
           "100%": { top: "100%" },
         },
+        fadeInUp: {
+          "0%": { opacity: "0", transform: "translateY(16px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        fadeInDown: {
+          "0%": { opacity: "0", transform: "translateY(-16px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        scaleInCenter: {
+          "0%": { opacity: "0", transform: "scale(0.7)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
       },
       animation: {
         scan: "scan 2s linear infinite",
+        fadeInUp: "fadeInUp 0.5s ease-out forwards",
+        fadeInDown: "fadeInDown 0.5s ease-out forwards",
+        scaleInCenter:
+          "scaleInCenter 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards",
       },
     },
   },

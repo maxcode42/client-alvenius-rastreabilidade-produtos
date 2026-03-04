@@ -302,8 +302,25 @@ export default function ProcessFlow({
             {(!itens || !itens?.length) && loading && <Loading />}
 
             {itens?.length === 0 && !loading && (
-              <div className="w-full h-full flex flex-col min-h-72 flex-1 px-2 py-8 gap-8 border-blue-300/50 border-2 rounded-md text-center">
-                <div className="flex flex-col justify-center items-center">
+              <div
+                //className="w-full h-full flex flex-col min-h-72 flex-1 px-2 py-8 gap-8 border-blue-300/50 border-2 rounded-md text-center"
+                className={`w-full h-full flex flex-col min-h-72 flex-1 px-2 py-8 gap-8 border-blue-300/50 border-2 rounded-md text-center
+                            opacity-0
+                            translate-y-4
+                            animate-scaleInCenter
+                            [animation-delay:${120}ms]
+                            animation-fill-mode:forwards
+                          `}
+              >
+                <div
+                  className={`flex flex-col justify-center items-center
+                              opacity-0
+                            translate-y-4
+                            animate-scaleInCenter
+                            [animation-delay:${600}ms]
+                            animation-fill-mode:forwards
+                          `}
+                >
                   <i className="border-[.1rem] border-blue-400/50 rounded-full p-6 shadow-lg bg-stone-100 shadow-blue-300/50">
                     <ArchiveXIcon className="size-8 text-blue-950/50 " />
                   </i>

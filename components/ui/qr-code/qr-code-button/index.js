@@ -131,7 +131,7 @@ export default function QRCodeButton({ children }) {
         onClick={() => {
           onClose(), setScannerLocked(true), setSpool(null);
         }}
-        className={`${currentSpool ? "w-1/2" : "w-full"} text-sm bg-red-600 px-3 py-1 rounded-md text-stone-100 h-16 text-center flex flex-row gap-1 justify-center items-center`}
+        className={`${currentSpool ? "w-1/2" : "w-full"} text-sm bg-red-600 hover:bg-red-600/50 hover:shadow-red-300 hover:text-stone-100  px-3 py-1 rounded-md text-stone-100 h-16 text-center flex flex-row gap-1 justify-center items-center`}
       >
         <XCircleIcon className="size-4" />
         Fechar

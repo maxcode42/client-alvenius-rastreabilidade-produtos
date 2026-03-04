@@ -125,7 +125,17 @@ export default function CardItems({ items, setText }) {
     <ul className="divide-y divide-stone-200 flex flex-col gap-4 py-2">
       {items?.map((item, index) => (
         <Fragment key={String(item?.codigo).concat(index)}>
-          <li className="hover:bg-stone-50 transition odd:bg-white px-2 py-2 border-2 border-stone-200 rounded-lg shadow-lg">
+          <li
+            className={`hover:bg-stone-50 transition odd:bg-white px-2 py-2 border-2 border-stone-200 rounded-lg shadow-lg
+             opacity-0
+              translate-y-4
+              //animate-fadeInUp
+              animate-fadeInDown
+              //[animation-delay:${index * 120}ms]
+              [animation-delay:${Math.min(index * 80, 800)}ms]
+              animation-fill-mode:forwards
+            `}
+          >
             <div className="flex flex-row w-full justify-between">
               <div className="flex flex-row justify-center gap-1">
                 <div className="flex flex-col  justify-center items-center text-sm sm:text-sm md:text-base text-center text-stone-800  ">

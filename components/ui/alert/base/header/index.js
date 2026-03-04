@@ -2,7 +2,15 @@ import { XIcon } from "lucide-react";
 
 export function AlertHeader({ setOpenAlert, title, children }) {
   return (
-    <>
+    <div
+      className={`w-full
+              opacity-0
+              translate-y-4
+              animate-scaleInCenter
+              [animation-delay:${120}ms]
+              animation-fill-mode:forwards
+            `}
+    >
       <div className="flex flex-row justify-end items-center w-full">
         <button
           onClick={() => setOpenAlert(false)}
@@ -15,6 +23,6 @@ export function AlertHeader({ setOpenAlert, title, children }) {
         {children}
         <h3 className="text-2xl text-center">{title}</h3>
       </section>
-    </>
+    </div>
   );
 }

@@ -199,7 +199,15 @@ export default function QRCodeFlowCustom() {
             <TextSpool spool={spool} />
 
             {String(currentSpool?.status_sigle).toUpperCase() === "FI" && (
-              <div className="flex flex-col py-2">
+              <div
+                className={`flex flex-col py-2
+                  opacity-0
+                  translate-y-4
+                  animate-fadeInDown
+                  [animation-delay:${120}ms]
+                  animation-fill-mode:forwards
+              `}
+              >
                 {/* <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-4 mb-4 rounded-full" /> */}
                 <Separator className={"via-stone-300/50"} />
                 <div className="flex flex-col justify-center gap-1 py-4">
