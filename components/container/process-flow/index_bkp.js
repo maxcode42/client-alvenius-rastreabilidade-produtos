@@ -23,6 +23,8 @@ export default function ProcessFlow({
   info = "",
   route,
 }) {
+  console.count(">>CONTAINER QR-CODE");
+
   const {
     setSpool,
     currentSpool,
@@ -53,6 +55,7 @@ export default function ProcessFlow({
      FETCH (RODA 1 VEZ POR ROUTE)
      ========================= */
   const fetchData = useCallback(async () => {
+    console.count(">>fetchData");
     const results = await api.execute[route].read();
     setItens(results || []);
   }, [route]);
@@ -69,6 +72,8 @@ export default function ProcessFlow({
   }
 
   async function handlerData() {
+    console.count(">>handlerData");
+
     if (!getData || !currentSpool) return;
 
     const objectData = {
@@ -157,8 +162,6 @@ export default function ProcessFlow({
     });
 
     setAction(() => () => handlerData());
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setOnClose, setOpenQRCode, setSpool, setScannerLocked, setAction]);
 
   /* =========================

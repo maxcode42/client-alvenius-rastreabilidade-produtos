@@ -35,7 +35,7 @@ export default function ProcessFlow({
   //const [message, setMessage] = useState("");
   // const [newStatus, setNewStatus] = useState("");
 
-  const cardCustom = false;
+  const cardCustom = true;
 
   const {
     currentSpool,
@@ -297,10 +297,7 @@ export default function ProcessFlow({
 
           <Separator />
 
-          <PanelPrimary
-            // cssCustom={`${itensFiltered.length === 0 || cardCustom ? "border-none" : ""}`}
-            cssCustom={`border-none`}
-          >
+          <PanelPrimary className={`border-none`}>
             {/* {!itens || !itens?.length || loading ?? <Loading />} */}
             {(!itens || !itens?.length) && loading && <Loading />}
 

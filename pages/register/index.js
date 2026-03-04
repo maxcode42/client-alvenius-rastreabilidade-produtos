@@ -128,7 +128,7 @@ function Register() {
             <Button
               onClick={(e) => handleConfirmClear(e)}
               disabled={itens.length === 0 && spool === null}
-              cssCustom={
+              className={
                 "bg-red-500 text-red-100  hover:bg-red-700 hover:text-stone-100 hover:shadow-red-600 disabled:bg-stone-300 disabled:shadow-none"
               }
             >
@@ -139,7 +139,7 @@ function Register() {
             <Button
               disabled={itens.length === 0 || openAlertInfo || loading}
               onClick={(e) => handleCreateRegister(e)}
-              cssCustom={
+              className={
                 "bg-green-500 text-green-100  hover:bg-green-700 hover:text-stone-100 hover:shadow-green-600 disabled:bg-stone-300 disabled:shadow-none"
               }
             >

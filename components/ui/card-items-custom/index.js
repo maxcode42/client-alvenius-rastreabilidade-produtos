@@ -129,7 +129,7 @@ export default function CardItemsCustom({ items }) {
     await setOpenQRCode(true);
   }
 
-  if (!items) return null;
+  if (!items || items?.length === 0) return null;
 
   return (
     <ul className="divide-y divide-stone-200 flex flex-col gap-4 py-2">
@@ -154,6 +154,7 @@ export default function CardItemsCustom({ items }) {
             onClick={(e) => openModalQRCode(e, item)}
             className={`
                   //disabled:bg-stone-300/50 disabled:cursor-not-allowed disabled:shadow-none text-stone-800
+                  flex flex-col items-start justify-center 
                    w-full min-w-full rounded-md px-2 py-2 hover:bg-stone-100 hover:shadow-blue-600/50 hover:shadow-md
                    ${item?.status_sigle === "SU" || item?.status_sigle === "RO" ? "bg-stone-300/50 shadow-none text-stone-800" : "bg-transparent"}
                    `}
@@ -164,7 +165,7 @@ export default function CardItemsCustom({ items }) {
                   {formatSixDigits(index + 1)}
                 </small>
               </div>
-              <div className="capitalize py-2 text-center min-w-20 text-xs sm:text-sm md:text-base text-stone-800">
+              <div className="capitalize  text-center min-w-20 text-xs sm:text-sm md:text-base text-stone-800">
                 <span
                   className={`${String(getStyleStatus(item?.status_sigle))} p-1 text-xs rounded-full flex flex-row justify-center items-center`}
                 >
@@ -172,12 +173,12 @@ export default function CardItemsCustom({ items }) {
                 </span>
               </div>
             </div>
-            <div className="flex flex-col">
-              <p className="text-left px-2 py-2 text-xs sm:text-sm md:text-base">
+            <div className="flex flex-col w-full justify-center">
+              <p className="w-full text-left px-2 py-2 text-xs sm:text-sm md:text-base">
                 <strong>Código: </strong>
                 {formatCodeDefault(item?.codigo)}
               </p>
-              <div className="flex flex-row justify-between px-2 py-1">
+              <div className="flex flex-row w-full items-center justify-between px-2 py-1">
                 <p className="text-xs flex flex-col w-1/2 gap-1 items-start">
                   <small className="flex flex-row gap-1">
                     <CalendarDaysIcon className="size-4 text-slate-400" />
@@ -198,7 +199,7 @@ export default function CardItemsCustom({ items }) {
               </div>
               <p
                 colSpan={5}
-                className=" px-2 py-2 text-xs sm:text-sm md:text-base text-left"
+                className="w-full px-2 py-2 text-xs sm:text-sm md:text-base text-left"
               >
                 <small>
                   <strong>Descrição:</strong> {item?.descricao}
