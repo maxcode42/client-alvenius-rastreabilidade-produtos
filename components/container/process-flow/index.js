@@ -1,24 +1,32 @@
 import { useCallback, useEffect, useState } from "react";
+import { ArchiveXIcon } from "lucide-react";
 
-import Header from "../../header"; //"../../components/header";
+import Header from "../../header";
 import Body from "../../body";
 import CardItems from "../../ui/card-items";
 import PanelDefault from "../../ui/panel-default";
 import PanelPrimary from "../../ui/panel-primary";
 import HeaderPageTitle from "../../header-page-title";
 import HeaderPageButtons from "../../header-page-buttons";
-
 import CardItemsCustom from "../../ui/card-items-custom";
 import QRCodeFlowCustom from "../../ui/modal/qr-code-flow-custom";
 import QRCodeFlow from "../../ui/modal/qr-code-flow";
 import AlertInfo from "../../ui/alert/info";
 
-import api from "infra/provider/api-web";
-import { useQRCode } from "hooks/qr-code-context";
 import QRCodeQuestion from "components/ui/modal/qr-code-question";
 import Loading from "components/ui/loading";
 import Separator from "components/ui/separator";
-import { ArchiveXIcon } from "lucide-react";
+
+import { normalizeAlphanumeric } from "util/formatters/text";
+import { formatCodeDefault } from "util/formatters/code";
+import { formatToPtBR } from "util/formatters/date";
+
+import { PROCESS_FLOW } from "types/process-flow";
+import { PROCESS_STATUS } from "types/process-status";
+
+import { useQRCode } from "hooks/qr-code-context";
+
+import api from "infra/provider/api-web";
 
 export default function ProcessFlow({
   textModal = "",
@@ -27,13 +35,6 @@ export default function ProcessFlow({
   route,
 }) {
   const [text, setText] = useState("");
-  // const [spool, setSpool] = useState(null);
-  // const [currentSpool, setCurrentSpool] = useState(null);
-  //const [openQRCode, setOpenQRCode] = useState(false);
-  //const [openAlert, setOpenAlert] = useState(false);
-  // const [getData, setGetData] = useState({});
-  //const [message, setMessage] = useState("");
-  // const [newStatus, setNewStatus] = useState("");
 
   const cardCustom = true;
 
@@ -51,13 +52,15 @@ export default function ProcessFlow({
     newStatus,
     setNewStatus,
     setResult,
+    setSpool,
+    spool,
   } = useQRCode();
 
-  const [itens, setItens] = useState(null);
-  const [searchText, setSearchText] = useState("");
-  const [itensFiltered, setItensFiltered] = useState([]);
   const [isOpenQuestion, setIsOpenQuestion] = useState(false);
+  const [itensFiltered, setItensFiltered] = useState(null);
+  const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(true);
+  const [itens, setItens] = useState(null);
 
   // const testeAPI = async (code) => {
   //   return code;
@@ -69,12 +72,13 @@ export default function ProcessFlow({
   //   //console.log(results);
   //   return results;
   // }
+
   async function openModalQRCode(e) {
     e.preventDefault();
 
     //await setCurrentSpool(item);
-    await setScannerLocked(false);
     await setResult(null);
+    await setScannerLocked(false);
     await setOpenQRCode(true);
     // }
     // function openModalQRCode(e) {
@@ -85,69 +89,50 @@ export default function ProcessFlow({
     //setOpenQRCode(true);
   }
 
-  function normalizeAlphanumeric(text) {
-    return text?.replace(/[^A-Za-z0-9]/g, "")?.trim();
+  function resetDataDefault() {
+    setItensFiltered(null);
+    setCurrentSpool(null);
+    setNewStatus(null);
+    setResult(null);
+    setItens(null);
+    setSpool(null);
   }
 
-  function formatToPtBR(dateStr) {
-    if (!dateStr) return;
+  //CONFIRMAR SE VAI DEIXAR LADO WEB MUDAR O PROCESSO ???
+  function sendNextProcess(status, reversible) {
+    //QUANDO PROCESSO FOR PINTURA QUAL SIGLA ENVIAR???
+    if (newStatus !== PROCESS_STATUS.sigle.romaneio || reversible) {
+      return PROCESS_FLOW.route[route].sigle;
+    }
 
-    const year = Number(dateStr.slice(0, 4));
-    const month = Number(dateStr.slice(4, 6)) - 1;
-    const day = Number(dateStr.slice(6, 8));
-
-    const date = new Date(year, month, day); // cria em horário local
-
-    return new Intl.DateTimeFormat("pt-BR").format(date);
+    const nextProcess = {
+      boilermaking: "RR",
+      coating: "PI",
+      painting: "FF",
+    };
+    return nextProcess[PROCESS_FLOW.route[route].name];
   }
 
-  // function formatCodeDefault(code) {
-  //   const result = code.replace(
-  //     /^([A-Z]{2})(\d{4})(\d{5})(\d{3})$/,
-  //     "$1-$2-$3-$4",
-  //   );
-  //   return result;
-  // }
-  function formatCodeDefault(code) {
-    // const result = code.replace(
-    //   /^([A-Z]{2})(\d{4})(\d{5})(\d{4})$/,
-    //   "$1-$2-$3-$4",
-    // );
-    // const result = code.replace(
-    //   /^(?=.{15}$)([A-Z]{2})([A-Za-z0-9]{4})([A-Za-z0-9]{5})([A-Za-z0-9]{4,5})$/,
-    //   (_, g1, g2, g3, g4) => `${g1}-${g2}-${g3}-${g4}`,
-    // );
-    // return result;
-    const text = normalizeAlphanumeric(code);
-    const match = text.match(/^(?=.{6,15}$)([A-Z]{2})([A-Za-z0-9]+)$/);
-    if (!match) return null;
+  async function handlerData(getData) {
+    //if (!getData || !currentSpool) return;
+    if (!currentSpool) return;
 
-    const prefix = match[1];
-    let rest = match[2];
+    const objectData = {
+      codigo: normalizeAlphanumeric(currentSpool?.codigo),
+      processo: sendNextProcess(newStatus, getData?.reversible),
+      conformidade: getData?.accordance ? "S" : "N",
+      reversivel: getData?.reversible ? "S" : "N",
+      disposicao_qualidade: getData?.qualityText ?? "",
+      status: newStatus,
+    };
 
-    const groups = [prefix];
+    console.log("PROCESS-FLOW");
+    console.log(objectData);
+    // await api.execute[route].create({
+    //   data: objectData,
+    // });
 
-    if (rest.length >= 4) {
-      groups.push(rest.slice(0, 4));
-      rest = rest.slice(4);
-    }
-
-    if (rest.length >= 5) {
-      groups.push(rest.slice(0, 5));
-      rest = rest.slice(5);
-    }
-
-    if (rest.length >= 4) {
-      const size = rest.length >= 5 ? 5 : 4;
-      groups.push(rest.slice(0, size));
-      rest = rest.slice(size);
-    }
-
-    if (rest.length > 0) {
-      groups.push(rest);
-    }
-
-    return groups.join("-");
+    resetDataDefault();
   }
 
   const fetchData = useCallback(async () => {
@@ -162,26 +147,59 @@ export default function ProcessFlow({
         e.preventDefault();
       }
 
-      if ((!itens || !itens?.length || itens?.length === 0) && !currentSpool) {
+      if (
+        ((!itens || !itens?.length || itens?.length === 0) && !currentSpool) ||
+        (searchText.length > 0 && searchText.length < 3)
+      ) {
         setLoading(false);
-        return null;
+        return;
+      }
+      console.log(itensFiltered);
+      if (!itensFiltered) {
+        setItensFiltered(itens);
+        setLoading(false);
+        return;
       }
 
       const filtered = itens?.filter((item) => {
-        const status = item.status;
-        const code = item.codigo;
-        const codeFormat = formatCodeDefault(item.codigo);
-        const dateStart = formatToPtBR(item.dateStart);
-        const dateEnd = formatToPtBR(item.dateEnd);
+        const status = item?.status;
+        const code = item?.codigo;
+        const codeFormat = formatCodeDefault(item?.codigo);
+        const dateStart = formatToPtBR(item?.dateStart);
+        const dateEnd = formatToPtBR(item?.dateEnd);
 
-        return (
+        const itemFiltered =
           code.includes(searchText.toUpperCase()) ||
           codeFormat.includes(searchText.toUpperCase()) ||
           status.includes(searchText.toLowerCase()) ||
           dateStart?.includes(searchText) ||
-          dateEnd?.includes(searchText)
-        );
+          dateEnd?.includes(searchText);
+
+        return itemFiltered;
       });
+      // const filtered = itens?.reduce((acc, item) => {
+      //   const status = item?.status ?? "";
+      //   const code = item?.codigo ?? "";
+      //   const codeFormat = formatCodeDefault(code) ?? "";
+      //   const dateStart = formatToPtBR(item?.dateStart) ?? "";
+      //   const dateEnd = formatToPtBR(item?.dateEnd) ?? "";
+
+      //   const match =
+      //     code.includes(searchText.toUpperCase()) ||
+      //     codeFormat.includes(searchText.toUpperCase()) ||
+      //     status.includes(searchText.toLowerCase()) ||
+      //     dateStart.includes(searchText) ||
+      //     dateEnd.includes(searchText);
+
+      //   if (match) {
+      //     acc.push({
+      //       ...item,
+      //       status_color: styleColorStatus(item?.status_sigle),
+      //     });
+      //   }
+      //   console.log(acc);
+      //   return acc;
+      // }, []);
 
       setItensFiltered(filtered);
       setLoading(false);
@@ -189,44 +207,6 @@ export default function ProcessFlow({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [itens, searchText],
   );
-
-  async function handlerData(getData) {
-    //if (!getData || !currentSpool) return;
-    if (!currentSpool) return;
-
-    const objectData = {
-      codigo: await normalizeAlphanumeric(currentSpool?.codigo),
-      status: newStatus, //EX
-      processo: "CA",
-      conformidade: getData?.accordance ? "S" : "N",
-      reversivel: getData?.reversible ? "S" : "N",
-      disposicao_qualidade: getData?.qualityText || "",
-    };
-
-    await api.execute[route].create({
-      data: objectData,
-    });
-
-    setItensFiltered(null);
-    setNewStatus(null);
-    setItens(null);
-  }
-
-  useEffect(() => {
-    if (itens?.length >= 0) return;
-
-    fetchData();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [itens]);
-
-  useEffect(() => {
-    const time = setTimeout(() => {
-      handleSearch(null);
-    }, 1_000);
-
-    return () => clearTimeout(time);
-  }, [searchText, handleSearch]);
 
   const assignDefaultStandards = useCallback(() => {
     // setOnClose(() => {
@@ -260,9 +240,25 @@ export default function ProcessFlow({
   }, []);
 
   useEffect(() => {
+    if (itens?.length >= 0) return;
+
+    fetchData();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itens]);
+
+  useEffect(() => {
+    const time = setTimeout(() => {
+      handleSearch(null);
+    }, 1_000);
+
+    return () => clearTimeout(time);
+  }, [searchText, handleSearch]);
+
+  useEffect(() => {
     if (!newStatus) return;
 
-    if (newStatus === "RO") {
+    if (newStatus === PROCESS_STATUS.sigle.romaneio && !cardCustom) {
       setIsOpenQuestion(true);
       return;
     }
@@ -391,8 +387,8 @@ export default function ProcessFlow({
       {isOpenQuestion && (
         <QRCodeQuestion
           setIsOpenQuestion={setIsOpenQuestion}
+          resetDataDefault={resetDataDefault}
           handlerData={handlerData}
-          //setData={setGetData}
         />
       )}
     </div>

@@ -3,6 +3,7 @@ import {
   NotFoundError,
   UnauthorizedError,
 } from "infra/errors";
+import { PROCESS_FLOW } from "types/process-flow";
 import { STATUS_CODE } from "types/status-code";
 
 const baseURL = process.env.API_PROTHEUS_BASE_URL;
@@ -16,8 +17,9 @@ async function handleSend(path, method, dataObject, token) {
     },
     body: dataObject ? JSON.stringify(dataObject) : null,
   });
-
   const result = await handlerResponse(response);
+  console.log("API PROTHEUS RESULT");
+  console.log(result);
   return result;
 }
 
@@ -115,14 +117,15 @@ const execute = {
   boilermaking: {
     read: async ({ tokenProtheus }) => {
       return await handleSend(
-        "WSRASTREIO/process?CA",
-        //"WSRASTREIO/process?RR",
+        `WSRASTREIO/process?${PROCESS_FLOW.route.boilermaking.sigle}`,
         "GET",
         null,
         tokenProtheus,
       );
     },
     create: async ({ data, tokenProtheus }) => {
+      console.log("API PROTHEUS boilermaking");
+      console.log(data);
       return await handleSend("WsRastreio/new", "POST", data, tokenProtheus);
     },
     find: async ({ params, tokenProtheus }) => {
@@ -137,7 +140,7 @@ const execute = {
   coating: {
     read: async ({ tokenProtheus }) => {
       return await handleSend(
-        "WSRASTREIO/process?RR",
+        `WSRASTREIO/process?${PROCESS_FLOW.route.coating.sigle}`,
         "GET",
         null,
         tokenProtheus,
@@ -158,7 +161,7 @@ const execute = {
   painting: {
     read: async ({ tokenProtheus }) => {
       return await handleSend(
-        "WSRASTREIO/process?PI",
+        `WSRASTREIO/process?${PROCESS_FLOW.route.painting.sigle}`,
         "GET",
         null,
         tokenProtheus,

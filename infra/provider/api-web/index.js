@@ -1,4 +1,5 @@
 import { dispatchUnauthorized } from "auth/auth-events";
+import { PROCESS_FLOW } from "types/process-flow";
 import { STATUS_CODE } from "types/status-code";
 
 async function handleSend(path, method, dataObject) {
@@ -39,40 +40,60 @@ const execute = {
   },
   register: {
     create: async ({ data }) => {
-      return await handleSend("register", "POST", data);
+      return await handleSend(PROCESS_FLOW.route.register.name, "POST", data);
     },
   },
   boilermaking: {
     read: async () => {
-      return await handleSend("boilermaking", "GET", null);
+      return await handleSend(
+        PROCESS_FLOW.route.boilermaking.name,
+        "GET",
+        null,
+      );
     },
     create: async ({ data }) => {
-      return await handleSend(`boilermaking`, "POST", data);
+      return await handleSend(
+        PROCESS_FLOW.route.boilermaking.name,
+        "POST",
+        data,
+      );
     },
     find: async ({ params }) => {
-      return await handleSend(`boilermaking/${params}`, "GET", null);
+      return await handleSend(
+        `${PROCESS_FLOW.route.boilermaking.name}/${params}`,
+        "GET",
+        null,
+      );
     },
   },
   coating: {
     read: async () => {
-      return await handleSend("coating", "GET", null);
+      return await handleSend(PROCESS_FLOW.route.coating.name, "GET", null);
     },
     create: async ({ data }) => {
-      return await handleSend(`coating`, "POST", data);
+      return await handleSend(PROCESS_FLOW.route.coating.name, "POST", data);
     },
     find: async ({ params }) => {
-      return await handleSend(`coating/${params}`, "GET", null);
+      return await handleSend(
+        `${PROCESS_FLOW.route.coating.name}/${params}`,
+        "GET",
+        null,
+      );
     },
   },
   painting: {
     read: async () => {
-      return await handleSend("painting", "GET", null);
+      return await handleSend(PROCESS_FLOW.route.painting.name, "GET", null);
     },
     create: async ({ data }) => {
-      return await handleSend(`painting`, "POST", data);
+      return await handleSend(PROCESS_FLOW.route.painting.name, "POST", data);
     },
     find: async ({ params }) => {
-      return await handleSend(`painting/${params}`, "GET", null);
+      return await handleSend(
+        `${PROCESS_FLOW.route.painting.name}/${params}`,
+        "GET",
+        null,
+      );
     },
   },
 };

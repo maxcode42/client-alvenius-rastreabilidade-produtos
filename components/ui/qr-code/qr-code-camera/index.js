@@ -1,179 +1,169 @@
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Html5Qrcode } from "html5-qrcode";
-
 import { useQRCode } from "hooks/qr-code-context";
 
 export default function QRCodeCamera() {
-  const {
-    setScannerLocked,
-    scannerLocked,
-    setOpenAlert,
-    setMessage,
-    setResult,
-    setSpool,
-    openQRCode,
-    result,
-  } = useQRCode();
-  const [permissionDenied, setPermissionDenied] = useState(false);
-  const [hasAskedPermission, setHasAskedPermission] = useState(false);
+  const { openQRCode, openAlert, setOpenAlert, setResult } = useQRCode();
+
   const qrRegionId = "qr-reader";
+
   const qrCodeRef = useRef(null);
+  const isStartingRef = useRef(false);
+  const lastReadRef = useRef(null);
+  const scanLockRef = useRef(false);
 
-  const stopScanner = async () => {
-    if (!qrCodeRef.current) return;
+  /* =========================
+     STOP CAMERA
+     ========================= */
+  const stopScanner = useCallback(async () => {
+    const instance = qrCodeRef.current;
+    if (!instance) return;
 
-    try {
-      await qrCodeRef.current.stop();
-      await qrCodeRef.current.clear();
-    } catch (error) {
-      console.error(error);
-    }
     qrCodeRef.current = null;
-  };
+    scanLockRef.current = false;
+    lastReadRef.current = null;
 
-  const checkCameraSupport = () => {
-    return !!navigator.mediaDevices?.getUserMedia;
-  };
-
-  const requestCameraPermission = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
-
-      stream.getTracks().forEach((track) => track.stop());
-
-      setPermissionDenied(false);
-      return true;
+      await instance.stop();
+      await instance.clear();
     } catch (error) {
-      if (error.name === "NotAllowedError") {
-        setPermissionDenied(true);
-      }
-      return false;
+      console.error("[QR-CODE] Erro ao parar scanner:", {
+        error,
+        message: error?.message ?? "Erro desconhecido",
+      });
     }
-  };
+  }, []);
 
-  const startScanner = async () => {
-    if (qrCodeRef.current) return;
+  /* =========================
+     PAUSE SCANNER
+     ========================= */
+  const pauseScanner = useCallback(() => {
+    const instance = qrCodeRef.current;
+    if (!instance) return;
+
+    try {
+      instance.pause(true);
+    } catch (error) {
+      console.error("[QR-CODE] Erro ao pausar scanner:", {
+        error,
+        message: error?.message ?? "Erro desconhecido",
+      });
+    }
+  }, []);
+
+  /* =========================
+     RESUME SCANNER
+     ========================= */
+  const resumeScanner = useCallback(() => {
+    const instance = qrCodeRef.current;
+    if (!instance) return;
+
+    try {
+      scanLockRef.current = false;
+      lastReadRef.current = null;
+
+      instance.resume();
+    } catch (error) {
+      console.error("[QR-CODE] Erro ao retomar scanner:", {
+        error,
+        message: error?.message ?? "Erro desconhecido",
+      });
+    }
+  }, []);
+
+  /* =========================
+     START SCANNER
+     ========================= */
+  const startScanner = useCallback(async () => {
+    if (qrCodeRef.current || isStartingRef.current) return;
+
+    isStartingRef.current = true;
 
     const html5QrCode = new Html5Qrcode(qrRegionId);
     qrCodeRef.current = html5QrCode;
 
-    await html5QrCode.start(
-      { facingMode: "environment" },
-      {
-        fps: 15,
-        aspectRatio: 1,
-        disableFlip: false,
-        // qrbox: (w, h) => {
-        //   const base = Math.min(w, h);
-        //   const size = Math.min(Math.max(base * 0.8, 50), 400);
+    try {
+      await html5QrCode.start(
+        { facingMode: "environment" },
+        {
+          fps: 15,
+          aspectRatio: 1,
+        },
+        (decodedText) => {
+          if (scanLockRef.current) return;
+          if (lastReadRef.current === decodedText) return;
 
-        //   return {
-        //     width: size,
-        //     height: size,
-        //   };
-        // },
-      },
-      (decodedText) => {
-        handleQrDecoded(decodedText);
-        stopScanner();
-      },
-    );
-  };
+          scanLockRef.current = true;
+          lastReadRef.current = decodedText;
 
-  const handleQrDecoded = useCallback(
-    (decodedText) => {
-      if (scannerLocked) return;
-      if (result !== null) {
-        setResult(null);
-      }
+          pauseScanner();
 
-      setResult(decodedText);
-      setScannerLocked(true);
-    },
-    // [scannerLocked, setResult, setScannerLocked, setSpool],
-    [setResult, result, scannerLocked, setScannerLocked],
-  );
+          /* limpa resultado antes da nova leitura */
+          setResult(null);
 
+          /* garante novo ciclo de render */
+          setTimeout(() => {
+            try {
+              setResult(decodedText);
+              setOpenAlert(true);
+            } catch (error) {
+              console.error("[QR-CODE] Erro ao processar leitura:", {
+                error,
+                decodedText,
+                message: error?.message ?? "Erro desconhecido",
+              });
+            }
+          }, 0);
+        },
+      );
+    } catch (error) {
+      console.error("[QR-CODE] Erro ao iniciar scanner:", {
+        error,
+        message: error?.message ?? "Erro desconhecido",
+      });
+
+      qrCodeRef.current = null;
+    } finally {
+      isStartingRef.current = false;
+    }
+  }, [pauseScanner, setOpenAlert, setResult]);
+
+  /* =========================
+     ALERT CONTROL
+     ========================= */
   useEffect(() => {
-    if (scannerLocked) return;
+    if (!openAlert) {
+      resumeScanner();
+    }
+  }, [openAlert, resumeScanner]);
 
-    let isMounted = true;
+  /* =========================
+     MODAL CONTROL
+     ========================= */
+  useEffect(() => {
+    if (!openQRCode) {
+      stopScanner();
+      return;
+    }
 
-    const initCamera = async () => {
-      // Verifica suporte
-      if (!checkCameraSupport()) {
-        setMessage("Câmera não suportada neste dispositivo.");
-        setOpenAlert(true);
-        return;
-      }
-
-      // Se já negou antes → mostra alerta direto
-      if (permissionDenied) {
-        setMessage(
-          "Permissão de câmera negada. Ative nas configurações do navegador.",
-        );
-        setOpenAlert(true);
-        return;
-      }
-
-      // Primeira vez → solicitar permissão sem alertar antes
-      if (!hasAskedPermission) {
-        setHasAskedPermission(true);
-
-        const granted = await requestCameraPermission();
-
-        if (!granted) {
-          // usuário negou agora → não mostrar alerta neste primeiro ciclo
-          return;
-        }
-      }
-
-      // Se permissão concedida → inicia scanner
-      if (isMounted) {
-        await startScanner();
-      }
-    };
-
-    initCamera();
+    startScanner();
 
     return () => {
-      isMounted = false;
-      setScannerLocked(false);
       stopScanner();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    //isOpen,
-    //openQRCode,
-    scannerLocked,
-    hasAskedPermission,
-    permissionDenied,
-    //startScanner,
-  ]);
-
-  useEffect(() => {
-    setScannerLocked(false);
-    setResult(null);
-    setSpool(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openQRCode]);
+  }, [openQRCode, startScanner, stopScanner]);
 
   return (
     <div className="bg-white rounded-md p-2 py-4 mt-4 w-full max-w-md aspect-square relative">
-      {/* Camera */}
-      {/* <div id={qrRegionId} className="w-[300px] h-[240px]" /> */}
-
       <div id={qrRegionId} className="w-full h-full" />
 
-      {/* Cantos  */}
+      {/* Cantos */}
       <div className="absolute rounded-tl-md top-28 left-24 w-8 h-8 border-t-4 border-l-4 border-blue-500"></div>
       <div className="absolute rounded-tr-md top-28 right-24 w-8 h-8 border-t-4 border-r-4 border-blue-500"></div>
       <div className="absolute rounded-bl-md bottom-28 left-24 w-8 h-8 border-b-4 border-l-4 border-blue-500"></div>
       <div className="absolute rounded-br-md bottom-28 right-24 w-8 h-8 border-b-4 border-r-4 border-blue-500"></div>
 
-      {/* Linha animada */}
+      {/* Linha scan */}
       <div className="absolute left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-scan"></div>
     </div>
   );

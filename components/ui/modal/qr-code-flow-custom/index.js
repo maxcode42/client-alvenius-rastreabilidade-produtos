@@ -223,18 +223,19 @@ export default function QRCodeFlowCustom() {
                       id="conforme"
                       name="conforme"
                       type="radio"
-                      value={""}
+                      value={true}
                       label="Sim"
-                      onChange={() => {}}
+                      // disabled={reversible}
+                      onChange={(e) => setAccordance(e.target.value)}
                       className="w-1/2 flex flex-row"
                     ></Input>
                     <Input
                       id="conforme"
                       name="conforme"
                       type="radio"
-                      value={""}
+                      value={false}
                       label="Não"
-                      onChange={() => {}}
+                      onChange={(e) => setAccordance(e.target.value)}
                     ></Input>
                   </div>
                   {/* <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-8 rounded-full" /> */}
@@ -253,18 +254,18 @@ export default function QRCodeFlowCustom() {
                       id="reversible"
                       name="reversible"
                       type="radio"
-                      value={accordance}
+                      value={true}
+                      disabled={accordance}
                       label="Sim"
-                      onChange={(e) => setAccordance(e.target.value)}
+                      onChange={(e) => setReversible(e.target.value)}
                       className="w-1/2 flex flex-row"
                     ></Input>
                     <Input
                       id="reversible"
                       name="reversible"
                       type="radio"
-                      value={reversible}
+                      value={false}
                       label="Não"
-                      disabled={!accordance}
                       onChange={(e) => setReversible(e.target.value)}
                       className="disabled:cursor-not-allowed"
                     ></Input>

@@ -7,6 +7,10 @@ import TextSpool from "components/ui/text-spool";
 
 import { useQRCode } from "hooks/qr-code-context";
 
+import { regexCodeSpool } from "util/regex/code";
+import AlertInfo from "components/ui/alert/info";
+import { normalizeAlphanumeric } from "util/formatters/text";
+
 export default function QRCodeFlow({ text }) {
   const {
     setOpenAlert,
@@ -19,6 +23,9 @@ export default function QRCodeFlow({ text }) {
     //newStatus,
     currentSpool,
     openQRCode,
+    message,
+    openAlert,
+    setScannerLocked,
   } = useQRCode();
   // const [accordance, setAccordance] = useState(false);
   // const [reversible, setReversible] = useState(false);
@@ -48,32 +55,33 @@ export default function QRCodeFlow({ text }) {
   //   setIsMaxHeightText(false);
   // }
 
-  function normalizedText(text) {
-    return new TextDecoder("utf-8")
-      .decode(new TextEncoder().encode(text))
-      .normalize("NFC");
-  }
-
   const parseQrSpoolToJson = useCallback((text) => {
-    const regex = /^(SP(?:-[A-Za-z0-9]+)+)\s+([\s\S]*)$/;
-    const normalized = normalizedText(text);
-    const match = normalized.match(regex);
-    // const match = normalized
-    //   .trim()
-    //   .match(/^(SP-[A-Za-z0-9]{4}-[A-Za-z0-9]{5}-[A-Za-z0-9]{3})\s+(.*)$/);
+    console.log(">>QR-CODE-FLOW regexCodeSpool");
+    const match = regexCodeSpool(text);
+    console.log(match);
     if (!match) {
       setMessage(
         "QRCODE-FLOW: Escanear um QRCode do SPOOL, ou este QRCODE é inválido!",
       );
       setOpenAlert(true);
+      setSpool(null);
       return null;
     }
-    return { codigo: match[1], descricao: match[2] };
+    const dataObject = {
+      codigo: normalizeAlphanumeric(match[1]),
+      descricao: match[2],
+    };
+
+    return dataObject;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleQrDecodedCustom = useCallback(async () => {
-    if ((!spool && !result) || spool !== null) {
+    // if ((!spool && !result) || spool !== null) {
+    if (!result) {
+      console.log(">>QR-CODE-FLOW");
+      console.log(result);
+      console.log(!spool, !result, spool);
       return;
     }
 
@@ -89,14 +97,14 @@ export default function QRCodeFlow({ text }) {
       //   qualityText: "TESTES",
       // });
       //setItem(parsedSpool);
-      await setItem(currentSpool);
-      await setSpool(parsedSpool);
+      setItem(currentSpool);
+      setSpool(parsedSpool);
       // console.log(currentSpool, {
       //   accordance,
       //   reversible,
       //   qualityText,
       // });
-      await setOpenAlert(true);
+      setOpenAlert(true);
 
       //await action(parsedSpool.codigo);
       //await checkIfCodeExists(parsedSpool.codigo);
@@ -306,12 +314,12 @@ export default function QRCodeFlow({ text }) {
       </div> */}
 
       {/* Alert */}
-      {/* <AlertInfo
+      <AlertInfo
         message={message}
         openAlert={openAlert}
         setOpenAlert={setOpenAlert}
         setScannerLocked={setScannerLocked}
-      /> */}
+      />
       {/* </div> */}
     </Fragment>
   );

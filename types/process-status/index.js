@@ -1,10 +1,11 @@
 const PROCESS_STATUS = {
   sigle: {
     reservado: "RE",
-    execucao: "EX",
+    executando: "EX",
     pausado: "PU",
+    continua: "CO",
     finalizado: "FI",
-    reversivel: "RV",
+    reverte: "RV",
     sucata: "SU",
     romaneio: "RO",
   },
@@ -12,6 +13,7 @@ const PROCESS_STATUS = {
     RE: "reservado",
     EX: "execução",
     PU: "pausado",
+    CO: "continua",
     FI: "finalizado",
     RV: "reversível",
     SU: "sucata",

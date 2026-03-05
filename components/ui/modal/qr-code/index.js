@@ -368,7 +368,7 @@ export default function QRCode({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 h-screen overflow-y-auto bg-black/80 flex flex-col items-center justify-start gap-2 px-4 pb-16 sm:pb-0 ">
+    <div className="fixed inset-0 z-40 h-screen overflow-y-auto bg-black/80 flex flex-col items-center justify-start gap-2 px-4 pb-16 sm:pb-0 ">
       {/* Header */}
       <div className="w-full max-w-md flex justify-center items-center p-4 text-white">
         <h2 className="text-lg font-semibold">Leitor de QRCode BASE</h2>

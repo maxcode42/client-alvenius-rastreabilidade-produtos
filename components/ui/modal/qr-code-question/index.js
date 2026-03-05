@@ -4,13 +4,17 @@ import Input from "components/ui/input";
 import TextSpool from "components/ui/text-spool";
 import { useQRCode } from "hooks/qr-code-context";
 
-export default function QRCodeQuestion({ setIsOpenQuestion, handlerData }) {
+export default function QRCodeQuestion({
+  setIsOpenQuestion,
+  resetDataDefault,
+  handlerData,
+}) {
   const [accordance, setAccordance] = useState(false);
   const [reversible, setReversible] = useState(false);
   const [qualityText, setQualityText] = useState("");
   const [isMaxHeightText, setIsMaxHeightText] = useState(false);
 
-  const { currentSpool, spool, item } = useQRCode();
+  const { spool } = useQRCode();
 
   const maxTextArea = useMemo(() => {
     return {
@@ -18,7 +22,7 @@ export default function QRCodeQuestion({ setIsOpenQuestion, handlerData }) {
       lines: 3,
     };
   }, []);
-  console.log(spool, item, currentSpool);
+
   function limitLines(e) {
     e.preventDefault();
     const textarea = e.target;
@@ -37,12 +41,6 @@ export default function QRCodeQuestion({ setIsOpenQuestion, handlerData }) {
   }
 
   async function handlerDataModal() {
-    // setData({
-    //   accordance: "PORRA",
-    //   reversible: "PORQUE",
-    //   qualityText: "NAO FUNCIONA",
-    // });
-
     await handlerData({
       accordance,
       reversible,
@@ -53,17 +51,12 @@ export default function QRCodeQuestion({ setIsOpenQuestion, handlerData }) {
   }
 
   async function handlerDataClose() {
-    // await setData({
-    //   accordance: false,
-    //   reversible: false,
-    //   qualityText: "",
-    // });
-
+    await resetDataDefault();
     setIsOpenQuestion(false);
   }
 
   return (
-    <section className="fixed inset-0 z-50 h-screen overflow-y-auto bg-black/80 flex flex-col items-center justify-start gap-6 px-4 py-4 sm:pb-0 ">
+    <section className="fixed inset-0 z-40 h-screen overflow-y-auto bg-black/80 flex flex-col items-center justify-start gap-6 px-4 py-4 sm:pb-0 ">
       {/* {String(currentSpool?.status_sigle).toUpperCase() === "EX" && ( */}
       <div className="w-full max-w-md flex justify-center items-center p-4 py-4 text-white">
         <h2 className="text-lg font-semibold">Avaliação de Qualidade</h2>
@@ -120,7 +113,7 @@ export default function QRCodeQuestion({ setIsOpenQuestion, handlerData }) {
               name="reversible"
               type="radio"
               value={true}
-              disabled={!accordance}
+              disabled={accordance}
               label="Sim"
               onChange={() => setReversible(true)}
               className="w-1/2 flex flex-row"

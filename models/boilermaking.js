@@ -1,44 +1,14 @@
 import apiProtheus from "infra/provider/api-protheus";
-import { PROCESS_FLOW } from "types/process-flow";
-import { PROCESS_STATUS } from "types/process-status";
+import responseProtheus from "adapters/api-protheus/response";
 
-function normalizeAlphanumeric(text) {
-  return text.replace(/[^A-Za-z0-9]/g, "").trim();
-}
-
-async function handlerObject(data) {
-  //const statusArray = Object.keys(PROCESS_STATUS.name);
-
-  const results = await data?.objects.map((item) => {
-    // const statusAcronym =
-    //   statusArray[Math.floor(Math.random() * statusArray.length)];
-    // console.log(data);
-    // if (item?.COD?.trim() === "SP0415003450") {
-    return {
-      sequence: item?.SEQ,
-      codigo: normalizeAlphanumeric(item?.COD?.trim()),
-      status: PROCESS_STATUS.name[item?.STATUS?.trim()], //PROCESS_STATUS.name[statusAcronym],
-      status_sigle: item?.STATUS?.trim(), //statusAcronym,statusAcronym, //
-      dateStart: item?.DTINIC?.trim(), //item?.DTENTR?.trim(),
-      timeStart: item?.HRINIC?.trim(),
-      dateEnd: item?.DTSAID?.trim(),
-      timeEnd: item?.HRSAID?.trim(),
-      user: item?.USER?.trimStart()?.trimEnd(),
-      process: PROCESS_FLOW.name[item?.PROCES?.trim()],
-      process_sigle: item?.PROCES?.trim(),
-      descricao: item?.DESC_QUALID ?? "", //"CALDEIRARIA: TESTES descrição produto",
-    };
-  });
-
-  return results;
-}
+import { normalizeAlphanumeric } from "../util/formatters/text";
 
 async function findAll(tokenProtheus) {
   const response = await apiProtheus.execute.boilermaking.read({
     tokenProtheus,
   });
 
-  const results = await handlerObject(response);
+  const results = await responseProtheus.execute.parse(response);
 
   return results;
 }
@@ -51,7 +21,7 @@ async function findOnByCode(tokenProtheus, code) {
     params: formatCode,
   });
 
-  const results = await handlerObject({ objects: [response] });
+  const results = await responseProtheus.execute.parse({ objects: [response] });
 
   return results;
 }

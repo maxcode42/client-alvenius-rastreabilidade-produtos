@@ -1,6 +1,3 @@
-import Button from "components/ui/button";
-import { useQRCode } from "hooks/qr-code-context";
-
 import {
   CheckCircleIcon,
   PackageOpenIcon,
@@ -10,6 +7,11 @@ import {
   StepForwardIcon,
   XCircleIcon,
 } from "lucide-react";
+
+import Button from "components/ui/button";
+
+import { useQRCode } from "hooks/qr-code-context";
+import { PROCESS_STATUS } from "types/process-status";
 
 export default function QRCodeButton({ children }) {
   const {
@@ -21,28 +23,29 @@ export default function QRCodeButton({ children }) {
     setNewStatus,
     setScannerLocked,
   } = useQRCode();
-  console.log("QRCODE_BUTTON");
-  console.log(currentSpool);
+
   async function execute(status) {
     await setScannerLocked(true);
     await setNewStatus(status);
-    await action();
-    // await setSpool(null);
     await onClose();
+    //Comentado enquanto estiver usando FORM QUALIDADE separado MODAL QRCode
+    await action();
   }
+
   return (
     <section className="flex flex-row w-full h-full py-8 gap-4 sm:w-1/2">
       {children}
-      {currentSpool?.status_sigle === "RE" && (
+      {PROCESS_STATUS.sigle.reservado === currentSpool?.status_sigle && (
         <Button
           type="button"
           title="Incia processo produção"
           disabled={
-            (currentSpool?.status_sigle !== "RE" || !spool) &&
-            currentSpool?.status_sigle !== "PU" &&
-            currentSpool?.status_sigle !== "EX"
+            (!spool ||
+              PROCESS_STATUS.sigle.reservado !== currentSpool?.status_sigle) &&
+            PROCESS_STATUS.sigle.pausado !== currentSpool?.status_sigle &&
+            PROCESS_STATUS.sigle.executando !== currentSpool?.status_sigle
           }
-          onClick={() => execute("EX")}
+          onClick={() => execute(PROCESS_STATUS.sigle.executando)}
           //onClick={action}
           className="
                   disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none
@@ -53,12 +56,15 @@ export default function QRCodeButton({ children }) {
           <span className="text-sm sm:text-base truncate">Iniciar</span>
         </Button>
       )}
-      {currentSpool?.status_sigle === "EX" && (
+      {PROCESS_STATUS.sigle.executando === currentSpool?.status_sigle && (
         <Button
           type="button"
           title="Pausar processo produção"
-          disabled={currentSpool?.status_sigle !== "EX" || !spool}
-          onClick={() => execute("PU")}
+          disabled={
+            !spool ||
+            PROCESS_STATUS.sigle.executando !== currentSpool?.status_sigle
+          }
+          onClick={() => execute(PROCESS_STATUS.sigle.pausado)}
           className="
                   disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
 
@@ -68,12 +74,15 @@ export default function QRCodeButton({ children }) {
           <span className="text-sm sm:text-base truncate">Pausar</span>
         </Button>
       )}
-      {currentSpool?.status_sigle === "PU" && (
+      {PROCESS_STATUS.sigle.pausado === currentSpool?.status_sigle && (
         <Button
           type="button"
           title="Continuar processo produção"
-          disabled={currentSpool?.status_sigle !== "PU" || !spool}
-          onClick={() => execute("CO")}
+          disabled={
+            !spool ||
+            PROCESS_STATUS.sigle.pausado !== currentSpool?.status_sigle
+          }
+          onClick={() => execute(PROCESS_STATUS.sigle.continua)}
           className="
                   disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
 
@@ -83,12 +92,15 @@ export default function QRCodeButton({ children }) {
           <span className="text-sm sm:text-base truncate">Continuar</span>
         </Button>
       )}
-      {currentSpool?.status_sigle === "EX" && (
+      {PROCESS_STATUS.sigle.executando === currentSpool?.status_sigle && (
         <Button
           type="button"
           title="Finaliza processo produção"
-          disabled={currentSpool?.status_sigle !== "EX" || !spool}
-          onClick={() => execute("FI")}
+          disabled={
+            !spool ||
+            PROCESS_STATUS.sigle.executando !== currentSpool?.status_sigle
+          }
+          onClick={() => execute(PROCESS_STATUS.sigle.finalizado)}
           className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
                truncate min-w-20 text-center flex flex-row gap-1 justify-center items-center bg-green-500 text-blue-100  hover:bg-green-800 hover:text-green-100 hover:shadow-green-600 hover:shadow-md"
         >
@@ -96,12 +108,15 @@ export default function QRCodeButton({ children }) {
           <span className="text-sm sm:text-base truncate">Finalizar</span>
         </Button>
       )}
-      {currentSpool?.status_sigle === "FI" && (
+      {PROCESS_STATUS.sigle.finalizado === currentSpool?.status_sigle && (
         <Button
           type="button"
           title="Avaliar qualidade produto"
-          disabled={currentSpool?.status_sigle !== "FI" || !spool}
-          onClick={() => execute("RO")}
+          disabled={
+            !spool ||
+            PROCESS_STATUS.sigle.finalizado !== currentSpool?.status_sigle
+          }
+          onClick={() => execute(PROCESS_STATUS.sigle.romaneio)}
           className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
                truncate min-w-20 text-center flex flex-row gap-1 justify-center items-center bg-blue-500 text-blue-100  hover:bg-blue-800 hover:text-blue-100 hover:shadow-blue-600 hover:shadow-md"
         >
@@ -109,12 +124,15 @@ export default function QRCodeButton({ children }) {
           <span className="text-sm sm:text-base truncate">Aprova CQ</span>
         </Button>
       )}
-      {currentSpool?.status_sigle === "RV" && (
+      {PROCESS_STATUS.sigle.reverte === currentSpool?.status_sigle && (
         <Button
           type="button"
-          title="Avaliar qualidade produto"
-          disabled={currentSpool?.status_sigle !== "RV" || !spool}
-          onClick={() => execute("RE")}
+          title="Reverte produto para inicio"
+          disabled={
+            !spool ||
+            PROCESS_STATUS.sigle.reverte !== currentSpool?.status_sigle
+          }
+          onClick={() => execute(PROCESS_STATUS.sigle.reservado)}
           className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
                truncate min-w-20 text-center flex flex-row gap-1 justify-center items-center bg-lime-500 text-lime-100  hover:bg-lime-800 hover:text-lime-100 hover:shadow-lime-600 hover:shadow-md"
         >

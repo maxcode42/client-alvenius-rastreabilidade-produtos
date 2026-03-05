@@ -2,7 +2,14 @@ import { CalendarDaysIcon } from "lucide-react";
 
 import Button from "components/ui/button";
 
+import { PROCESS_STATUS } from "types/process-status";
+import { formatSixDigits } from "util/formatters/numeric";
+import { formatCodeDefault } from "util/formatters/code";
+import { formatDateCustom } from "util/formatters/date";
+
 import { useQRCode } from "hooks/qr-code-context";
+
+import { styleColorStatus } from "types/styles-color-status";
 
 export default function CardItemsCustom({ items }) {
   const {
@@ -14,108 +21,12 @@ export default function CardItemsCustom({ items }) {
     setResult,
   } = useQRCode();
 
-  function normalizeAlphanumeric(text) {
-    return text.replace(/[^A-Za-z0-9]/g, "").trim();
-  }
-
-  function formatCodeDefault(code) {
-    // const result = code.replace(
-    //   /^([A-Z]{2})(\d{4})(\d{5})(\d{4})$/,
-    //   "$1-$2-$3-$4",
-    // );
-    // const result = code.replace(
-    //   /^(?=.{15}$)([A-Z]{2})([A-Za-z0-9]{4})([A-Za-z0-9]{5})([A-Za-z0-9]{4,5})$/,
-    //   (_, g1, g2, g3, g4) => `${g1}-${g2}-${g3}-${g4}`,
-    // );
-    // return result;
-    const text = normalizeAlphanumeric(code);
-    const match = text.match(/^(?=.{6,15}$)([A-Z]{2})([A-Za-z0-9]+)$/);
-    if (!match) return null;
-
-    const prefix = match[1];
-    let rest = match[2];
-
-    const groups = [prefix];
-
-    if (rest.length >= 4) {
-      groups.push(rest.slice(0, 4));
-      rest = rest.slice(4);
-    }
-
-    if (rest.length >= 5) {
-      groups.push(rest.slice(0, 5));
-      rest = rest.slice(5);
-    }
-
-    if (rest.length >= 4) {
-      const size = rest.length >= 5 ? 5 : 4;
-      groups.push(rest.slice(0, size));
-      rest = rest.slice(size);
-    }
-
-    if (rest.length > 0) {
-      groups.push(rest);
-    }
-
-    return groups.join("-");
-  }
-
-  function formatDateCustom(date, time) {
-    if (time?.trim().length === 0) {
-      time = "00:00";
-    }
-
-    if (date?.trim().length > 0) {
-      const dateFull = date.concat(" ").concat(time);
-      const result = dateFull.replace(
-        /(\d{4})(\d{2})(\d{2})\s(\d{2}:\d{2})/,
-        "$3/$2/$1 às $4",
-      );
-
-      return result;
-    }
-
-    return "-- / -- / ---- às -- : --";
-  }
-
-  function formatSixDigits(value) {
-    const result = String(value).padStart(4, "0");
-    return result;
-  }
-
-  function getStyleStatus(sigle) {
-    const statusStyle = {
-      RE: () => {
-        return "bg-amber-400 text-amber-100";
-      },
-      EX: () => {
-        return "bg-teal-400 text-teal-100";
-      },
-      PU: () => {
-        return "bg-orange-400 text-orange-100";
-      },
-      FI: () => {
-        return "bg-green-500 text-green-100";
-      },
-      RV: () => {
-        return "bg-lime-400 text-lime-100";
-      },
-      SU: () => {
-        return "bg-red-400 text-red-100";
-      },
-      RO: () => {
-        return "bg-sky-500 text-sky-100";
-      },
-    };
-
-    const ex = statusStyle[sigle];
-
-    return ex();
-  }
-
   async function openModalQRCode(e, item) {
     e.preventDefault();
-    if (item?.status_sigle === "SU" || item?.status_sigle === "RO") {
+    if (
+      PROCESS_STATUS.sigle.sucata === item?.status_sigle ||
+      PROCESS_STATUS.sigle.romaneio === item?.status_sigle
+    ) {
       setMessage(
         `Processo produção encerrado para esse SPOOL, selecione outro card.`,
       );
@@ -146,12 +57,10 @@ export default function CardItemsCustom({ items }) {
             hover:bg-stone-50 transition  border-2 border-stone-200 rounded-lg shadow-lg
               opacity-0
               translate-y-4
-              animate-fadeInUp
-              //animate-fadeInDown
-              //[animation-delay:${index * 120}ms]
+              animate-fadeInDown
               [animation-delay:${Math.min(index * 80, 800)}ms]
               animation-fill-mode:forwards
-              ${item?.status_sigle === "SU" || item?.status_sigle === "RO" ? "bg-stone-300/50 shadow-none text-stone-800" : "bg-white"}
+              ${PROCESS_STATUS.sigle.sucata === item?.status_sigle || PROCESS_STATUS.sigle.romaneio === item?.status_sigle ? "bg-stone-300/50 shadow-none text-stone-800" : "bg-white"}
             `}
         >
           {/* <li className="hover:bg-stone-50 transition odd:bg-white border-2 border-stone-200 rounded-lg shadow-lg"> */}
@@ -176,7 +85,7 @@ export default function CardItemsCustom({ items }) {
               </div>
               <div className="capitalize  text-center min-w-20 text-xs sm:text-sm md:text-base text-stone-800">
                 <span
-                  className={`${String(getStyleStatus(item?.status_sigle))} p-1 text-xs rounded-full flex flex-row justify-center items-center`}
+                  className={`${styleColorStatus(item?.status_sigle)} p-1 text-xs rounded-full flex flex-row justify-center items-center`}
                 >
                   <small> {item?.status}</small>
                 </span>
