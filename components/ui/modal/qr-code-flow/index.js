@@ -1,206 +1,174 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Html5Qrcode } from "html5-qrcode";
-import { CircleQuestionMarkIcon, FilePenLineIcon } from "lucide-react";
+import { Fragment, useCallback, useEffect } from "react";
+//import { CircleQuestionMarkIcon, FilePenLineIcon } from "lucide-react";
 
-import Input from "components/ui/input";
+//import Input from "components/ui/input";
+import QRCode from "components/ui/qr-code";
+import TextSpool from "components/ui/text-spool";
+
+import { useQRCode } from "hooks/qr-code-context";
+
+import { regexCodeSpool } from "util/regex/code";
 import AlertInfo from "components/ui/alert/info";
+import { normalizeAlphanumeric } from "util/formatters/text";
 
-export default function QRCodeFlow({ isOpen, onClose, spool, setSpool, text }) {
-  const qrRegionId = "qr-reader";
-  const qrCodeRef = useRef(null);
+export default function QRCodeFlow({ text }) {
+  const {
+    setOpenAlert,
+    setMessage,
+    setSpool,
+    result,
+    spool,
+    //setData,
+    setItem,
+    //newStatus,
+    currentSpool,
+    openQRCode,
+    message,
+    openAlert,
+    setScannerLocked,
+  } = useQRCode();
+  // const [accordance, setAccordance] = useState(false);
+  // const [reversible, setReversible] = useState(false);
+  // const [qualityText, setQualityText] = useState("");
+  // const [isMaxHeightText, setIsMaxHeightText] = useState(false);
+  // const maxTextArea = useMemo(() => {
+  //   return {
+  //     characters: 180,
+  //     lines: 3,
+  //   };
+  // }, []);
 
-  const [message, setMessage] = useState("");
-  const [result, setResult] = useState(null);
-  const [openAlert, setOpenAlert] = useState(false);
+  //function limitLines(e) {
+  //   e.preventDefault();
+  //   const textarea = e.target;
+  //   const lines = textarea.value.split("\n").length;
 
-  const [scannerLocked, setScannerLocked] = useState(false);
-  const [hasAskedPermission, setHasAskedPermission] = useState(false);
-  const [permissionDenied, setPermissionDenied] = useState(false);
+  //   if (
+  //     lines > maxTextArea.lines ||
+  //     String(e.target.value).length === maxTextArea.characters
+  //   ) {
+  //     setIsMaxHeightText(true);
+  //     return;
+  //   }
 
-  function normalizedText(text) {
-    return new TextDecoder("utf-8")
-      .decode(new TextEncoder().encode(text))
-      .normalize("NFC");
-  }
+  //   setQualityText(textarea.value);
+  //   setIsMaxHeightText(false);
+  // }
 
   const parseQrSpoolToJson = useCallback((text) => {
-    const normalized = normalizedText(text);
-    const match = normalized
-      .trim()
-      .match(/^(SP-[A-Za-z0-9]{4}-[A-Za-z0-9]{5}-[A-Za-z0-9]{3})\s+(.*)$/);
+    console.log(">>QR-CODE-FLOW regexCodeSpool");
+    const match = regexCodeSpool(text);
+    console.log(match);
     if (!match) {
-      setMessage("Escanear um QRCode do SPOOL, ou este QRCODE é inválido!");
+      setMessage(
+        "QRCODE-FLOW: Escanear um QRCode do SPOOL, ou este QRCODE é inválido!",
+      );
       setOpenAlert(true);
+      setSpool(null);
       return null;
     }
-    return { codigo: match[1], descricao: match[2] };
+    const dataObject = {
+      codigo: normalizeAlphanumeric(match[1]),
+      descricao: match[2],
+    };
+
+    return dataObject;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleQrDecoded = useCallback(
-    (decodedText) => {
-      if (scannerLocked) return;
-
-      setResult(decodedText);
-      setScannerLocked(true);
-
-      if (!spool) {
-        const parsedSpool = parseQrSpoolToJson(decodedText);
-        if (parsedSpool) {
-          setMessage(`Spool: ${parsedSpool.codigo} - ${parsedSpool.descricao}`);
-          setOpenAlert(true);
-          setSpool(parsedSpool);
-        }
-        return;
-      }
-    },
-    [scannerLocked, parseQrSpoolToJson, setSpool, spool],
-  );
-
-  const stopScanner = async () => {
-    if (!qrCodeRef.current) return;
-
-    try {
-      await qrCodeRef.current.stop();
-      await qrCodeRef.current.clear();
-    } catch (error) {
-      console.error(error);
+  const handleQrDecodedCustom = useCallback(async () => {
+    // if ((!spool && !result) || spool !== null) {
+    if (!result) {
+      console.log(">>QR-CODE-FLOW");
+      console.log(result);
+      console.log(!spool, !result, spool);
+      return;
     }
-    qrCodeRef.current = null;
-  };
 
-  const checkCameraSupport = () => {
-    return !!navigator.mediaDevices?.getUserMedia;
-  };
+    const parsedSpool = parseQrSpoolToJson(result);
+    if (parsedSpool) {
+      setMessage(
+        `QRCODE-FLOW Spool: ${parsedSpool.codigo} - ${parsedSpool.descricao}`,
+      );
 
-  const requestCameraPermission = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
+      // setData({
+      //   accordance: true,
+      //   reversible: true,
+      //   qualityText: "TESTES",
+      // });
+      //setItem(parsedSpool);
+      setItem(currentSpool);
+      setSpool(parsedSpool);
+      // console.log(currentSpool, {
+      //   accordance,
+      //   reversible,
+      //   qualityText,
+      // });
+      setOpenAlert(true);
 
-      stream.getTracks().forEach((track) => track.stop());
-
-      setPermissionDenied(false);
-      return true;
-    } catch (error) {
-      if (error.name === "NotAllowedError") {
-        setPermissionDenied(true);
-      }
-      return false;
+      //await action(parsedSpool.codigo);
+      //await checkIfCodeExists(parsedSpool.codigo);
     }
-  };
+    // }, [parseQrSpoolToJson, setSpool, spool, result]);
+    //}, [result, spool]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result]);
 
-  const startScanner = async () => {
-    if (qrCodeRef.current) return;
-
-    const html5QrCode = new Html5Qrcode(qrRegionId);
-    qrCodeRef.current = html5QrCode;
-
-    await html5QrCode.start(
-      { facingMode: "environment" },
-      {
-        fps: 20,
-        aspectRatio: 1,
-        qrbox: (w, h) => {
-          const size = Math.min(w, h) * 0.8;
-          return { width: size, height: size };
-        },
-      },
-      (decodedText) => {
-        handleQrDecoded(decodedText);
-        stopScanner();
-      },
-    );
-  };
+  // async function handlerData() {
+  //   await action(
+  //     {
+  //       data: {
+  //         accordance,
+  //         reversible,
+  //         qualityText,
+  //       },
+  //     },
+  //     currentSpool,
+  //   );
+  // }
 
   useEffect(() => {
-    if (scannerLocked) return;
+    handleQrDecodedCustom();
+  }, [handleQrDecodedCustom, result]);
 
-    let isMounted = true;
-
-    const initCamera = async () => {
-      // Verifica suporte
-      if (!checkCameraSupport()) {
-        setMessage("Câmera não suportada neste dispositivo.");
-        setOpenAlert(true);
-        return;
-      }
-
-      // Se já negou antes → mostra alerta direto
-      if (permissionDenied) {
-        setMessage(
-          "Permissão de câmera negada. Ative nas configurações do navegador.",
-        );
-        setOpenAlert(true);
-        return;
-      }
-
-      // Primeira vez → solicitar permissão sem alertar antes
-      if (!hasAskedPermission) {
-        setHasAskedPermission(true);
-
-        const granted = await requestCameraPermission();
-
-        if (!granted) {
-          // usuário negou agora → não mostrar alerta neste primeiro ciclo
-          return;
-        }
-      }
-
-      // Se permissão concedida → inicia scanner
-      if (isMounted) {
-        await startScanner();
-      }
-    };
-
-    initCamera();
-
-    return () => {
-      isMounted = false;
-      //setScannerLocked(false);
-      //stopScanner();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    isOpen,
-    scannerLocked,
-    hasAskedPermission,
-    permissionDenied,
-    //startScanner,
-  ]);
-
-  if (!isOpen) return null;
+  // useEffect(() => {}, [isMaxHeightText]);
+  // if (!isOpen) return null;
+  if (!openQRCode) return null;
 
   return (
-    <div className="fixed inset-0 z-50 h-screen overflow-y-auto bg-black/80 flex flex-col items-center justify-start gap-2 px-4 pb-16 sm:pb-0 ">
-      {/* Header */}
-      <div className="w-full max-w-md flex justify-center items-center p-4 text-white">
-        <h2 className="text-lg font-semibold">Leitor de QRCode</h2>
-      </div>
-
-      <div className="flex flex-col border-2 border-stone-300/50 w-full" />
+    <Fragment>
+      {/* <div className="fixed inset-0 z-50 h-screen overflow-y-auto bg-black/80 flex flex-col items-center justify-start gap-2 px-4 pb-16 sm:pb-0 "> */}
       {/* Camera */}
-      <div className="bg-white rounded-md p-2 py-4 mt-4 w-full max-w-md aspect-square relative">
-        {/* <div id={qrRegionId} className="w-[300px] h-[240px]" /> */}
-
-        <div id={qrRegionId} className="w-full h-full" />
-      </div>
-
-      {/* Resultado */}
-      <div className="mt-4 bg-white w-full max-w-md p-4 rounded-md">
+      <QRCode
+      // setScannerLocked={setScannerLocked}
+      // scannerLocked={scannerLocked}
+      // setOpenAlert={setOpenAlert}
+      // setMessage={setMessage}
+      // setResult={setResult}
+      // setSpool={setSpool}
+      // result={result}
+      // message={message}
+      // openAlert={openAlert}
+      // spool={spool}
+      // currentSpool={currentSpool}
+      // onClose={onClose}
+      // action={handlerData}
+      >
+        {/* Resultado */}
+        {/* <div className="mt-4 bg-white w-full max-w-md p-4 rounded-md"> */}
         <div className="flex flex-col py-2">
           <p className="text-sm font-semibold text-center">
-            Ler o QRCode do Spool.
+            Ler o QRCode do Spool - FLOW.
           </p>
           <p className="text-sm font-semibold text-center">
             <strong className="text-md font-bold uppercase">{text}</strong>{" "}
             processo produto.
           </p>
         </div>
-        <div className="flex flex-col border-2 border-stone-300/50 w-full" />
+        <div className="flex flex-col border-2 border-stone-300/50 w-full rounded-full" />
         {spool && (
           <div className="flex flex-col py-5">
-            <p className="mt-2 text-md break-all ">Spool:</p>
+            {/* <p className="mt-2 text-md break-all ">Spool:</p>
             <div className="text-xs sm:text-lg">
               <div className="flex flex-col ">
                 <p>
@@ -212,10 +180,12 @@ export default function QRCodeFlow({ isOpen, onClose, spool, setSpool, text }) {
                   <span className="font-normal">{spool?.descricao}</span>
                 </p>
               </div>
-            </div>
-            {String(text).toLowerCase() !== "iniciar" && (
+            </div> */}
+            <TextSpool spool={spool} />
+
+            {/* {String(currentSpool?.status_sigle).toUpperCase() === "FI" && (
               <div className="flex flex-col py-2">
-                <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-16 mr-16 mt-4 mb-4" />
+                <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-4 mb-4 rounded-full" />
                 <div className="flex flex-col justify-center gap-1 py-4">
                   <label className="w-full flex flex-row item-center gap-1">
                     <CircleQuestionMarkIcon
@@ -229,21 +199,22 @@ export default function QRCodeFlow({ isOpen, onClose, spool, setSpool, text }) {
                       id="conforme"
                       name="conforme"
                       type="radio"
-                      value={""}
+                      value={true}
+                      // disabled={!reversible}
                       label="Sim"
-                      onChange={() => {}}
+                      onChange={() => setAccordance(true)}
                       className="w-1/2 flex flex-row"
                     ></Input>
                     <Input
                       id="conforme"
                       name="conforme"
                       type="radio"
-                      value={""}
+                      value={false}
                       label="Não"
-                      onChange={() => {}}
+                      onChange={() => setAccordance(false)}
                     ></Input>
                   </div>
-                  <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-16 mr-16 mt-8" />
+                  <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-8 rounded-full" />
                 </div>
                 <div className="flex flex-col justify-center gap-1 py-4">
                   <label className="w-full flex flex-row item-center gap-1">
@@ -255,53 +226,79 @@ export default function QRCodeFlow({ isOpen, onClose, spool, setSpool, text }) {
                   </label>
                   <div className="flex flex-row justify-around">
                     <Input
-                      id="reversivel"
-                      name="reversivel"
+                      id="reversible"
+                      name="reversible"
                       type="radio"
-                      value={""}
+                      value={true}
+                      disabled={!accordance}
                       label="Sim"
-                      onChange={() => {}}
+                      onChange={() => setReversible(true)}
                       className="w-1/2 flex flex-row"
                     ></Input>
                     <Input
-                      id="reversivel"
-                      name="reversivel"
+                      id="reversible"
+                      name="reversible"
                       type="radio"
-                      value={""}
+                      value={false}
                       label="Não"
-                      onChange={() => {}}
+                      // disabled={accordance}
+                      onChange={() => setReversible(false)}
+                      className="disabled:cursor-not-allowed"
                     ></Input>
                   </div>
-                  <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-16 mr-16 mt-8" />
+                  <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-8 rounded-full" />
                 </div>
-                <Input
-                  id="descrição"
-                  type="text"
-                  value={""}
-                  label="Descrição qualidade produto"
-                  placeholder="Digite breve descrição qualidade produto."
-                  onChange={() => {}}
-                >
-                  <FilePenLineIcon
-                    className="text-stone-400 mr-2 mt-0.5"
-                    size={18}
+               
+                <div className="flex flex-col justify-center gap-1 py-4">
+                  <label
+                    id="descrição"
+                    type="text"
+                    label="Descrição qualidade produto"
+                    placeholder="Digite disposição qualidade produto."
+                    className="flex flex-row w-full gap-1 py-2"
+                  >
+                    <FilePenLineIcon
+                      className="text-stone-400 mr-2 mt-0.5"
+                      size={18}
+                    />
+                    Disposição qualidade produto.
+                  </label>
+                  <p
+                    className={`text-xs text-red-600 mb-2 ${!isMaxHeightText ? "hidden" : ""}`}
+                  >
+                    <span>
+                      * Limite máximo de{" "}
+                      <strong>{maxTextArea.characters}</strong> caracteres ou{" "}
+                      <strong>{maxTextArea.lines}</strong> linhas.
+                    </span>
+                  </p>
+                  <textarea
+                    rows={maxTextArea.lines}
+                    value={qualityText}
+                    maxLength={maxTextArea.characters}
+                    onChange={(e) => limitLines(e)}
+                    placeholder="Digite texto direto e objetivo para disposição qualidade."
+                    className="overflow-y-scroll leading-6 w-full h-24 resize-none border-2 border-stone-300/50 placeholder:text-gray-400 outline-none focus:border-blue-400/50 focus:ring-0 focus:ring-blue-200 focus:shadow-md focus:shadow-blue-300/50 rounded-md px-1 py-1"
                   />
-                </Input>
+                </div>
               </div>
-            )}
+            )} */}
             <div className="flex flex-col border-2 border-stone-300/50 w-full mt-8" />
           </div>
         )}
-        <div className="flex flex-col py-4">
+      </QRCode>
+      {/* <div className="flex flex-col py-4">
           <p className="text-sm font-semibold">Último QRCode lido:</p>
-          <p className="mt-2 text-xs break-all text-gray-700">
+          <p className="mt-2 text-xs break-all text-gray-700 w-full flex flex-row justify-center item-center">
             {result ?? (
-              <span className="animate-pulse">Aguardando leitura...</span>
+              <span className="animate-pulse mt-2 px-4 py-2 rounded-md w-fit">
+                Aguardando leitura...
+              </span>
             )}
           </p>
-        </div>
-      </div>
-      <div className="flex flex-row w-full h-full py-8 gap-4 sm:w-1/2">
+        </div> */}
+      {/* </div> */}
+      {/* <div className="flex flex-row w-full h-full py-8 gap-4 sm:w-1/2">
         <button
           onClick={onClose}
           className="w-1/2 text-sm bg-blue-700 px-3 py-1 rounded-md text-stone-100 h-16"
@@ -314,7 +311,7 @@ export default function QRCodeFlow({ isOpen, onClose, spool, setSpool, text }) {
         >
           Fechar
         </button>
-      </div>
+      </div> */}
 
       {/* Alert */}
       <AlertInfo
@@ -323,6 +320,7 @@ export default function QRCodeFlow({ isOpen, onClose, spool, setSpool, text }) {
         setOpenAlert={setOpenAlert}
         setScannerLocked={setScannerLocked}
       />
-    </div>
+      {/* </div> */}
+    </Fragment>
   );
 }

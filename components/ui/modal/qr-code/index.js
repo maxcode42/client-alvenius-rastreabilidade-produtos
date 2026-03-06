@@ -4,6 +4,7 @@ import { Html5Qrcode } from "html5-qrcode";
 
 import Input from "../../input";
 import AlertInfo from "components/ui/alert/info";
+import TextSpool from "components/ui/text-spool";
 
 export default function QRCode({
   isOpen,
@@ -32,7 +33,6 @@ export default function QRCode({
     () => ["TB", "TJ", "TK", "TU", "TV", "TW", "TI"],
     [],
   );
-
   function normalizedText(text) {
     return new TextDecoder("utf-8")
       .decode(new TextEncoder().encode(text))
@@ -40,13 +40,16 @@ export default function QRCode({
   }
 
   const parseQrSpoolToJson = useCallback((text) => {
+    const regex = /^(SP(?:-[A-Za-z0-9]+)+)\s+([\s\S]*)$/;
     const normalized = normalizedText(text);
-    const match = normalized
-      .trim()
-      .match(/^(SP-[A-Za-z0-9]{4}-[A-Za-z0-9]{5}-[A-Za-z0-9]{3})\s+(.*)$/);
+    const match = normalized.match(regex);
+    // const match = normalized
+    //   .trim()
+    //   .match(/^(SP-[A-Za-z0-9]{4}-[A-Za-z0-9]{5}-[A-Za-z0-9]{3})\s+(.*)$/);
+
     if (!match) {
       setMessage(
-        "Escanear primeiro o QRCode do SPOOL, ou este QRCODE é inválido!",
+        "Escanear primeiro o QRCode do SPOOL, ou este QRCODE é inválido MATCH 2!",
       );
       setOpenAlert(true);
       return null;
@@ -239,15 +242,65 @@ export default function QRCode({
     const html5QrCode = new Html5Qrcode(qrRegionId);
     qrCodeRef.current = html5QrCode;
 
+    // QRBOX Dinâmico
+    // const qrboxFunction = (viewfinderWidth, viewfinderHeight) => {
+    //   const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+    //   const size = Math.floor(minEdge * 0.7);
+    //   return { width: size, height: size };
+    // };
+
+    //FUNCIONA
+    // await html5QrCode.start(
+    //   { facingMode: "environment" },
+    //   {
+    //     fps: 15,
+    //     aspectRatio: 1,
+    //     disableFlip: false,
+    //     qrbox: (w, h) => {
+    //       const base = Math.min(w, h);
+    //       const size = Math.min(Math.max(base * 0.8, 50), 400);
+
+    //       return {
+    //         width: size,
+    //         height: size,
+    //       };
+    //     },
+    //   },
+    //   (decodedText) => {
+    //     handleQrDecoded(decodedText);
+    //     stopScanner();
+    //   },
+    // );
+
     await html5QrCode.start(
       { facingMode: "environment" },
       {
-        fps: 20,
+        fps: 15,
+        //aspectRatio: 1,
+        //aspectRatio: 1.777, // 16:9
+        disableFlip: false,
+        // qrbox: (w, h) => {
+        //   const edge = Math.min(w, h);
+        //   return { width: edge * 0.75, height: edge * 0.75 };
+        // },
+        //qrbox: qrboxFunction,
+        // qrbox: (w, h) => {
+        //   const base = Math.min(w, h);
+        //   const size = Math.min(Math.max(base * 0.8, 50), 400);
+
+        //   return {
+        //     width: size,
+        //     height: size,
+        //   };
+        // },
+        // qrbox: (w, h) => {
+        //   const minEdge = Math.min(w, h);
+        //   return {
+        //     width: minEdge * 0.5,
+        //     height: minEdge * 0.5,
+        //   };
+        // },
         aspectRatio: 1,
-        qrbox: (w, h) => {
-          const size = Math.min(w, h) * 0.8;
-          return { width: size, height: size };
-        },
       },
       (decodedText) => {
         handleQrDecoded(decodedText);
@@ -315,18 +368,20 @@ export default function QRCode({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 h-screen overflow-y-auto bg-black/80 flex flex-col items-center justify-start gap-2 px-4 pb-16 sm:pb-0 ">
+    <div className="fixed inset-0 z-40 h-screen overflow-y-auto bg-black/80 flex flex-col items-center justify-start gap-2 px-4 pb-16 sm:pb-0 ">
       {/* Header */}
       <div className="w-full max-w-md flex justify-center items-center p-4 text-white">
-        <h2 className="text-lg font-semibold">Leitor de QRCode</h2>
+        <h2 className="text-lg font-semibold">Leitor de QRCode BASE</h2>
       </div>
 
-      <div className="flex flex-col border-2 border-stone-300/50 w-full" />
+      <div className="flex flex-col border-2 border-stone-300/50 w-full rounded-full" />
       {/* Camera */}
       <div className="bg-white rounded-md p-2 py-4 mt-4 w-full max-w-md aspect-square relative">
         {/* <div id={qrRegionId} className="w-[300px] h-[240px]" /> */}
 
         <div id={qrRegionId} className="w-full h-full" />
+        <div className="scanner-overlay"></div>
+        <div className="scan-line"></div>
       </div>
 
       {/* Resultado */}
@@ -337,10 +392,10 @@ export default function QRCode({
             2 - Ler o QRCode dos componentes.
           </p>
         </div>
-        <div className="flex flex-col border-2 border-stone-300/50 w-full" />
+        <div className="flex flex-col border-2 border-stone-300/50 w-full rounded-full" />
         {spool && (
           <div className="flex flex-col py-4">
-            <p className="mt-2 text-md break-all ">Spool:</p>
+            {/* <p className="mt-2 text-md break-all ">Spool:</p>
             <div className="text-xs sm:text-lg">
               <div className="flex flex-col ">
                 <p>
@@ -354,8 +409,9 @@ export default function QRCode({
                   </span>
                 </p>
               </div>
-            </div>
-            <div className="flex flex-col py-4">
+            </div> */}
+            <TextSpool spool={spool} />
+            <div className="flex flex-col py-4 mb-4">
               <p className="mt-2 text-md break-all ">Componentes:</p>
               <div className="flex flex-col ">
                 <table className="text-sm w-full min-w-full border border-zinc-200 bg-white rounded-lg">
@@ -403,14 +459,16 @@ export default function QRCode({
                 </table>
               </div>
             </div>
-            <div className="flex flex-col border-2 border-stone-300/50 w-full" />
+            <div className="flex flex-col border-2 border-stone-300/50 w-full rounded-full" />
           </div>
         )}
         <div className="flex flex-col py-4">
           <p className="text-sm font-semibold">Último QRCode lido:</p>
-          <p className="mt-2 text-xs break-all text-gray-700">
+          <p className="mt-2 text-xs break-all text-gray-700 w-full flex flex-row justify-center item-center">
             {result ?? (
-              <span className="animate-pulse">Aguardando leitura...</span>
+              <span className="animate-pulse mt-2 px-4 py-2 rounded-md w-fit">
+                Aguardando leitura...
+              </span>
             )}
           </p>
         </div>
@@ -451,7 +509,7 @@ export default function QRCode({
               <h3 className="text-2xl text-center">Quantidade componente</h3>
             </section>
             <section className="w-full px-4 py-16">
-              <form className="flex flex-col w-full sm:w-1/2 lg:w-1/3 p-4 gap-8 justify-center border-blue-950/50 border-2 rounded-sm">
+              <form className="flex flex-col w-full  p-4 gap-8 justify-center border-blue-950/50 border-2 rounded-sm">
                 <section className="flex flex-col w-full items-center gap-4">
                   <p className="text-sm">Digite o comprimento do componente.</p>
                 </section>
@@ -462,7 +520,7 @@ export default function QRCode({
                       type="text"
                       // inputModel="decimal"
                       value={amount}
-                      label="Qual medida do tubo:"
+                      label="Medida do tubo em metros:"
                       placeholder="000,000"
                       // onChange={(e) => {
                       //   const value = e.target.value;

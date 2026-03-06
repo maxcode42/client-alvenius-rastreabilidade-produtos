@@ -16,11 +16,12 @@ async function getHandler(req, res) {
 
   const sessionObject = await session.findOneValidByToken(token);
 
-  const renewedSessionObject = await session.renew(sessionObject.id);
+  await session.findOneValidByTokenProtheus(sessionObject.token_protheus);
+  //const renewedSessionObject = await session.renew(sessionObject.id);
 
   const result = await user.findOnById(sessionObject.user_id);
 
-  await controller.setSessionCookie(res, renewedSessionObject.token);
+  await controller.setSessionCookie(res, sessionObject.token);
 
   // Desativa o cache do navegador obrigando a carregar dados em todas requisições
   res.setHeader(
