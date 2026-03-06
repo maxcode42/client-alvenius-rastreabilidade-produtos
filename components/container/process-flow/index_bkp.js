@@ -162,6 +162,7 @@ export default function ProcessFlow({
     });
 
     setAction(() => () => handlerData());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setOnClose, setOpenQRCode, setSpool, setScannerLocked, setAction]);
 
   /* =========================

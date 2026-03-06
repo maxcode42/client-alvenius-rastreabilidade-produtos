@@ -8,13 +8,15 @@ export default function QRCodeQuestion({
   setIsOpenQuestion,
   resetDataDefault,
   handlerData,
+  //setData,
+  //data,
 }) {
-  const [accordance, setAccordance] = useState(false);
-  const [reversible, setReversible] = useState(false);
-  const [qualityText, setQualityText] = useState("");
+  // const [accordance, setAccordance] = useState(false);
+  // const [reversible, setReversible] = useState(false);
+  // const [qualityText, setQualityText] = useState("");
   const [isMaxHeightText, setIsMaxHeightText] = useState(false);
 
-  const { spool } = useQRCode();
+  const { spool, data, setData } = useQRCode();
 
   const maxTextArea = useMemo(() => {
     return {
@@ -36,17 +38,18 @@ export default function QRCodeQuestion({
       return;
     }
 
-    setQualityText(textarea.value);
+    //setQualityText(textarea.value);
+    setData({ ...data, qualityText: textarea.value });
     setIsMaxHeightText(false);
   }
 
   async function handlerDataModal() {
-    await handlerData({
-      accordance,
-      reversible,
-      qualityText,
-    });
-
+    // await handlerData({
+    //   accordance,
+    //   reversible,
+    //   qualityText,
+    // });
+    await handlerData();
     setIsOpenQuestion(false);
   }
 
@@ -68,8 +71,10 @@ export default function QRCodeQuestion({
         {/* <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-4 mb-4 rounded-full" /> */}
 
         <TextSpool spool={spool} />
-
-        <div className="flex flex-col justify-center gap-1 py-4 mt-6">
+        <div className="flex flex-col bg-gradient-to-r from-transparent h-1 to-transparent via-stone-300/50 w-1/2 ml-20 mt-8 rounded-full" />
+        <div
+          className={`${data?.reversible ? "text-stone-300/50" : ""} flex flex-col justify-center gap-1 py-4`}
+        >
           <label className="w-full flex flex-row item-center gap-1">
             <CircleQuestionMarkIcon
               className="text-stone-400 mr-2 mt-0.5"
@@ -79,27 +84,38 @@ export default function QRCodeQuestion({
           </label>
           <div className="flex flex-row justify-around">
             <Input
-              id="conforme"
-              name="conforme"
-              type="radio"
-              value={true}
-              // disabled={!reversible}
               label="Sim"
-              onChange={() => setAccordance(true)}
-              className="w-1/2 flex flex-row"
-            ></Input>
-            <Input
+              type="radio"
               id="conforme"
               name="conforme"
-              type="radio"
-              value={false}
+              value={data?.accordance}
+              checked={data?.accordance}
+              disabled={data?.reversible}
+              onChange={() =>
+                setData({ ...data, accordance: !data?.accordance })
+              }
+            />
+            <Input
               label="Não"
-              onChange={() => setAccordance(false)}
-            ></Input>
+              type="radio"
+              id="conforme"
+              name="conforme"
+              value={!data?.accordance}
+              checked={!data?.accordance}
+              disabled={data?.reversible}
+              onChange={() =>
+                setData({ ...data, accordance: !data?.accordance })
+              }
+            />
           </div>
-          <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-8 rounded-full" />
+          {/* <div className="flex flex-col bg-gradient-to-r from-transparent h-1 to-transparent via-stone-300/50 w-1/2 ml-20 mt-8 rounded-full" /> */}
         </div>
-        <div className="flex flex-col justify-center gap-1 py-4">
+
+        <div className="flex flex-col bg-gradient-to-r from-transparent h-1 to-transparent via-stone-300/50 w-1/2 ml-20 mt-8 rounded-full" />
+
+        <div
+          className={`${data?.accordance ? "text-stone-300/50" : ""} flex flex-col justify-center gap-1 py-4`}
+        >
           <label className="w-full flex flex-row item-center gap-1">
             <CircleQuestionMarkIcon
               className="text-stone-400 mr-2 mt-0.5"
@@ -109,28 +125,33 @@ export default function QRCodeQuestion({
           </label>
           <div className="flex flex-row justify-around">
             <Input
+              type="radio"
               id="reversible"
               name="reversible"
-              type="radio"
-              value={true}
-              disabled={accordance}
+              value={data?.reversible}
+              checked={data?.reversible}
+              disabled={data?.accordance}
               label="Sim"
-              onChange={() => setReversible(true)}
-              className="w-1/2 flex flex-row"
-            ></Input>
+              onChange={() =>
+                setData({ ...data, reversible: !data?.reversible })
+              }
+            />
             <Input
+              label="Não"
               id="reversible"
               name="reversible"
               type="radio"
-              value={false}
-              label="Não"
-              // disabled={accordance}
-              onChange={() => setReversible(false)}
-              className="disabled:cursor-not-allowed"
-            ></Input>
+              value={!data?.reversible}
+              checked={!data?.reversible}
+              disabled={data?.accordance}
+              onChange={() =>
+                setData({ ...data, reversible: !data?.reversible })
+              }
+            />
           </div>
-          <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-8 rounded-full" />
+          {/* <div className="flex flex-col bg-gradient-to-r from-transparent h-1 to-transparent via-stone-300/50 w-1/2 ml-20 mt-8 rounded-full" /> */}
         </div>
+        <div className="flex flex-col bg-gradient-to-r from-transparent h-1 to-transparent via-stone-300/50 w-1/2 ml-20 mt-8 rounded-full" />
         {/* <Input
                       id="descrição"
                       type="text"
@@ -165,7 +186,7 @@ export default function QRCodeQuestion({
           </p>
           <textarea
             rows={maxTextArea.lines}
-            value={qualityText}
+            value={data?.qualityText}
             maxLength={maxTextArea.characters}
             onChange={(e) => limitLines(e)}
             placeholder="Digite texto direto e objetivo para disposição qualidade."

@@ -17,16 +17,19 @@ import QRCodeQuestion from "components/ui/modal/qr-code-question";
 import Loading from "components/ui/loading";
 import Separator from "components/ui/separator";
 
+import { PROCESS_STATUS } from "types/process-status";
+import { PROCESS_FLOW } from "types/process-flow";
+
 import { normalizeAlphanumeric } from "util/formatters/text";
 import { formatCodeDefault } from "util/formatters/code";
 import { formatToPtBR } from "util/formatters/date";
 
-import { PROCESS_FLOW } from "types/process-flow";
-import { PROCESS_STATUS } from "types/process-status";
-
 import { useQRCode } from "hooks/qr-code-context";
 
 import api from "infra/provider/api-web";
+import QuantitiesItens from "components/ui/quantities-itens";
+
+const cardCustom = !process.env.NEXT_PUBLIC_APP_CARD_CUSTOM;
 
 export default function ProcessFlow({
   textModal = "",
@@ -35,8 +38,6 @@ export default function ProcessFlow({
   route,
 }) {
   const [text, setText] = useState("");
-
-  const cardCustom = true;
 
   const {
     currentSpool,
@@ -53,11 +54,14 @@ export default function ProcessFlow({
     setNewStatus,
     setResult,
     setSpool,
-    spool,
+    data,
+    setData,
+    //spool,
   } = useQRCode();
 
   const [isOpenQuestion, setIsOpenQuestion] = useState(false);
   const [itensFiltered, setItensFiltered] = useState(null);
+  const [quantities, setQuantities] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(true);
   const [itens, setItens] = useState(null);
@@ -96,113 +100,138 @@ export default function ProcessFlow({
     setResult(null);
     setItens(null);
     setSpool(null);
+    setData({
+      accordance: true,
+      reversible: false,
+      qualityText: "",
+    });
   }
 
-  //CONFIRMAR SE VAI DEIXAR LADO WEB MUDAR O PROCESSO ???
-  function sendNextProcess(status, reversible) {
-    //QUANDO PROCESSO FOR PINTURA QUAL SIGLA ENVIAR???
-    if (newStatus !== PROCESS_STATUS.sigle.romaneio || reversible) {
-      return PROCESS_FLOW.route[route].sigle;
-    }
+  //CONFIRMAR SE VAI DEIXAR LADO WEB MUDAR O PROCESSO ??? FICA LADO PROTHEUS
+  // function sendNextProcess(status, reversible) {
+  //   //QUANDO PROCESSO FOR PINTURA QUAL SIGLA ENVIAR??? FICA LADO PROTHEUS
+  //   if (newStatus !== PROCESS_STATUS.sigle.romaneio || reversible) {
+  //   return PROCESS_FLOW.route[route].sigle;
+  //   }
 
-    const nextProcess = {
-      boilermaking: "RR",
-      coating: "PI",
-      painting: "FF",
-    };
-    return nextProcess[PROCESS_FLOW.route[route].name];
-  }
+  //   const nextProcess = {
+  //     boilermaking: "CA",
+  //     coating: "RR",
+  //     painting: "PI",
+  //   };
+  //   return nextProcess[PROCESS_FLOW.route[route].name];
+  // }
 
-  async function handlerData(getData) {
+  async function handlerData() {
     //if (!getData || !currentSpool) return;
     if (!currentSpool) return;
 
     const objectData = {
       codigo: normalizeAlphanumeric(currentSpool?.codigo),
-      processo: sendNextProcess(newStatus, getData?.reversible),
-      conformidade: getData?.accordance ? "S" : "N",
-      reversivel: getData?.reversible ? "S" : "N",
-      disposicao_qualidade: getData?.qualityText ?? "",
-      status: newStatus,
+      processo: PROCESS_FLOW.route[route].sigle, //sendNextProcess(newStatus, getData?.reversible),
+      conformidade: data?.accordance ? "S" : "N", //getData?.accordance ? "S" : "N",
+      reversivel: data?.reversible ? "S" : "N", //getData?.reversible ? "S" : "N",
+      disposicao_qualidade: data?.qualityText ?? "",
+      status:
+        data?.reversible === true && PROCESS_FLOW.sigle.romaneio === newStatus
+          ? PROCESS_FLOW.sigle.reversible
+          : newStatus,
     };
 
     console.log("PROCESS-FLOW");
     console.log(objectData);
-    // await api.execute[route].create({
-    //   data: objectData,
-    // });
+    console.log("PROCESS-FLOW DATA CONTEXT");
+    console.log(data);
+
+    await api.execute[route].create({
+      data: objectData,
+    });
 
     resetDataDefault();
   }
 
   const fetchData = useCallback(async () => {
     const results = await api.execute[route].read();
-
-    setItens(results);
+    console.log(results.quantities);
+    setItens([]);
+    setItens(results.data);
+    setQuantities({
+      items: results?.quantities,
+      total: results?.total,
+    });
   }, [route]);
 
   const handleSearch = useCallback(
     async (e) => {
-      if (e) {
-        e.preventDefault();
-      }
+      try {
+        if (e) {
+          e.preventDefault();
+        }
 
-      if (
-        ((!itens || !itens?.length || itens?.length === 0) && !currentSpool) ||
-        (searchText.length > 0 && searchText.length < 3)
-      ) {
+        if (
+          ((!itens || !itens?.length || itens?.length === 0) &&
+            !currentSpool) ||
+          (searchText.length > 0 && searchText.length < 3)
+        ) {
+          //setLoading(false);
+          return;
+        }
+
+        // console.log(itensFiltered);
+
+        if (!itensFiltered) {
+          setItensFiltered(itens);
+          //setLoading(false);
+          return;
+        }
+
+        const filtered = itens?.filter((item) => {
+          const status = item?.status;
+          const code = item?.codigo;
+          const codeFormat = formatCodeDefault(item?.codigo);
+          const dateStart = formatToPtBR(item?.dateStart);
+          const dateEnd = formatToPtBR(item?.dateEnd);
+
+          const itemFiltered =
+            code.includes(searchText.toUpperCase()) ||
+            codeFormat.includes(searchText.toUpperCase()) ||
+            status.includes(searchText.toLowerCase()) ||
+            dateStart?.includes(searchText) ||
+            dateEnd?.includes(searchText);
+
+          return itemFiltered;
+        });
+        // const filtered = itens?.reduce((acc, item) => {
+        //   const status = item?.status ?? "";
+        //   const code = item?.codigo ?? "";
+        //   const codeFormat = formatCodeDefault(code) ?? "";
+        //   const dateStart = formatToPtBR(item?.dateStart) ?? "";
+        //   const dateEnd = formatToPtBR(item?.dateEnd) ?? "";
+
+        //   const match =
+        //     code.includes(searchText.toUpperCase()) ||
+        //     codeFormat.includes(searchText.toUpperCase()) ||
+        //     status.includes(searchText.toLowerCase()) ||
+        //     dateStart.includes(searchText) ||
+        //     dateEnd.includes(searchText);
+
+        //   if (match) {
+        //     acc.push({
+        //       ...item,
+        //       status_color: styleColorStatus(item?.status_sigle),
+        //     });
+        //   }
+        //   console.log(acc);
+        //   return acc;
+        // }, []);
+
+        setItensFiltered(filtered);
+      } catch (error) {
+        console.log(`ERROR: Controller ${route}, list in filter items."`);
+        console.error(error);
+      } finally {
         setLoading(false);
-        return;
       }
-      console.log(itensFiltered);
-      if (!itensFiltered) {
-        setItensFiltered(itens);
-        setLoading(false);
-        return;
-      }
-
-      const filtered = itens?.filter((item) => {
-        const status = item?.status;
-        const code = item?.codigo;
-        const codeFormat = formatCodeDefault(item?.codigo);
-        const dateStart = formatToPtBR(item?.dateStart);
-        const dateEnd = formatToPtBR(item?.dateEnd);
-
-        const itemFiltered =
-          code.includes(searchText.toUpperCase()) ||
-          codeFormat.includes(searchText.toUpperCase()) ||
-          status.includes(searchText.toLowerCase()) ||
-          dateStart?.includes(searchText) ||
-          dateEnd?.includes(searchText);
-
-        return itemFiltered;
-      });
-      // const filtered = itens?.reduce((acc, item) => {
-      //   const status = item?.status ?? "";
-      //   const code = item?.codigo ?? "";
-      //   const codeFormat = formatCodeDefault(code) ?? "";
-      //   const dateStart = formatToPtBR(item?.dateStart) ?? "";
-      //   const dateEnd = formatToPtBR(item?.dateEnd) ?? "";
-
-      //   const match =
-      //     code.includes(searchText.toUpperCase()) ||
-      //     codeFormat.includes(searchText.toUpperCase()) ||
-      //     status.includes(searchText.toLowerCase()) ||
-      //     dateStart.includes(searchText) ||
-      //     dateEnd.includes(searchText);
-
-      //   if (match) {
-      //     acc.push({
-      //       ...item,
-      //       status_color: styleColorStatus(item?.status_sigle),
-      //     });
-      //   }
-      //   console.log(acc);
-      //   return acc;
-      // }, []);
-
-      setItensFiltered(filtered);
-      setLoading(false);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [itens, searchText],
@@ -256,6 +285,8 @@ export default function ProcessFlow({
   }, [searchText, handleSearch]);
 
   useEffect(() => {
+    console.log("PROCESS-FLOW DATA CONTEXT USEEFFECT MODAL2");
+    console.log(data);
     if (!newStatus) return;
 
     if (newStatus === PROCESS_STATUS.sigle.romaneio && !cardCustom) {
@@ -276,10 +307,23 @@ export default function ProcessFlow({
 
   //if (!itens) return null;
 
+  //EXIBE A ESTRUTURA DA TELA
+  // function SkeletonRow() {
+  //   return (
+  //     <div className="animate-pulse flex justify-between items-center py-2">
+  //       <div className="h-4 bg-stone-300 rounded w-2/3"></div>
+  //       <div className="h-4 bg-stone-300 rounded w-12"></div>
+  //     </div>
+  //   );
+  // }
+
   return (
     <div className="w-full h-full bg-zinc-100">
       <Header />
-
+      {/* 
+            //EXIBE A ESTRUTURA DA TELA
+            {loading &&
+              Array.from({ length: 6 }).map((_, i) => <SkeletonRow key={i} />)} */}
       <Body>
         <PanelDefault>
           <HeaderPageTitle title={title} text={info} />
@@ -294,7 +338,6 @@ export default function ProcessFlow({
           <Separator />
 
           <PanelPrimary className={`border-none`}>
-            {/* {!itens || !itens?.length || loading ?? <Loading />} */}
             {(!itens || !itens?.length) && loading && <Loading />}
 
             {itens?.length === 0 && !loading && (
@@ -326,6 +369,7 @@ export default function ProcessFlow({
                 </p>
               </div>
             )}
+
             {!loading &&
               (cardCustom ? (
                 <CardItemsCustom
@@ -335,7 +379,9 @@ export default function ProcessFlow({
                   //setOpenAlert={setOpenAlert}
                   // setOpenQRCode={setOpenQRCode}
                   // setCurrentSpool={setCurrentSpool}
-                />
+                >
+                  <QuantitiesItens data={quantities} />
+                </CardItemsCustom>
               ) : (
                 <CardItems
                   setText={setText}
@@ -343,7 +389,9 @@ export default function ProcessFlow({
                   //setOpenQRCode={setOpenQRCode}
                   //setCurrentSpool={setCurrentSpool}
                   //setNewStatus={setNewStatus}
-                />
+                >
+                  <QuantitiesItens data={quantities} />
+                </CardItems>
               ))}
           </PanelPrimary>
         </PanelDefault>
