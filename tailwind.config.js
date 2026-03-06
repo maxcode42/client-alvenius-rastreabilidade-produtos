@@ -1,10 +1,29 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
+    "./types/**/*.{js,jsx,ts,tsx}",
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     //"./app/**/*.{js,ts,jsx,tsx,mdx}", // caso use o App Router
   ],
+  // safelist: [
+  //   "bg-amber-400",
+  //   "text-amber-100",
+  //   "bg-teal-400",
+  //   "text-teal-100",
+  //   "bg-orange-400",
+  //   "text-orange-100",
+  //   "bg-green-500",
+  //   "text-green-100",
+  //   "bg-lime-400",
+  //   "text-lime-100",
+  //   "bg-red-400",
+  //   "text-red-100",
+  //   "bg-sky-500",
+  //   "text-sky-100",
+  //   "bg-stone-200",
+  //   "text-stone-950",
+  // ],
   theme: {
     extend: {
       gridTemplateColumns: {

@@ -12,14 +12,13 @@ import { styleColorStatus } from "types/styles-color-status";
 import { PROCESS_STATUS } from "types/process-status";
 import { formatSixDigits } from "util/formatters/numeric";
 import { formatCodeDefault } from "util/formatters/code";
-
 import { formatDateCustom } from "util/formatters/date";
 
 import Button from "components/ui/button";
 
 import { useQRCode } from "hooks/qr-code-context";
 
-export default function CardItems({ items, setText }) {
+export default function CardItems({ items, setText, children }) {
   const { setCurrentSpool, setOpenQRCode, setScannerLocked, setResult } =
     useQRCode();
 
@@ -35,6 +34,84 @@ export default function CardItems({ items, setText }) {
 
   return (
     <ul className="divide-y divide-stone-200 flex flex-col gap-4 py-2">
+      {/* <li
+        className={`flex flex-col divide-y divide-stone-200 rounded-sm bg-stone-200/50  
+    items-center justify-center px-4 py-2 mt-4 gap-1 max-w-full shadow-md shadow-stone-300
+    tracking-wider`}
+      >
+        <div className="grid grid-cols-[12vw_1fr_12vw] items-center gap-1 w-full justify-center">
+          <button
+            title="Expandir e ocultar o total processo"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="w-5 h-5 border-2 border-blue-950/50 rounded-md flex items-center justify-center text-blue-100 hover:text-blue-950/50 transition"
+          >
+            {isExpanded ? (
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path d="M19 15l-7-7-7 7" />
+              </svg>
+            ) : (
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 9l7 7 7-7" />
+              </svg>
+            )}
+          </button>
+          <span className="w-full min-full text-center text-sm font-semibold text-stone-700 uppercase">
+            Processos
+          </span>
+
+          <span className="flex items-center justify-center min-w-12 max-w-[44px] px-2 text-stone-700 text-sm font-semibold tabular-nums">
+            QTD.
+          </span>
+        </div>
+
+        {isExpanded &&
+          quantityPerProcess.map((item) => (
+            <div
+              key={item?.name}
+              className="grid grid-cols-[1fr_auto] items-center gap-1 py-1 w-full"
+            >
+              <div className="flex flex-row leading-tight items-center gap-1">
+                <span className="text-sm font-semibold text-stone-700 capitalize">
+                  {item?.name}
+                </span>
+
+                <span className="text-xs text-stone-500 line-clamp-2">
+                  {item?.description}
+                </span>
+              </div>
+
+              <span className="mt-[.2em] flex items-center justify-center self-stretch h-full min-w-[44px] px-2 rounded-md bg-stone-600 text-blue-100 text-sm font-semibold tabular-nums">
+                {formatSixDigits(item?.quantity)}
+              </span>
+            </div>
+          ))}
+
+        <Separator className="via-stone-400/50 mt-2 -mb-2" />
+        <div className="flex flex-row w-full justify-between border-none items-center text-xs text-stone-600 font-bold tracking-wider break-words line-clamp-2 gap-2 py-2">
+          <span className="text-sm font-semibold text-stone-700">
+            TOTAL SPOOL
+          </span>
+
+          <span className="mt-[.2em] flex items-center justify-center min-w-[44px] px-2 py-1 rounded-md bg-blue-600 text-blue-100 text-sm font-semibold tabular-nums">
+            {formatSixDigits(items?.length || 0)}
+          </span>
+        </div>
+      </li> */}
+
+      {children}
+
       {items?.map((item, index) => (
         <li
           key={String(item?.codigo).concat(index)}

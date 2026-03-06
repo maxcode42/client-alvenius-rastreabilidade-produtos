@@ -18,8 +18,7 @@ async function handleSend(path, method, dataObject, token) {
     body: dataObject ? JSON.stringify(dataObject) : null,
   });
   const result = await handlerResponse(response);
-  console.log("API PROTHEUS RESULT");
-  console.log(result);
+
   return result;
 }
 
@@ -124,8 +123,6 @@ const execute = {
       );
     },
     create: async ({ data, tokenProtheus }) => {
-      console.log("API PROTHEUS boilermaking");
-      console.log(data);
       return await handleSend("WsRastreio/new", "POST", data, tokenProtheus);
     },
     find: async ({ params, tokenProtheus }) => {

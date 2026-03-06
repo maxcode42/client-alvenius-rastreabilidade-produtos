@@ -20,8 +20,12 @@ export function QRCodeProvider({ children }) {
   const [result, setResult] = useState(null);
   const [spool, setSpool] = useState(null);
   const [text, setText] = useState("");
-  const [data, setData] = useState(null);
   const [item, setItem] = useState(null);
+  const [data, setData] = useState({
+    accordance: true,
+    reversible: false,
+    qualityText: "",
+  });
 
   // Opcional: memorizar contexto para evitar re-render global desnecessário
   const value = useMemo(
