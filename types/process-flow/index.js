@@ -2,23 +2,23 @@ const PROCESS_FLOW = {
   route: {
     register: {
       name: "register",
-      sigle: "",
+      acronym: "",
     },
     boilermaking: {
       name: "boilermaking",
-      sigle: "CA",
+      acronym: "CA",
     },
 
     coating: {
       name: "coating",
-      sigle: "RR",
+      acronym: "RR",
     },
     painting: {
       name: "painting",
-      sigle: "PI",
+      acronym: "PI",
     },
   },
-  sigle: {
+  acronym: {
     caldeiraria: "CA",
     revestimento: "RR",
     pintura: "PI",

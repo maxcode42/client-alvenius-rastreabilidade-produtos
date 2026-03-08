@@ -29,7 +29,9 @@ import { useQRCode } from "hooks/qr-code-context";
 import api from "infra/provider/api-web";
 import QuantitiesItens from "components/ui/quantities-itens";
 
-const cardCustom = !process.env.NEXT_PUBLIC_APP_CARD_CUSTOM;
+const cardCustom = Boolean(
+  process.env.NEXT_PUBLIC_APP_CARD_CUSTOM.toLowerCase() === "true",
+);
 
 export default function ProcessFlow({
   textModal = "",
@@ -66,14 +68,9 @@ export default function ProcessFlow({
   const [loading, setLoading] = useState(true);
   const [itens, setItens] = useState(null);
 
-  // const testeAPI = async (code) => {
-  //   return code;
-  // };
-
   // async function findOnByCode(code) {
-  //   const results = await testeAPI(code); //await api.execute[route].find({ params: code });
-  //   //
-  //   //console.log(results);
+  //   const results = await api.execute[route].find({ params: code });
+
   //   return results;
   // }
 
@@ -107,34 +104,19 @@ export default function ProcessFlow({
     });
   }
 
-  //CONFIRMAR SE VAI DEIXAR LADO WEB MUDAR O PROCESSO ??? FICA LADO PROTHEUS
-  // function sendNextProcess(status, reversible) {
-  //   //QUANDO PROCESSO FOR PINTURA QUAL SIGLA ENVIAR??? FICA LADO PROTHEUS
-  //   if (newStatus !== PROCESS_STATUS.sigle.romaneio || reversible) {
-  //   return PROCESS_FLOW.route[route].sigle;
-  //   }
-
-  //   const nextProcess = {
-  //     boilermaking: "CA",
-  //     coating: "RR",
-  //     painting: "PI",
-  //   };
-  //   return nextProcess[PROCESS_FLOW.route[route].name];
-  // }
-
   async function handlerData() {
     //if (!getData || !currentSpool) return;
     if (!currentSpool) return;
 
     const objectData = {
       codigo: normalizeAlphanumeric(currentSpool?.codigo),
-      processo: PROCESS_FLOW.route[route].sigle, //sendNextProcess(newStatus, getData?.reversible),
-      conformidade: data?.accordance ? "S" : "N", //getData?.accordance ? "S" : "N",
-      reversivel: data?.reversible ? "S" : "N", //getData?.reversible ? "S" : "N",
+      processo: PROCESS_FLOW.route[route].acronym,
+      conformidade: data?.accordance ? "S" : "N",
+      reversivel: data?.reversible ? "S" : "N",
       disposicao_qualidade: data?.qualityText ?? "",
       status:
-        data?.reversible === true && PROCESS_FLOW.sigle.romaneio === newStatus
-          ? PROCESS_FLOW.sigle.reversible
+        data?.reversible === true && PROCESS_FLOW.acronym.romaneio === newStatus
+          ? PROCESS_FLOW.acronym.reversible
           : newStatus,
     };
 
@@ -143,16 +125,16 @@ export default function ProcessFlow({
     console.log("PROCESS-FLOW DATA CONTEXT");
     console.log(data);
 
-    await api.execute[route].create({
-      data: objectData,
-    });
+    // await api.execute[route].create({
+    //   data: objectData,
+    // });
 
     resetDataDefault();
   }
 
   const fetchData = useCallback(async () => {
     const results = await api.execute[route].read();
-    console.log(results.quantities);
+
     setItens([]);
     setItens(results.data);
     setQuantities({
@@ -218,7 +200,7 @@ export default function ProcessFlow({
         //   if (match) {
         //     acc.push({
         //       ...item,
-        //       status_color: styleColorStatus(item?.status_sigle),
+        //       status_color: styleColorStatus(item?.status_acronym),
         //     });
         //   }
         //   console.log(acc);
@@ -285,11 +267,9 @@ export default function ProcessFlow({
   }, [searchText, handleSearch]);
 
   useEffect(() => {
-    console.log("PROCESS-FLOW DATA CONTEXT USEEFFECT MODAL2");
-    console.log(data);
     if (!newStatus) return;
 
-    if (newStatus === PROCESS_STATUS.sigle.romaneio && !cardCustom) {
+    if (newStatus === PROCESS_STATUS.acronym.romaneio && !cardCustom) {
       setIsOpenQuestion(true);
       return;
     }

@@ -1,5 +1,5 @@
 const PROCESS_STATUS = {
-  sigle: {
+  acronym: {
     reservado: "RE",
     executando: "EX",
     pausado: "PU",
@@ -18,6 +18,16 @@ const PROCESS_STATUS = {
     RV: "reversível",
     SU: "sucata",
     RO: "romaneio",
+  },
+  description: {
+    reservado: "(aguardando início)",
+    executando: "(em processo produção)",
+    pausado: "(aguardando para continuar)",
+    continua: "(retornar para execução)",
+    finalizado: `(aguardando "Aprova CQ")`,
+    sucata: "(descarte do produto)",
+    reverte: "(retorna início processo.)",
+    romaneio: "(aguardando próxima etapa)",
   },
 };
 

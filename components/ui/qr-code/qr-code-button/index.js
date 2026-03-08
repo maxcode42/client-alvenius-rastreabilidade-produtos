@@ -1,17 +1,12 @@
-import {
-  CheckCircleIcon,
-  PackageOpenIcon,
-  PauseIcon,
-  PlayIcon,
-  RefreshCcwDotIcon,
-  StepForwardIcon,
-  XCircleIcon,
-} from "lucide-react";
+import * as Icons from "lucide-react";
+import { XCircleIcon } from "lucide-react";
 
 import Button from "components/ui/button";
 
 import { useQRCode } from "hooks/qr-code-context";
 import { PROCESS_STATUS } from "types/process-status";
+
+import { twMerge } from "tailwind-merge";
 
 export default function QRCodeButton({ children }) {
   const {
@@ -32,114 +27,162 @@ export default function QRCodeButton({ children }) {
     await action();
   }
 
+  const buttonsDisplay = Object.keys(PROCESS_STATUS.acronym).reduce(
+    (acc, status) => {
+      let status_acronym = PROCESS_STATUS.acronym[status];
+
+      if (
+        (currentSpool?.status_acronym === PROCESS_STATUS.acronym.executando &&
+          status_acronym !== PROCESS_STATUS.acronym.finalizado &&
+          status_acronym !== PROCESS_STATUS.acronym.pausado) ||
+        (currentSpool?.status_acronym !== PROCESS_STATUS.acronym.executando &&
+          currentSpool?.status_acronym !== status_acronym)
+      ) {
+        console.log("dentro do IF CONDITIONAL ");
+        return acc;
+      }
+
+      acc.push({
+        sigla: currentSpool?.status_acronym.concat("_", status_acronym),
+      });
+
+      return acc;
+    },
+    [],
+  );
+
+  const buttonAttribute = {
+    RE_RE: {
+      name: "Iniciar",
+      title: "Incia processo produção",
+      disabled:
+        !spool ||
+        PROCESS_STATUS.acronym.reservado !== currentSpool?.status_acronym,
+      process_next: PROCESS_STATUS.acronym.executando,
+      class_name: `disabled:bg-amber-500/50 disabled:text-amber-100/50 bg-amber-500 
+                  text-amber-100 hover:bg-amber-800 hover:text-amber-100 hover:shadow-amber-600`,
+      icon: "PlayIcon",
+    },
+    EX_PU: {
+      name: "Pausar",
+      title: "Pausar processo produção",
+      disabled:
+        !spool ||
+        PROCESS_STATUS.acronym.executando !== currentSpool?.status_acronym,
+      process_next: PROCESS_STATUS.acronym.pausado,
+      class_name: `
+                  disabled:bg-orange-500/50 disabled:text-orange-100/50 bg-orange-500 
+                  text-orange-100 hover:bg-orange-800 hover:text-orange-100 hover:shadow-orange-400`,
+      icon: "PauseIcon",
+    },
+    PU_PU: {
+      name: "Continuar",
+      title: "Continuar processo produção",
+      disabled:
+        !spool ||
+        PROCESS_STATUS.acronym.pausado !== currentSpool?.status_acronym,
+      process_next: PROCESS_STATUS.acronym.continua,
+      class_name: `
+                  disabled:bg-orange-500/50 disabled:text-orange-100/50 bg-orange-500 
+                  text-orange-100 hover:bg-orange-800 hover:text-orange-100 hover:shadow-orange-600`,
+      icon: "StepForwardIcon",
+    },
+    EX_FI: {
+      name: "Finalizar",
+      title: "Finaliza processo produção",
+      disabled:
+        !spool ||
+        PROCESS_STATUS.acronym.executando !== currentSpool?.status_acronym,
+      process_next: PROCESS_STATUS.acronym.finalizado,
+      class_name: `
+                  disabled:bg-green-500/50 disabled:text-green-100/50 bg-green-600 
+                  text-green-100 hover:bg-green-800 hover:text-green-100 hover:shadow-green-500`,
+      icon: "CheckCircleIcon",
+    },
+    CO_CO: {
+      name: "Desabilitado",
+      title: "Botão sem função definida",
+      disabled: true,
+      process_next: "",
+      class_name: `
+                  disabled:bg-stone-500/50 disabled:text-stone-100/50 bg-stone-500 
+                  text-stone-100 hover:bg-stone-800 hover:text-stone-100 hover:shadow-stone-600`,
+      icon: "TriangleAlertIcon",
+    },
+    FI_FI: {
+      name: "Aprova CQ",
+      title: "Avaliar qualidade produto",
+      disabled:
+        !spool ||
+        PROCESS_STATUS.acronym.finalizado !== currentSpool?.status_acronym,
+      process_next: PROCESS_STATUS.acronym.romaneio,
+      class_name: `
+                  disabled:bg-sky-500/50 disabled:text-sky-100/50 bg-sky-600 
+                  text-sky-100 hover:bg-sky-800 hover:text-sky-100 hover:shadow-sky-500`,
+      icon: "RefreshCcwDotIcon",
+    },
+    RV_RV: {
+      name: "Desabilitado",
+      title: "Botão sem função definida",
+      disabled: true,
+      process_next: "TriangleAlertIcon",
+      class_name: `
+                  disabled:bg-stone-500/50 disabled:text-stone-100/50 bg-stone-500 
+                  text-stone-100 hover:bg-stone-800 hover:text-stone-100 hover:shadow-stone-600`,
+      icon: "PackageOpenIcon",
+    },
+    SU_SU: {
+      name: "Desabilitado",
+      title: "Botão sem função definida",
+      disabled: true,
+      process_next: "",
+      class_name: `
+                  disabled:bg-stone-500/50 disabled:text-stone-100/50 bg-stone-500 
+                  text-stone-100 hover:bg-stone-800 hover:text-stone-100 hover:shadow-stone-600`,
+      icon: "TriangleAlertIcon",
+    },
+    RO_RO: {
+      name: "Desabilitado",
+      title: "Botão sem função definida",
+      disabled: true,
+      process_next: "",
+      class_name: `
+                  disabled:bg-stone-500/50 disabled:text-stone-100/50 bg-stone-500 
+                  text-stone-100 hover:bg-stone-800 hover:text-stone-100 hover:shadow-stone-600`,
+      icon: "TriangleAlertIcon",
+    },
+  };
+
   return (
-    <section className="flex flex-row w-full h-full py-8 gap-4 sm:w-1/2">
+    <section className="w-full max-w-md h-full flex flex-row  py-8 gap-4 sm:w-1/2">
       {children}
-      {PROCESS_STATUS.sigle.reservado === currentSpool?.status_sigle && (
-        <Button
-          type="button"
-          title="Incia processo produção"
-          disabled={
-            (!spool ||
-              PROCESS_STATUS.sigle.reservado !== currentSpool?.status_sigle) &&
-            PROCESS_STATUS.sigle.pausado !== currentSpool?.status_sigle &&
-            PROCESS_STATUS.sigle.executando !== currentSpool?.status_sigle
-          }
-          onClick={() => execute(PROCESS_STATUS.sigle.executando)}
-          //onClick={action}
-          className="
-                  disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none
-                  w-1/2 text-sm px-3 py-1 rounded-md h-16
-                   truncate min-w-20 text-center flex flex-row gap-1 justify-center items-center bg-yellow-500 text-blue-100  hover:bg-yellow-800 hover:text-blue-100 hover:shadow-yellow-600 hover:shadow-md"
-        >
-          <PlayIcon className="size-4" />
-          <span className="text-sm sm:text-base truncate">Iniciar</span>
-        </Button>
-      )}
-      {PROCESS_STATUS.sigle.executando === currentSpool?.status_sigle && (
-        <Button
-          type="button"
-          title="Pausar processo produção"
-          disabled={
-            !spool ||
-            PROCESS_STATUS.sigle.executando !== currentSpool?.status_sigle
-          }
-          onClick={() => execute(PROCESS_STATUS.sigle.pausado)}
-          className="
-                  disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
 
-                   truncate min-w-20 text-center flex flex-row gap-1 justify-center items-center bg-orange-500 text-orange-100  hover:bg-orange-800 hover:text-blue-100 hover:shadow-yellow-600 hover:shadow-md"
-        >
-          <PauseIcon className="size-4" />
-          <span className="text-sm sm:text-base truncate">Pausar</span>
-        </Button>
-      )}
-      {PROCESS_STATUS.sigle.pausado === currentSpool?.status_sigle && (
-        <Button
-          type="button"
-          title="Continuar processo produção"
-          disabled={
-            !spool ||
-            PROCESS_STATUS.sigle.pausado !== currentSpool?.status_sigle
-          }
-          onClick={() => execute(PROCESS_STATUS.sigle.continua)}
-          className="
-                  disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
+      {buttonsDisplay.map((item) => {
+        const attribute = buttonAttribute[item.sigla];
+        const Icon = Icons[attribute?.icon];
+        return (
+          <Button
+            type="button"
+            key={attribute?.name}
+            title={attribute?.title}
+            disabled={attribute?.disabled}
+            onClick={() => execute(attribute?.process_next)}
+            //onClick={action}
+            className={twMerge(
+              `w-1/2 min-w-20 h-16 gap-1 flex flex-row px-3 py-1 
+            truncate text-sm text-center items-center justify-center rounded-md 
+            disable:cursor-not-allowed disabled:shadow-none hover:shadow-md`,
+              attribute?.class_name,
+            )}
+          >
+            {Icon && <Icon className="size-4" />}
 
-                   truncate min-w-20 text-center flex flex-row gap-1 justify-center items-center bg-orange-400 text-orange-100  hover:bg-orange-600 hover:text-blue-100 hover:shadow-orange-700 hover:shadow-md"
-        >
-          <StepForwardIcon className="size-4" />
-          <span className="text-sm sm:text-base truncate">Continuar</span>
-        </Button>
-      )}
-      {PROCESS_STATUS.sigle.executando === currentSpool?.status_sigle && (
-        <Button
-          type="button"
-          title="Finaliza processo produção"
-          disabled={
-            !spool ||
-            PROCESS_STATUS.sigle.executando !== currentSpool?.status_sigle
-          }
-          onClick={() => execute(PROCESS_STATUS.sigle.finalizado)}
-          className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
-               truncate min-w-20 text-center flex flex-row gap-1 justify-center items-center bg-green-500 text-blue-100  hover:bg-green-800 hover:text-green-100 hover:shadow-green-600 hover:shadow-md"
-        >
-          <CheckCircleIcon className="size-4" />
-          <span className="text-sm sm:text-base truncate">Finalizar</span>
-        </Button>
-      )}
-      {PROCESS_STATUS.sigle.finalizado === currentSpool?.status_sigle && (
-        <Button
-          type="button"
-          title="Avaliar qualidade produto"
-          disabled={
-            !spool ||
-            PROCESS_STATUS.sigle.finalizado !== currentSpool?.status_sigle
-          }
-          onClick={() => execute(PROCESS_STATUS.sigle.romaneio)}
-          className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
-               truncate min-w-20 text-center flex flex-row gap-1 justify-center items-center bg-blue-500 text-blue-100  hover:bg-blue-800 hover:text-blue-100 hover:shadow-blue-600 hover:shadow-md"
-        >
-          <RefreshCcwDotIcon className="size-4" />
-          <span className="text-sm sm:text-base truncate">Aprova CQ</span>
-        </Button>
-      )}
-      {PROCESS_STATUS.sigle.reverte === currentSpool?.status_sigle && (
-        <Button
-          type="button"
-          title="Reverte produto para inicio"
-          disabled={
-            !spool ||
-            PROCESS_STATUS.sigle.reverte !== currentSpool?.status_sigle
-          }
-          onClick={() => execute(PROCESS_STATUS.sigle.reservado)}
-          className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none w-1/2 text-sm px-3 py-1 rounded-md h-16
-               truncate min-w-20 text-center flex flex-row gap-1 justify-center items-center bg-lime-500 text-lime-100  hover:bg-lime-800 hover:text-lime-100 hover:shadow-lime-600 hover:shadow-md"
-        >
-          <PackageOpenIcon className="size-4" />
-          <span className="text-sm sm:text-base truncate">Reservar</span>
-        </Button>
-      )}
+            <span className="text-sm sm:text-base truncate">
+              {attribute?.name}
+            </span>
+          </Button>
+        );
+      })}
       <Button
         type="button"
         title="Fechar e cancelar a leitura QRCode"
@@ -149,7 +192,9 @@ export default function QRCodeButton({ children }) {
         onClick={() => {
           onClose(), setScannerLocked(true), setSpool(null);
         }}
-        className={`${currentSpool ? "w-1/2" : "w-full"} text-sm bg-red-600 hover:bg-red-600/50 hover:shadow-red-300 hover:text-stone-100  px-3 py-1 rounded-md text-stone-100 h-16 text-center flex flex-row gap-1 justify-center items-center`}
+        className={`${currentSpool ? "w-1/2" : "w-full"} h-16 gap-1 flex flex-row px-3 py-1 truncate 
+        text-sm text-center items-center justify-center rounded-md bg-red-600 text-red-100 
+        hover:bg-red-800 hover:text-red-100 hover:shadow-red-500`}
       >
         <XCircleIcon className="size-4" />
         Fechar

@@ -34,82 +34,6 @@ export default function CardItems({ items, setText, children }) {
 
   return (
     <ul className="divide-y divide-stone-200 flex flex-col gap-4 py-2">
-      {/* <li
-        className={`flex flex-col divide-y divide-stone-200 rounded-sm bg-stone-200/50  
-    items-center justify-center px-4 py-2 mt-4 gap-1 max-w-full shadow-md shadow-stone-300
-    tracking-wider`}
-      >
-        <div className="grid grid-cols-[12vw_1fr_12vw] items-center gap-1 w-full justify-center">
-          <button
-            title="Expandir e ocultar o total processo"
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="w-5 h-5 border-2 border-blue-950/50 rounded-md flex items-center justify-center text-blue-100 hover:text-blue-950/50 transition"
-          >
-            {isExpanded ? (
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path d="M19 15l-7-7-7 7" />
-              </svg>
-            ) : (
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path d="M5 9l7 7 7-7" />
-              </svg>
-            )}
-          </button>
-          <span className="w-full min-full text-center text-sm font-semibold text-stone-700 uppercase">
-            Processos
-          </span>
-
-          <span className="flex items-center justify-center min-w-12 max-w-[44px] px-2 text-stone-700 text-sm font-semibold tabular-nums">
-            QTD.
-          </span>
-        </div>
-
-        {isExpanded &&
-          quantityPerProcess.map((item) => (
-            <div
-              key={item?.name}
-              className="grid grid-cols-[1fr_auto] items-center gap-1 py-1 w-full"
-            >
-              <div className="flex flex-row leading-tight items-center gap-1">
-                <span className="text-sm font-semibold text-stone-700 capitalize">
-                  {item?.name}
-                </span>
-
-                <span className="text-xs text-stone-500 line-clamp-2">
-                  {item?.description}
-                </span>
-              </div>
-
-              <span className="mt-[.2em] flex items-center justify-center self-stretch h-full min-w-[44px] px-2 rounded-md bg-stone-600 text-blue-100 text-sm font-semibold tabular-nums">
-                {formatSixDigits(item?.quantity)}
-              </span>
-            </div>
-          ))}
-
-        <Separator className="via-stone-400/50 mt-2 -mb-2" />
-        <div className="flex flex-row w-full justify-between border-none items-center text-xs text-stone-600 font-bold tracking-wider break-words line-clamp-2 gap-2 py-2">
-          <span className="text-sm font-semibold text-stone-700">
-            TOTAL SPOOL
-          </span>
-
-          <span className="mt-[.2em] flex items-center justify-center min-w-[44px] px-2 py-1 rounded-md bg-blue-600 text-blue-100 text-sm font-semibold tabular-nums">
-            {formatSixDigits(items?.length || 0)}
-          </span>
-        </div>
-      </li> */}
-
       {children}
 
       {items?.map((item, index) => (
@@ -137,11 +61,8 @@ export default function CardItems({ items, setText, children }) {
             </div>
             <div className="capitalize px-2 py-2 text-center min-w-20 text-xs sm:text-sm md:text-base text-stone-800">
               <span
-                className={
-                  `p-1 text-xs rounded-full flex flex-row justify-center items-center ${" "} 
-                  ${String(styleColorStatus(item?.status_sigle))}`
-                  //${String(colorStatus[item.status_sigle]).replace('""', "").replace('""', "")}`
-                }
+                className={`p-1 text-xs rounded-full flex flex-row justify-center items-center ${" "} 
+                  ${String(styleColorStatus(item?.status_acronym))}`}
               >
                 <small> {item?.status}</small>
               </span>
@@ -179,18 +100,18 @@ export default function CardItems({ items, setText, children }) {
           <div className="flex flex-col h-[.1vh] shadow-sm shadow-stone-200 bg-blue-300/50 w-full mb-2 rounded-full" />
           <div className="flex flex-row w-full gap-1 py-1">
             <div className="w-1/3">
-              {PROCESS_STATUS.sigle.pausado !== item?.status_sigle &&
-                PROCESS_STATUS.sigle.executando !== item?.status_sigle && (
+              {PROCESS_STATUS.acronym.pausado !== item?.status_acronym &&
+                PROCESS_STATUS.acronym.executando !== item?.status_acronym && (
                   <Button
                     type="button"
                     title="Incia processo produção"
                     disabled={
-                      PROCESS_STATUS.sigle.reservado !== item?.status_sigle
+                      PROCESS_STATUS.acronym.reservado !== item?.status_acronym
                     }
                     onClick={() =>
                       handlerData(
                         "INICIAR",
-                        PROCESS_STATUS.sigle.executando,
+                        PROCESS_STATUS.acronym.executando,
                         item,
                       )
                     }
@@ -204,15 +125,15 @@ export default function CardItems({ items, setText, children }) {
                     </span>
                   </Button>
                 )}
-              {PROCESS_STATUS.sigle.executando === item?.status_sigle && (
+              {PROCESS_STATUS.acronym.executando === item?.status_acronym && (
                 <Button
                   type="button"
                   title="Pausar processo produção"
                   disabled={
-                    PROCESS_STATUS.sigle.executando !== item?.status_sigle
+                    PROCESS_STATUS.acronym.executando !== item?.status_acronym
                   }
                   onClick={() =>
-                    handlerData("PAUSAR", PROCESS_STATUS.sigle.pausado, item)
+                    handlerData("PAUSAR", PROCESS_STATUS.acronym.pausado, item)
                   }
                   className="
                   disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none
@@ -222,15 +143,17 @@ export default function CardItems({ items, setText, children }) {
                   <span className="text-xs sm:text-base truncate">Pausar</span>
                 </Button>
               )}
-              {PROCESS_STATUS.sigle.pausado === item?.status_sigle && (
+              {PROCESS_STATUS.acronym.pausado === item?.status_acronym && (
                 <Button
                   type="button"
                   title="Continuar processo produção"
-                  disabled={PROCESS_STATUS.sigle.pausado !== item?.status_sigle}
+                  disabled={
+                    PROCESS_STATUS.acronym.pausado !== item?.status_acronym
+                  }
                   onClick={() =>
                     handlerData(
                       "Continuar",
-                      PROCESS_STATUS.sigle.continua,
+                      PROCESS_STATUS.acronym.continua,
                       item,
                     )
                   }
@@ -250,12 +173,12 @@ export default function CardItems({ items, setText, children }) {
                 type="button"
                 title="Finaliza processo produção"
                 disabled={
-                  PROCESS_STATUS.sigle.executando !== item?.status_sigle
+                  PROCESS_STATUS.acronym.executando !== item?.status_acronym
                 }
                 onClick={() =>
                   handlerData(
                     "FINALIZAR",
-                    PROCESS_STATUS.sigle.finalizado,
+                    PROCESS_STATUS.acronym.finalizado,
                     item,
                   )
                 }
@@ -270,10 +193,14 @@ export default function CardItems({ items, setText, children }) {
                 type="button"
                 title="Avaliar qualidade produto"
                 disabled={
-                  PROCESS_STATUS.sigle.finalizado !== item?.status_sigle
+                  PROCESS_STATUS.acronym.finalizado !== item?.status_acronym
                 }
                 onClick={() =>
-                  handlerData("Qualidade", PROCESS_STATUS.sigle.romaneio, item)
+                  handlerData(
+                    "Qualidade",
+                    PROCESS_STATUS.acronym.romaneio,
+                    item,
+                  )
                 }
                 className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none truncate w-full  min-w-20 py-2 px-1 text-xs rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-blue-500 text-blue-100  hover:bg-blue-800 hover:text-blue-100 hover:shadow-blue-600 hover:shadow-md"
               >
@@ -284,12 +211,6 @@ export default function CardItems({ items, setText, children }) {
           </div>
         </li>
       ))}
-      <li className="rounded-md bg-stone-200 flex flex-row items-center px-4 py-2 mt-4">
-        <p className="text-xs text-stone-600 font-bold tracking-wider flex flex-row gap-2">
-          <span>{formatSixDigits(items?.length || 0)}</span>
-          <span>TOTAL ITENS</span>
-        </p>
-      </li>
     </ul>
   );
 }

@@ -183,7 +183,7 @@ export default function QRCodeFlow({ text }) {
             </div> */}
             <TextSpool spool={spool} />
 
-            {/* {String(currentSpool?.status_sigle).toUpperCase() === "FI" && (
+            {/* {String(currentSpool?.status_acronym).toUpperCase() === "FI" && (
               <div className="flex flex-col py-2">
                 <div className="flex flex-col border-2 border-stone-300/50 w-1/2 ml-20 mt-4 mb-4 rounded-full" />
                 <div className="flex flex-col justify-center gap-1 py-4">

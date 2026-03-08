@@ -60,7 +60,7 @@ export default function QRCodeQuestion({
 
   return (
     <section className="fixed inset-0 z-40 h-screen overflow-y-auto bg-black/80 flex flex-col items-center justify-start gap-6 px-4 py-4 sm:pb-0 ">
-      {/* {String(currentSpool?.status_sigle).toUpperCase() === "EX" && ( */}
+      {/* {String(currentSpool?.status_acronym).toUpperCase() === "EX" && ( */}
       <div className="w-full max-w-md flex justify-center items-center p-4 py-4 text-white">
         <h2 className="text-lg font-semibold">Avaliação de Qualidade</h2>
       </div>

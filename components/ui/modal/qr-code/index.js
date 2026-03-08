@@ -5,6 +5,7 @@ import { Html5Qrcode } from "html5-qrcode";
 import Input from "../../input";
 import AlertInfo from "components/ui/alert/info";
 import TextSpool from "components/ui/text-spool";
+import { PRODUCTS_TYPES } from "types/acronyms-tubes";
 
 export default function QRCode({
   isOpen,
@@ -29,10 +30,8 @@ export default function QRCode({
   const [hasAskedPermission, setHasAskedPermission] = useState(false);
   const [permissionDenied, setPermissionDenied] = useState(false);
 
-  const productsTypes = useMemo(
-    () => ["TB", "TJ", "TK", "TU", "TV", "TW", "TI"],
-    [],
-  );
+  const productsTypes = useMemo(() => PRODUCTS_TYPES, []);
+
   function normalizedText(text) {
     return new TextDecoder("utf-8")
       .decode(new TextEncoder().encode(text))

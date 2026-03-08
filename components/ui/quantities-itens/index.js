@@ -2,35 +2,10 @@ import { useState } from "react";
 
 import Separator from "../separator";
 import { formatSixDigits } from "util/formatters/numeric";
+import { styleColorStatus } from "types/styles-color-status";
 
 export default function QuantitiesItens({ data }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  console.log(data);
-  // const PROCESS_DESCRIPTION = {
-  //   reservado: "(aguardando incio)",
-  //   execução: "(em processo produção)",
-  //   pausado: "(aguardando para continuar)",
-  //   finalizado: `(aguardando "Aprova CQ")`,
-  //   romaneio: "(aguardando proxima etapa)",
-  // };
-
-  // const quantityPerProcess = useMemo(() => {
-  //   const counts = items?.reduce((acc, item) => {
-  //     const status = item?.status?.toLowerCase();
-  //     if (!status) return acc;
-
-  //     acc[status] = (acc[status] || 0) + 1;
-
-  //     return acc;
-  //   }, {});
-
-  //   return Object.keys(PROCESS_DESCRIPTION).map((status) => ({
-  //     name: status,
-  //     description: PROCESS_DESCRIPTION[status],
-  //     quantity: counts?.[status] || 0,
-  //   }));
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [items]);
 
   return (
     <ul
@@ -47,7 +22,7 @@ export default function QuantitiesItens({ data }) {
     items-center justify-center px-4 py-2 mt-4 gap-1 max-w-full shadow-md shadow-stone-300
     tracking-wider`}
       >
-        <div className="grid grid-cols-[12vw_1fr_12vw] items-center gap-1 w-full justify-center">
+        <div className="grid grid-cols-[5vw_auto_12vw] items-center gap-1 py-2 w-full">
           <button
             title="Expandir e ocultar o total processo"
             onClick={() => setIsExpanded(!isExpanded)}
@@ -75,11 +50,12 @@ export default function QuantitiesItens({ data }) {
               </svg>
             )}
           </button>
-          <span className="w-full min-full text-center text-xs font-semibold text-stone-700 uppercase">
+
+          <span className="text-center text-xs font-semibold text-stone-700 uppercase ">
             Processos
           </span>
 
-          <span className="flex items-center justify-center min-w-12 max-w-[44px] px-2 text-stone-700 text-xs font-semibold tabular-nums">
+          <span className="flex items-center justify-center px-2 text-stone-700 text-xs font-semibold tabular-nums">
             QTD.
           </span>
         </div>
@@ -88,7 +64,7 @@ export default function QuantitiesItens({ data }) {
           data?.items?.map((item) => (
             <div
               key={item?.name}
-              className={`grid grid-cols-[1fr_auto] items-center gap-1 py-1 w-full
+              className={`grid grid-cols-[1fr_auto] items-center gap-1 w-full
                   opacity-0
                   translate-y-4
                   animate-fadeInDown
@@ -96,19 +72,26 @@ export default function QuantitiesItens({ data }) {
                   animation-fill-mode:forwards
                 `}
             >
-              <div className="flex flex-row leading-tight items-center gap-1">
+              <div className="flex flex-row leading-tight items-center gap-2">
+                <div className="capitalize py-1 text-center min-w-2 text-xs sm:text-sm md:text-base text-stone-800">
+                  <span
+                    className={`w-2 p-2 text-xs rounded-full flex flex-row justify-center items-center ${" "} 
+                      ${String(styleColorStatus(item?.status_acronym))}`}
+                  ></span>
+                </div>
                 <span className="text-xs font-semibold text-stone-700 capitalize">
                   {item?.name}
                 </span>
 
                 <span className="text-xs text-stone-500 line-clamp-2">
-                  {item?.description}
+                  <small>{item?.description}</small>
                 </span>
               </div>
-
-              <span className="mt-[.2em] flex items-center justify-center self-stretch h-full min-w-[44px] px-2 rounded-md bg-stone-600 text-blue-100 text-xs font-semibold tabular-nums">
-                {formatSixDigits(item?.quantity)}
-              </span>
+              <div className="flex flex-row items-center gap-1 py-1">
+                <span className="flex items-center justify-center self-stretch h-[1.7em] px-2 rounded-md bg-stone-600 text-blue-100 text-xs font-semibold tabular-nums">
+                  <small>{formatSixDigits(item?.quantity)}</small>
+                </span>
+              </div>
             </div>
           ))}
 
@@ -132,9 +115,11 @@ export default function QuantitiesItens({ data }) {
         >
           <span className="text-xs font-semibold text-stone-700">TOTAL</span>
 
-          <span className="mt-[.2em] flex items-center justify-center min-w-[44px] px-2 py-1 rounded-md bg-blue-600 text-blue-100 text-xs font-semibold tabular-nums">
-            {formatSixDigits(data?.total || 0)}
-          </span>
+          <div className="flex flex-row items-center gap-1 py-1">
+            <span className="flex items-center justify-center self-stretch h-[1.7em] px-2 rounded-md bg-blue-600 text-blue-100 text-xs font-semibold tabular-nums">
+              <small> {formatSixDigits(data?.total || 0)}</small>
+            </span>
+          </div>
         </div>
       </li>
     </ul>

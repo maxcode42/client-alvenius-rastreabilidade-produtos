@@ -24,8 +24,8 @@ export default function CardItemsCustom({ items, children }) {
   async function openModalQRCode(e, item) {
     e.preventDefault();
     if (
-      PROCESS_STATUS.sigle.sucata === item?.status_sigle ||
-      PROCESS_STATUS.sigle.romaneio === item?.status_sigle
+      PROCESS_STATUS.acronym.sucata === item?.status_acronym ||
+      PROCESS_STATUS.acronym.romaneio === item?.status_acronym
     ) {
       setMessage(
         `Processo produção encerrado para esse SPOOL, selecione outro card.`,
@@ -50,73 +50,6 @@ export default function CardItemsCustom({ items, children }) {
         </h3>
       </div>
 
-      {/* <li className="rounded-sm bg-stone-200/50 flex flex-col items-start justify-center px-4 py-2 mt-4 gap-1 max-w-full shadow-md shadow-stone-300">
-        <p className="flex flex-row w-full justify-between text-xs text-stone-600 font-bold tracking-wider break-words line-clamp-2 items-start  gap-2">
-          <span className="w-full text-center justify-center items-center uppercase">
-            Processos
-          </span>
-          <span className="min-w-8 max-w-10 text-center">QTD.</span>
-        </p>
-
-        {quantityPerProcess.map((item) => (
-          <p
-            key={item?.name}
-            className="flex flex-row w-full justify-between text-xs text-stone-600 font-bold tracking-wider break-words line-clamp-2 items-start  gap-2"
-          >
-            <span className="w-fit gap-1 flex flex-row">
-              <span className="capitalize">{item?.name}</span>
-              <span className="font-normal">{item?.description}</span>:
-            </span>
-            <span className="min-w-8 max-w-10 text-end">
-              {formatSixDigits(item?.quantity)}
-            </span>
-          </p>
-        ))}
-        {/* <p className="flex flex-row w-full justify-between text-xs text-stone-600 font-bold tracking-wider break-words line-clamp-2 items-start  gap-2">
-          <span className="w-fit">
-            Reservado <span className="font-normal">(aguardando inicio)</span>:
-          </span>
-          <span className="min-w-8 max-w-10 text-end">
-            {formatSixDigits(quantityPerProcess?.reservado)}
-          </span>
-        </p>
-
-        <p className="flex flex-row w-full justify-between text-xs text-stone-600 font-bold tracking-wider break-words line-clamp-2 items-start  gap-2">
-          <span className="w-fit">
-            Execução <span className="font-normal">(em processo execução)</span>
-            :
-          </span>
-          <span className="min-w-8 max-w-10 text-end">
-            {formatSixDigits(quantityPerProcess?.execução)}
-          </span>
-        </p>
-        <p className="flex flex-row w-full justify-between text-xs text-stone-600 font-bold tracking-wider break-words line-clamp-2 items-start  gap-2">
-          <span className="w-fit">
-            Pausado{" "}
-            <span className="font-normal">(aguardando para continuar)</span>:
-          </span>
-          <span className="min-w-8 max-w-10 text-end">
-            {formatSixDigits(quantityPerProcess?.pausado)}
-          </span>
-        </p>
-        <p className="flex flex-row w-full justify-between text-xs text-stone-600 font-bold tracking-wider break-words line-clamp-2 items-start  gap-2">
-          <span className="w-fit">
-            Finalizado{" "}
-            <span className="font-normal">({`aguardando "Aprova CQ"`})</span>:
-          </span>
-          <span className="min-w-8 max-w-10 text-end">
-            {formatSixDigits(quantityPerProcess?.finalizado)}
-          </span>
-        </p> */}
-      {/* <Separator className="via-stone-400/50" />
-        <p className="flex flex-row w-full justify-between text-xs text-stone-600 font-bold tracking-wider break-words line-clamp-2 items-start  gap-2 mt-1">
-          <span className="w-fit">TOTAL SPOOL</span>
-          <span className="min-w-8 max-w-10 text-end">
-            {formatSixDigits(items?.length || 0)}
-          </span>
-        </p>
-      </li> */}
-
       {children}
 
       {items?.map((item, index) => (
@@ -129,7 +62,7 @@ export default function CardItemsCustom({ items, children }) {
               animate-fadeInDown
               [animation-delay:${Math.min(index * 80, 800)}ms]
               animation-fill-mode:forwards
-              ${PROCESS_STATUS.sigle.sucata === item?.status_sigle || PROCESS_STATUS.sigle.romaneio === item?.status_sigle ? "bg-stone-300/50 shadow-none text-stone-800" : "bg-white"}
+              ${PROCESS_STATUS.acronym.sucata === item?.status_acronym || PROCESS_STATUS.acronym.romaneio === item?.status_acronym ? "bg-stone-300/50 shadow-none text-stone-800" : "bg-white"}
             `}
         >
           {/* <li className="hover:bg-stone-50 transition odd:bg-white border-2 border-stone-200 rounded-lg shadow-lg"> */}
@@ -137,7 +70,7 @@ export default function CardItemsCustom({ items, children }) {
             type="button"
             title={`Ler QRCode produto código ${item?.codigo}`}
             // disabled={
-            //   item?.status_sigle === "SU" || item?.status_sigle === "RO"
+            //   item?.status_acronym === "SU" || item?.status_acronym === "RO"
             // }
             onClick={(e) => openModalQRCode(e, item)}
             className={`
@@ -154,7 +87,7 @@ export default function CardItemsCustom({ items, children }) {
               </div>
               <div className="capitalize  text-center min-w-20 text-xs sm:text-sm md:text-base text-stone-800">
                 <span
-                  className={`${styleColorStatus(item?.status_sigle)} p-1 text-xs rounded-full flex flex-row justify-center items-center`}
+                  className={`${styleColorStatus(item?.status_acronym)} p-1 text-xs rounded-full flex flex-row justify-center items-center`}
                 >
                   <small> {item?.status}</small>
                 </span>
@@ -196,12 +129,6 @@ export default function CardItemsCustom({ items, children }) {
           </Button>
         </li>
       ))}
-      {/* <li className="rounded-md bg-stone-200 flex flex-row items-center px-4 py-2 mt-4">
-        <p className="text-xs text-stone-600 font-bold tracking-wider flex flex-row gap-2">
-          <span>{formatSixDigits(items?.length || 0)}</span>
-          <span>TOTAL ITENS</span>
-        </p>
-      </li> */}
     </ul>
   );
 }

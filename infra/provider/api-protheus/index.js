@@ -116,7 +116,7 @@ const execute = {
   boilermaking: {
     read: async ({ tokenProtheus }) => {
       return await handleSend(
-        `WSRASTREIO/process?${PROCESS_FLOW.route.boilermaking.sigle}`,
+        `WSRASTREIO/process?${PROCESS_FLOW.route.boilermaking.acronym}`,
         "GET",
         null,
         tokenProtheus,
@@ -137,7 +137,7 @@ const execute = {
   coating: {
     read: async ({ tokenProtheus }) => {
       return await handleSend(
-        `WSRASTREIO/process?${PROCESS_FLOW.route.coating.sigle}`,
+        `WSRASTREIO/process?${PROCESS_FLOW.route.coating.acronym}`,
         "GET",
         null,
         tokenProtheus,
@@ -158,7 +158,7 @@ const execute = {
   painting: {
     read: async ({ tokenProtheus }) => {
       return await handleSend(
-        `WSRASTREIO/process?${PROCESS_FLOW.route.painting.sigle}`,
+        `WSRASTREIO/process?${PROCESS_FLOW.route.painting.acronym}`,
         "GET",
         null,
         tokenProtheus,
