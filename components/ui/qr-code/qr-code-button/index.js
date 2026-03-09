@@ -13,6 +13,7 @@ export default function QRCodeButton({ children }) {
     currentSpool,
     onClose,
     spool,
+    data,
     //action,
     setSpool,
     setNewStatus,
@@ -25,32 +26,39 @@ export default function QRCodeButton({ children }) {
     //await action?.handlerData();
     await onClose();
   }
+  const currentSpoolAlt = currentSpool;
+  currentSpoolAlt.status_acronym = "FI";
 
-  const buttonsDisplay = Object.keys(PROCESS_STATUS.acronym).reduce(
-    (acc, status) => {
-      let status_acronym = PROCESS_STATUS.acronym[status];
+  // const buttonsDisplay = Object.keys(PROCESS_STATUS.acronym).reduce(
+  //   (acc, status) => {
+  //     let status_acronym = PROCESS_STATUS.acronym_next[status];
+  //     console.log(currentSpoolAlt.status_acronym, status_acronym);
+  //     // if (
+  //     //   currentSpoolAlt?.status_acronym === PROCESS_STATUS.acronym.executando &&
+  //     //   status_acronym !== PROCESS_STATUS.acronym_next.finalizado &&
+  //     //   status_acronym !== PROCESS_STATUS.acronym_next.pausado //||
+  //     //   // (currentSpoolAlt?.status_acronym !==
+  //     //   //   PROCESS_STATUS.acronym.acronym_next &&
+  //     //   //   currentSpoolAlt?.status_acronym !== status_acronym)
+  //     // ) {
+  //     //   return acc;
+  //     // }
+  //     // if (!PROCESS_STATUS.acronym_next[status].includes(status)) return acc;
+  //     // acc.push({
+  //     //   // sigla: currentSpool?.status_acronym.concat("_", status_acronym),
+  //     //   sigla: status_acronym[0],
+  //     // });
 
-      if (
-        (currentSpool?.status_acronym === PROCESS_STATUS.acronym.executando &&
-          status_acronym !== PROCESS_STATUS.acronym.finalizado &&
-          status_acronym !== PROCESS_STATUS.acronym.pausado) ||
-        (currentSpool?.status_acronym !== PROCESS_STATUS.acronym.executando &&
-          currentSpool?.status_acronym !== status_acronym)
-      ) {
-        return acc;
-      }
+  //     return acc;
+  //   },
+  //   [],
+  // );
 
-      acc.push({
-        sigla: currentSpool?.status_acronym.concat("_", status_acronym),
-      });
-
-      return acc;
-    },
-    [],
-  );
-
+  const buttonsDisplay =
+    PROCESS_STATUS.acronym_next[currentSpoolAlt.status_acronym];
+  console.log(buttonsDisplay);
   const buttonAttribute = {
-    RE_RE: {
+    EX: {
       name: "Iniciar",
       title: "Incia processo produção",
       disabled:
@@ -61,7 +69,7 @@ export default function QRCodeButton({ children }) {
                   text-amber-100 hover:bg-amber-800 hover:text-amber-100 hover:shadow-amber-600`,
       icon: "PlayIcon",
     },
-    EX_PU: {
+    PU: {
       name: "Pausar",
       title: "Pausar processo produção",
       disabled:
@@ -73,7 +81,7 @@ export default function QRCodeButton({ children }) {
                   text-orange-100 hover:bg-orange-800 hover:text-orange-100 hover:shadow-orange-400`,
       icon: "PauseIcon",
     },
-    PU_PU: {
+    CO: {
       name: "Continuar",
       title: "Continuar processo produção",
       disabled:
@@ -85,7 +93,7 @@ export default function QRCodeButton({ children }) {
                   text-orange-100 hover:bg-orange-800 hover:text-orange-100 hover:shadow-orange-600`,
       icon: "StepForwardIcon",
     },
-    EX_FI: {
+    FI: {
       name: "Finalizar",
       title: "Finaliza processo produção",
       disabled:
@@ -97,17 +105,7 @@ export default function QRCodeButton({ children }) {
                   text-green-100 hover:bg-green-800 hover:text-green-100 hover:shadow-green-500`,
       icon: "CheckCircleIcon",
     },
-    CO_CO: {
-      name: "Desabilitado",
-      title: "Botão sem função definida",
-      disabled: true,
-      process_next: "",
-      class_name: `
-                  disabled:bg-stone-500/50 disabled:text-stone-100/50 bg-stone-500 
-                  text-stone-100 hover:bg-stone-800 hover:text-stone-100 hover:shadow-stone-600`,
-      icon: "TriangleAlertIcon",
-    },
-    FI_FI: {
+    RO: {
       name: "Aprova CQ",
       title: "Avaliar qualidade produto",
       disabled:
@@ -116,37 +114,37 @@ export default function QRCodeButton({ children }) {
       process_next: PROCESS_STATUS.acronym.romaneio,
       class_name: `
                   disabled:bg-sky-500/50 disabled:text-sky-100/50 bg-sky-600 
-                  text-sky-100 hover:bg-sky-800 hover:text-sky-100 hover:shadow-sky-500`,
+                  text-sky-100 hover:bg-sky-800 hover:text-sky-100 hover:shadow-sky-500
+                  ${data?.accordance && !data?.reversible ? "" : "hidden"}
+                  `,
       icon: "RefreshCcwDotIcon",
     },
-    RV_RV: {
-      name: "Desabilitado",
-      title: "Botão sem função definida",
-      disabled: true,
-      process_next: "TriangleAlertIcon",
+    RV: {
+      name: "Reverter",
+      title: "Retornar inicio do processo",
+      disabled:
+        !spool ||
+        PROCESS_STATUS.acronym.finalizado !== currentSpool?.status_acronym,
+      process_next: PROCESS_STATUS.acronym.reservado,
       class_name: `
                   disabled:bg-stone-500/50 disabled:text-stone-100/50 bg-stone-500 
-                  text-stone-100 hover:bg-stone-800 hover:text-stone-100 hover:shadow-stone-600`,
+                  text-stone-100 hover:bg-stone-800 hover:text-stone-100 hover:shadow-stone-600
+                  ${!data?.accordance && data?.reversible ? "" : "hidden"}
+                  `,
       icon: "PackageOpenIcon",
     },
-    SU_SU: {
-      name: "Desabilitado",
-      title: "Botão sem função definida",
-      disabled: true,
-      process_next: "",
+    SU: {
+      name: "Sucata",
+      title: "Descarte do produto",
+      disabled:
+        !spool ||
+        PROCESS_STATUS.acronym.finalizado !== currentSpool?.status_acronym,
+      process_next: PROCESS_STATUS.acronym.sucata,
       class_name: `
                   disabled:bg-stone-500/50 disabled:text-stone-100/50 bg-stone-500 
-                  text-stone-100 hover:bg-stone-800 hover:text-stone-100 hover:shadow-stone-600`,
-      icon: "TriangleAlertIcon",
-    },
-    RO_RO: {
-      name: "Desabilitado",
-      title: "Botão sem função definida",
-      disabled: true,
-      process_next: "",
-      class_name: `
-                  disabled:bg-stone-500/50 disabled:text-stone-100/50 bg-stone-500 
-                  text-stone-100 hover:bg-stone-800 hover:text-stone-100 hover:shadow-stone-600`,
+                  text-stone-100 hover:bg-stone-800 hover:text-stone-100 hover:shadow-stone-600
+                  ${!data?.accordance && !data?.reversible ? "" : "hidden"}
+                  `,
       icon: "TriangleAlertIcon",
     },
   };
@@ -155,8 +153,8 @@ export default function QRCodeButton({ children }) {
     <section className="w-full max-w-md h-full flex flex-row  py-8 gap-4 sm:w-1/2">
       {children}
 
-      {buttonsDisplay.map((item) => {
-        const attribute = buttonAttribute[item.sigla];
+      {buttonsDisplay.map((acronym) => {
+        const attribute = buttonAttribute[acronym];
         const Icon = Icons[attribute?.icon];
         return (
           <Button
@@ -176,7 +174,9 @@ export default function QRCodeButton({ children }) {
             {Icon && <Icon className="size-4" />}
 
             <span className="text-sm sm:text-base truncate">
-              {attribute?.name}
+              <small>
+                {attribute?.name} - {acronym}
+              </small>
             </span>
           </Button>
         );

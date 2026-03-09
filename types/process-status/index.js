@@ -9,6 +9,12 @@ const PROCESS_STATUS = {
     sucata: "SU",
     romaneio: "RO",
   },
+  acronym_next: {
+    RE: ["EX"],
+    PU: ["CO"],
+    EX: ["FI", "PU"],
+    FI: ["RO", "RV", "SU"],
+  },
   name: {
     RE: "reservado",
     EX: "execução",
