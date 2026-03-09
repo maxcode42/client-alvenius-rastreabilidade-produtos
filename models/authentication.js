@@ -2,7 +2,7 @@ import user from "models/user";
 //import password from "models/password";
 import { UnauthorizedError, NotFoundError } from "infra/errors";
 
-import apiProtheus from "provider/api-protheus";
+import apiProtheus from "infra/provider/api-protheus";
 
 // async function validatePassword(providedPassword, storedPassword) {
 //   const correctPasswordMatch = await password.compare(
@@ -43,7 +43,14 @@ async function findUserByUsername(providedUsername, providedPassword) {
 
 async function sendUserByUsernameProtheus(providedUsername, providedPassword) {
   // try {
-  const response = await apiProtheus.sendAuthenticateUser({
+  // const response = await apiProtheus.sendAuthenticateUser({
+  //   data: {
+  //     grant_type: "password",
+  //     username: providedUsername,
+  //     password: providedPassword,
+  //   },
+  // });
+  const response = await apiProtheus.execute.session.create({
     data: {
       grant_type: "password",
       username: providedUsername,
@@ -52,8 +59,6 @@ async function sendUserByUsernameProtheus(providedUsername, providedPassword) {
   });
 
   if (!response?.access_token) {
-    console.log("IF");
-    console.log(response);
     throw new UnauthorizedError({
       message: "Senha não confere.",
       action: "Verifique se o dado enviado está correto.",
@@ -75,7 +80,7 @@ async function getAuthenticateUser(providedUsername, providedPassword) {
     // const result = await findUserByUsername(providedUsername);
     // await validatePassword(providedPassword, result.password);
 
-    // return result;
+    // return { ...result, token_protheus: result.id };
     const results = await sendUserByUsernameProtheus(
       providedUsername,
       providedPassword,

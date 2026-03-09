@@ -2,11 +2,16 @@ import crypto from "node:crypto";
 
 import database from "infra/database";
 import { UnauthorizedError } from "infra/errors";
+import apiProtheus from "infra/provider/api-protheus";
 
-const EXPIRATION_IN_MILLISECONDS = 60 * 60 * 24 * 30 * 1_000; // 30 days in milliseconds
+// const EXPIRATION_IN_MILLISECONDS = 60 * 60 * 24 * 30 * 1_000; // 30 days in milliseconds
+const ONE_HOUR = 60 * 60 * 1_000; // 1 time in milliseconds
+const SAFETY_MARGIN = 1 * 60 * 1_000; // 1 minute in milliseconds
+const EXPIRATION_IN_MILLISECONDS = ONE_HOUR - SAFETY_MARGIN; // 59 minutes in milliseconds
+//const EXPIRATION_IN_MILLISECONDS = 60 * 1_000;
 
 function createDateExpiresAt() {
-  const result = new Date(Date.now() + EXPIRATION_IN_MILLISECONDS); // add 30 day
+  const result = new Date(Date.now() + EXPIRATION_IN_MILLISECONDS); // add 1 time
 
   return result;
 }
@@ -92,6 +97,26 @@ async function runSelectQuery(token) {
   return results.rows[0];
 }
 
+async function sendSessionProtheus(tokenProtheus) {
+  const results = await apiProtheus.execute.register.status({ tokenProtheus });
+
+  if (!results[0]?.Status) {
+    throw new UnauthorizedError({
+      message: `Sessão expirada ou inativa no "Protheus".`,
+      action:
+        "Verifique se a sessão expirou ou se esse usuário esta logado e tente novamente.",
+    });
+  }
+
+  return results[0];
+}
+
+async function findOneValidByTokenProtheus(tokenProtheus) {
+  const result = await sendSessionProtheus(tokenProtheus);
+
+  return result;
+}
+
 async function findOneValidByToken(token) {
   const result = await runSelectQuery(token);
 
@@ -122,6 +147,7 @@ async function renew(id) {
 
 const session = {
   EXPIRATION_IN_MILLISECONDS,
+  findOneValidByTokenProtheus,
   findOneValidByToken,
   expireById,
   create,

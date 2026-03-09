@@ -1,0 +1,216 @@
+import {
+  CalendarDaysIcon,
+  CheckCircleIcon,
+  PauseIcon,
+  PlayIcon,
+  RefreshCcwDotIcon,
+  StepForwardIcon,
+} from "lucide-react";
+
+import { styleColorStatus } from "types/styles-color-status";
+
+import { PROCESS_STATUS } from "types/process-status";
+import { formatSixDigits } from "util/formatters/numeric";
+import { formatCodeDefault } from "util/formatters/code";
+import { formatDateCustom } from "util/formatters/date";
+
+import Button from "components/ui/button";
+
+import { useQRCode } from "hooks/qr-code-context";
+
+export default function CardItems({ items, setText, children }) {
+  const { setCurrentSpool, setOpenQRCode, setScannerLocked, setResult } =
+    useQRCode();
+
+  async function handlerData(text, _, item) {
+    setText(text);
+    setResult(null);
+    setCurrentSpool(item);
+    setScannerLocked(false);
+    setOpenQRCode(true);
+  }
+
+  if (!items || items.length === 0) return null;
+
+  return (
+    <ul className="divide-y divide-stone-200 flex flex-col gap-4 py-2">
+      {children}
+
+      {items?.map((item, index) => (
+        <li
+          key={String(item?.codigo).concat(index)}
+          className={`hover:bg-stone-50 transition odd:bg-white px-2 py-2 border-2 border-stone-200 rounded-lg shadow-lg
+             opacity-0
+              translate-y-4
+              animate-fadeInUp
+              [animation-delay:${Math.min(index * 80, 800)}ms]
+              animation-fill-mode:forwards
+            `}
+        >
+          <div className="flex flex-row w-full justify-between">
+            <div className="flex flex-row justify-center gap-1">
+              <div className="flex flex-col  justify-center items-center text-sm sm:text-sm md:text-base text-center text-stone-800  ">
+                <small className="px-2 bg-stone-300/50 rounded-full w-fit">
+                  {formatSixDigits(index + 1)}
+                </small>
+              </div>
+              <p className="flex flex-row justify-center items-center gap-1 px-2 py-2 text-xs sm:text-sm md:text-base text-stone-800">
+                <strong>Código: </strong>
+                {formatCodeDefault(item?.codigo)}
+              </p>
+            </div>
+            <div className="capitalize px-2 py-2 text-center min-w-20 text-xs sm:text-sm md:text-base text-stone-800">
+              <span
+                className={`p-1 text-xs rounded-full flex flex-row justify-center items-center ${" "} 
+                  ${String(styleColorStatus(item?.status_acronym))}`}
+              >
+                <small> {item?.status}</small>
+              </span>
+            </div>
+          </div>
+          <div className="flex flex-col py-1">
+            <div className="flex flex-row justify-between px-2 py-1">
+              <p className="text-xs flex flex-col w-1/2 gap-1">
+                <small className="flex flex-row gap-1">
+                  <CalendarDaysIcon className="size-4 text-slate-400" />
+                  <strong>Início:</strong>
+                </small>
+                <small>
+                  {formatDateCustom(item.dateStart, item.timeStart)}
+                </small>
+              </p>
+              <div className="flex flex-col items-center justify-center bg-stone-200 w-[.2rem] h-8 rounded-full" />
+              <p className="text-xs flex flex-col w-1/2 px-4 gap-1">
+                <small className="flex flex-row gap-1">
+                  <CalendarDaysIcon className="size-4 text-stone-400" />
+                  <strong>Finalizado:</strong>{" "}
+                </small>
+                <small>{formatDateCustom(item.dateEnd, item.timeEnd)}</small>
+              </p>
+            </div>
+            <p
+              colSpan={5}
+              className=" px-2 py-2 text-xs sm:text-sm md:text-base text-stone-800"
+            >
+              <small>
+                <strong>Descrição:</strong> {item?.descricao}
+              </small>
+            </p>
+          </div>
+          <div className="flex flex-col h-[.1vh] shadow-sm shadow-stone-200 bg-blue-300/50 w-full mb-2 rounded-full" />
+          <div className="flex flex-row w-full gap-1 py-1">
+            <div className="w-1/3">
+              {PROCESS_STATUS.acronym.pausado !== item?.status_acronym &&
+                PROCESS_STATUS.acronym.executando !== item?.status_acronym && (
+                  <Button
+                    type="button"
+                    title="Incia processo produção"
+                    disabled={
+                      PROCESS_STATUS.acronym.reservado !== item?.status_acronym
+                    }
+                    onClick={() =>
+                      handlerData(
+                        "INICIAR",
+                        PROCESS_STATUS.acronym.executando,
+                        item,
+                      )
+                    }
+                    className="
+                  disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none
+                   truncate w-full min-w-20 text-xs py-2 px-1 rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-yellow-500 text-blue-100  hover:bg-yellow-800 hover:text-blue-100 hover:shadow-yellow-600 hover:shadow-md"
+                  >
+                    <PlayIcon className="size-4" />
+                    <span className="text-xs sm:text-base truncate">
+                      Iniciar
+                    </span>
+                  </Button>
+                )}
+              {PROCESS_STATUS.acronym.executando === item?.status_acronym && (
+                <Button
+                  type="button"
+                  title="Pausar processo produção"
+                  disabled={
+                    PROCESS_STATUS.acronym.executando !== item?.status_acronym
+                  }
+                  onClick={() =>
+                    handlerData("PAUSAR", PROCESS_STATUS.acronym.pausado, item)
+                  }
+                  className="
+                  disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none
+                   truncate w-full min-w-20 text-xs py-2 px-1 rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-orange-500 text-orange-100  hover:bg-orange-800 hover:text-blue-100 hover:shadow-yellow-600 hover:shadow-md"
+                >
+                  <PauseIcon className="size-4" />
+                  <span className="text-xs sm:text-base truncate">Pausar</span>
+                </Button>
+              )}
+              {PROCESS_STATUS.acronym.pausado === item?.status_acronym && (
+                <Button
+                  type="button"
+                  title="Continuar processo produção"
+                  disabled={
+                    PROCESS_STATUS.acronym.pausado !== item?.status_acronym
+                  }
+                  onClick={() =>
+                    handlerData(
+                      "Continuar",
+                      PROCESS_STATUS.acronym.continua,
+                      item,
+                    )
+                  }
+                  className="
+                  disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none
+                   truncate w-full min-w-20 text-xs py-2 px-1 rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-orange-400 text-orange-100  hover:bg-orange-600 hover:text-blue-100 hover:shadow-orange-700 hover:shadow-md"
+                >
+                  <StepForwardIcon className="size-4" />
+                  <span className="text-xs sm:text-base truncate">
+                    Continuar
+                  </span>
+                </Button>
+              )}
+            </div>
+            <div className="w-1/3">
+              <Button
+                type="button"
+                title="Finaliza processo produção"
+                disabled={
+                  PROCESS_STATUS.acronym.executando !== item?.status_acronym
+                }
+                onClick={() =>
+                  handlerData(
+                    "FINALIZAR",
+                    PROCESS_STATUS.acronym.finalizado,
+                    item,
+                  )
+                }
+                className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none truncate w-full min-w-20 py-2 px-1 text-xs rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-green-500 text-blue-100  hover:bg-green-800 hover:text-green-100 hover:shadow-green-600 hover:shadow-md"
+              >
+                <CheckCircleIcon className="size-4" />
+                <span className="text-xs sm:text-base truncate">Finalizar</span>
+              </Button>
+            </div>
+            <div className="w-1/3 ">
+              <Button
+                type="button"
+                title="Avaliar qualidade produto"
+                disabled={
+                  PROCESS_STATUS.acronym.finalizado !== item?.status_acronym
+                }
+                onClick={() =>
+                  handlerData(
+                    "Qualidade",
+                    PROCESS_STATUS.acronym.romaneio,
+                    item,
+                  )
+                }
+                className="disabled:bg-stone-300 disable:cursor-not-allowed disabled:shadow-none truncate w-full  min-w-20 py-2 px-1 text-xs rounded-sm text-center flex flex-row gap-1 justify-center items-center bg-blue-500 text-blue-100  hover:bg-blue-800 hover:text-blue-100 hover:shadow-blue-600 hover:shadow-md"
+              >
+                <RefreshCcwDotIcon className="size-4" />
+                <span className="text-xs sm:text-base truncate">Aprova CQ</span>
+              </Button>
+            </div>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}

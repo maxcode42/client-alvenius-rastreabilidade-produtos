@@ -1,11 +1,14 @@
-import { AuthProvider } from "../src/auth/auth-context";
+import { AuthProvider } from "../auth/auth-context";
+import { QRCodeProvider } from "hooks/qr-code-context";
 
 import "./styles/globals.css";
 
 export default function App({ Component, pageProps }) {
   return (
     <AuthProvider>
-      <Component {...pageProps} />
+      <QRCodeProvider>
+        <Component {...pageProps} />
+      </QRCodeProvider>
     </AuthProvider>
   );
 }

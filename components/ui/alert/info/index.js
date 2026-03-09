@@ -6,16 +6,21 @@ import AlertBody from "../base/body";
 import AlertFooter from "../base/footer";
 
 export default function AlertInfo({
+  message,
   openAlert,
   setOpenAlert,
+  action = null,
   setScannerLocked,
-  message,
 }) {
   async function handlerActionAlert(e) {
     e.preventDefault();
 
     await setOpenAlert(false);
     await setScannerLocked(false);
+
+    if (action) {
+      action();
+    }
   }
   return (
     <AlertPanel openAlert={openAlert}>

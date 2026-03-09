@@ -1,19 +1,25 @@
 //import { useRouter } from "next/router";
 import { useEffect, useState, useMemo } from "react";
-import { SaveIcon, QrCodeIcon, Trash2Icon, InfoIcon } from "lucide-react";
-
-import withAuth from "../../src/auth/auth-with";
+import { SaveIcon, QrCodeIcon, Trash2Icon } from "lucide-react";
 
 import Header from "../../components/header";
 import Body from "../../components/body";
 import Button from "components/ui/button";
 import Table from "components/ui/table";
-
-import QRCode from "components/ui/modal/qr-code";
-import AlertConfirm from "components/ui/alert/confirm";
-import api from "provider/api-web";
 import AlertInfo from "components/ui/alert/info";
+import AlertConfirm from "components/ui/alert/confirm";
+import PanelDefault from "components/ui/panel-default";
+import PanelPrimary from "components/ui/panel-primary";
+import HeaderPageTitle from "components/header-page-title";
+import HeaderPageText from "components/header-page-text";
+import QRCode from "components/ui/modal/qr-code";
+
 import { STATUS_CODE } from "types/status-code";
+import withAuth from "../../auth/auth-with";
+
+import api from "infra/provider/api-web";
+import Separator from "components/ui/separator";
+import TextSpool from "components/ui/text-spool";
 
 function Register() {
   const [itens, setItens] = useState([]);
@@ -57,16 +63,18 @@ function Register() {
     try {
       e.preventDefault();
       setLoading(true);
-      const results = await api.createRegister({ data: { spool, itens } });
+      const results = await api.execute.register.create({
+        data: { spool, itens },
+      });
 
       setOpenAlertInfo(true);
 
-      if (results?.status_code === STATUS_CODE.SERVER_ERROR) {
+      if (results?.status_code !== STATUS_CODE.CREATE) {
         setMessage(results?.message);
         return;
       }
 
-      setMessage(results?.Sucesso);
+      setMessage(results?.message);
       clearData();
     } catch (error) {
       setOpenAlertInfo(true);
@@ -84,77 +92,68 @@ function Register() {
       <Header />
 
       <Body>
-        <div className="flex flex-col w-full px-4 py-6 md:mt-16 justify-start items-center h-full overflow-hidden">
-          <section className="overflow-y-scroll md:overflow-hidden h-full sm:h-full sm:w-1/2 sm:min-h-[70vh] px-4 py-4 w-full flex flex-col gap-2 justify-start items-start border-blue-950/50 border-2 rounded-sm">
-            <div className="w-full bg-stone-300/50">
-              <h3 className="text-2xl text-center font-semibold py-2 ">
-                Cadastro
-              </h3>
-              <div className="flex flex-row items-center gap-2 py-1 px-1">
-                <InfoIcon size={16} className="text-blue-950/50" />
-                <p className="text-xs">
-                  Realizar o cadastro inicial do Spool e componentes.
-                </p>
-              </div>
-            </div>
-            <div className="text-xs sm:text-lg">
-              <p className="mt-2 text-sm sm:text-lg break-all font-semibold ">
-                Spool
-              </p>
-              <div className="text-xs sm:text-lg">
-                <div className="flex flex-col ">
-                  <p>
-                    <span className="font-semibold">Código: </span>
-                    <span className="font-normal">{spool?.codigo}</span>
-                  </p>
-                  <p>
-                    <span className="font-semibold">Descrição: </span>
-                    <span className="font-normal truncate">
-                      {spool?.descricao}
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="w-full h-full sm:h-1/2 flex flex-col sm:flex-col gap-4">
-              <div className="w-full min-w-full h-70 min-h-64 sm:min-h-96 sm:h-96 sm:max-h-96 border-blue-950/50 border-2 rounded-sm overflow-auto">
-                <Table titles={titles} items={itens} />
-              </div>
-              <div className="w-full sm:w-full h-16 flex gap-4 flex-row">
-                <Button type="button" onClick={(e) => openModalQRCode(e)}>
-                  <QrCodeIcon className="size-6 sm:size-8" />
-                  <span className="text-sm sm:text-base truncate">
-                    Escanear
-                  </span>
-                </Button>
+        <PanelDefault>
+          <HeaderPageTitle
+            title={"Cadastro"}
+            text={"Realizar o cadastro inicial do Spool e componentes."}
+          />
 
-                <Button
-                  onClick={(e) => handleConfirmClear(e)}
-                  disabled={itens.length === 0 && spool === null}
-                >
-                  <Trash2Icon className="size-6 sm:size-8" />
-                  <span className="text-sm sm:text-base truncate"> Limpar</span>
-                </Button>
+          <Separator />
 
-                <Button
-                  disabled={itens.length === 0 || openAlertInfo || loading}
-                  onClick={(e) => handleCreateRegister(e)}
-                >
-                  {openAlertInfo || loading ? (
-                    <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <span className="fel flex row gap-2 justify-center items-center">
-                      <SaveIcon className="size-6 sm:size-8" />
-                      <span className="text-sm sm:text-base truncate">
-                        Gravar
-                      </span>
-                    </span>
-                  )}
-                </Button>
-              </div>
-            </div>
+          <HeaderPageText>
+            {/* <p className="mt-2 text-sm sm:text-lg break-all font-semibold ">
+              SPOOL
+            </p>
+            <p>
+              <span className="font-semibold">Código: </span>
+              <span className="font-normal">{spool?.codigo}</span>
+            </p>
+            <p>
+              <span className="font-semibold">Descrição: </span>
+              <span className="font-normal truncate">{spool?.descricao}</span>
+            </p> */}
+            <TextSpool spool={spool} />
+          </HeaderPageText>
+
+          <PanelPrimary>
+            <Table titles={titles} items={itens} />
+          </PanelPrimary>
+
+          <section className="w-full sm:w-full h-16 flex gap-2 flex-row">
+            <Button type="button" onClick={(e) => openModalQRCode(e)}>
+              <QrCodeIcon className="size-6 sm:size-8" />
+              <span className="text-xs sm:text-base truncate">Ler QRCode</span>
+            </Button>
+
+            <Button
+              onClick={(e) => handleConfirmClear(e)}
+              disabled={itens.length === 0 && spool === null}
+              className={
+                "bg-red-500 text-red-100  hover:bg-red-700 hover:text-stone-100 hover:shadow-red-600 disabled:bg-stone-300 disabled:shadow-none"
+              }
+            >
+              <Trash2Icon className="size-6 sm:size-8" />
+              <span className="text-xs sm:text-base truncate"> Limpar</span>
+            </Button>
+
+            <Button
+              disabled={itens.length === 0 || openAlertInfo || loading}
+              onClick={(e) => handleCreateRegister(e)}
+              className={
+                "bg-green-500 text-green-100  hover:bg-green-700 hover:text-stone-100 hover:shadow-green-600 disabled:bg-stone-300 disabled:shadow-none"
+              }
+            >
+              {openAlertInfo || loading ? (
+                <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <span className="fel flex row gap-2 justify-center items-center">
+                  <SaveIcon className="size-6 sm:size-8" />
+                  <span className="text-xs sm:text-base truncate">Gravar</span>
+                </span>
+              )}
+            </Button>
           </section>
-        </div>
+        </PanelDefault>
       </Body>
 
       {openQRCode && (
