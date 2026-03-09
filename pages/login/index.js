@@ -11,7 +11,6 @@ import Input from "components/ui/input";
 import Button from "components/ui/button";
 
 export default function Login() {
-  //const router = useRouter();
   const { signIn } = useAuth();
 
   const [username, setUsername] = useState("");
@@ -21,13 +20,6 @@ export default function Login() {
   const [passwordMessage, setPasswordMessage] = useState("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Se usuário já estiver autenticado, redireciona
-  // useEffect(() => {
-  //   if (user?.id) {
-  //     router.replace("/");
-  //   }
-  // }, [user, router]);
 
   const validateFields = useCallback(() => {
     let hasError = false;
@@ -66,9 +58,6 @@ export default function Login() {
 
         return;
       }
-
-      // REDIRECIONA IMEDIATAMENTE
-      //router.replace("/");
     } catch (error) {
       setUsernameMessage("Erro ao realizar login.");
       setIsSubmitting(false);
