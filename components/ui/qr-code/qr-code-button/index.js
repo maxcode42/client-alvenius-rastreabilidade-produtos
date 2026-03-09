@@ -13,7 +13,7 @@ export default function QRCodeButton({ children }) {
     currentSpool,
     onClose,
     spool,
-    action,
+    //action,
     setSpool,
     setNewStatus,
     setScannerLocked,
@@ -22,9 +22,8 @@ export default function QRCodeButton({ children }) {
   async function execute(status) {
     await setScannerLocked(true);
     await setNewStatus(status);
+    //await action?.handlerData();
     await onClose();
-    //Comentado enquanto estiver usando FORM QUALIDADE separado MODAL QRCode
-    await action();
   }
 
   const buttonsDisplay = Object.keys(PROCESS_STATUS.acronym).reduce(
@@ -38,7 +37,6 @@ export default function QRCodeButton({ children }) {
         (currentSpool?.status_acronym !== PROCESS_STATUS.acronym.executando &&
           currentSpool?.status_acronym !== status_acronym)
       ) {
-        console.log("dentro do IF CONDITIONAL ");
         return acc;
       }
 

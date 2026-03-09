@@ -3,7 +3,8 @@ import { Html5Qrcode } from "html5-qrcode";
 import { useQRCode } from "hooks/qr-code-context";
 
 export default function QRCodeCamera() {
-  const { openQRCode, openAlert, setOpenAlert, setResult } = useQRCode();
+  const { openQRCode, openAlert, setOpenAlert, setResult, setSpool } =
+    useQRCode();
 
   const qrRegionId = "qr-reader";
 
@@ -100,12 +101,13 @@ export default function QRCodeCamera() {
 
           /* limpa resultado antes da nova leitura */
           setResult(null);
+          setSpool(null);
 
           /* garante novo ciclo de render */
           setTimeout(() => {
             try {
               setResult(decodedText);
-              setOpenAlert(true);
+              //setOpenAlert(true);
             } catch (error) {
               console.error("[QR-CODE] Erro ao processar leitura:", {
                 error,
@@ -126,6 +128,7 @@ export default function QRCodeCamera() {
     } finally {
       isStartingRef.current = false;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pauseScanner, setOpenAlert, setResult]);
 
   /* =========================

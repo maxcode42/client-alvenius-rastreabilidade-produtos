@@ -14,6 +14,7 @@ export function QRCodeProvider({ children }) {
   const [onClose, setOnClose] = useState(() => () => {});
   const [action, setAction] = useState(() => () => {});
 
+  const [checkCodeExists, setCheckCodeExists] = useState(false);
   const [newStatus, setNewStatus] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -58,6 +59,8 @@ export function QRCodeProvider({ children }) {
       setNewStatus,
       text,
       setText,
+      checkCodeExists,
+      setCheckCodeExists,
     }),
     [
       data,
@@ -74,6 +77,7 @@ export function QRCodeProvider({ children }) {
       currentSpool,
       newStatus,
       text,
+      checkCodeExists,
     ],
   );
 

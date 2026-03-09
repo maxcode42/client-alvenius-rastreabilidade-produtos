@@ -42,22 +42,23 @@ export default function ProcessFlow({
   const [text, setText] = useState("");
 
   const {
-    currentSpool,
-    setOnClose,
-    setOpenQRCode,
-    setCurrentSpool,
-    openAlert,
-    setOpenAlert,
-    setAction,
-    openQRCode,
+    setCheckCodeExists,
     setScannerLocked,
-    message,
-    newStatus,
+    setCurrentSpool,
+    setOpenQRCode,
+    currentSpool,
     setNewStatus,
+    setOpenAlert,
+    setOnClose,
+    openQRCode,
+    openAlert,
+    setAction,
+    newStatus,
     setResult,
     setSpool,
-    data,
+    message,
     setData,
+    data,
     //spool,
   } = useQRCode();
 
@@ -68,11 +69,35 @@ export default function ProcessFlow({
   const [loading, setLoading] = useState(true);
   const [itens, setItens] = useState(null);
 
-  // async function findOnByCode(code) {
-  //   const results = await api.execute[route].find({ params: code });
+  async function findOnByCode({ code }) {
+    //= "SP0414FL005003") {
+    const results = await api.execute[route].find({ params: code });
+    // const results = {
+    //   data: [
+    //     {
+    //       codigo: "SP041500345003",
+    //       dateEnd: "",
+    //       dateStart: "20260302",
+    //       descricao: "Carretel FS+FF 16pol x 6,35 x 4500mm 150 PSI",
+    //       process: "caldeiraria",
+    //       process_acronym: "CA",
+    //       sequence: "0001",
+    //       status: "execução",
+    //       status_acronym: "FI",
+    //       timeEnd: "",
+    //       timeStart: "17:02",
+    //       user: "josuel",
+    //     },
+    //   ],
+    //   quantities: [{}],
+    //   total: 1,
+    // };
 
-  //   return results;
-  // }
+    // console.log(">>PROCESS-FLOW findInByCode IS CHECKING AQUI");
+    // console.log(code);
+    // console.log(results?.data?.[0]);
+    return results?.data?.[0] ?? {};
+  }
 
   async function openModalQRCode(e) {
     e.preventDefault();
@@ -91,6 +116,7 @@ export default function ProcessFlow({
   }
 
   function resetDataDefault() {
+    setCheckCodeExists(false);
     setItensFiltered(null);
     setCurrentSpool(null);
     setNewStatus(null);
@@ -105,7 +131,6 @@ export default function ProcessFlow({
   }
 
   async function handlerData() {
-    //if (!getData || !currentSpool) return;
     if (!currentSpool) return;
 
     const objectData = {
@@ -120,14 +145,9 @@ export default function ProcessFlow({
           : newStatus,
     };
 
-    console.log("PROCESS-FLOW");
-    console.log(objectData);
-    console.log("PROCESS-FLOW DATA CONTEXT");
-    console.log(data);
-
-    // await api.execute[route].create({
-    //   data: objectData,
-    // });
+    await api.execute[route].create({
+      data: objectData,
+    });
 
     resetDataDefault();
   }
@@ -242,11 +262,14 @@ export default function ProcessFlow({
       //   setOpenQRCode(false), setSpool(null), setScannerLocked(true);
       // };
       return () => {
-        setOpenQRCode(false), setScannerLocked(true);
+        setOpenQRCode(false), setScannerLocked(true), setCheckCodeExists(false);
       };
     });
-    setAction(() => () => handlerData());
+    // FUNCIONA
+    // setAction(() => () => handlerData());
 
+    // 08-0-2026 NEW IMPLEMENTS
+    setAction(() => findOnByCode);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -276,7 +299,7 @@ export default function ProcessFlow({
 
     setLoading(true);
     handlerData();
-    setNewStatus(null);
+    // setNewStatus(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newStatus]);
 

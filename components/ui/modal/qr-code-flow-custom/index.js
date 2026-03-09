@@ -7,19 +7,23 @@ import TextSpool from "components/ui/text-spool";
 import Separator from "components/ui/separator";
 
 import { useQRCode } from "hooks/qr-code-context";
+import { normalizeAlphanumeric } from "util/formatters/text";
+import { formatCodeDefault } from "util/formatters/code";
 
 export default function QRCodeFlowCustom() {
   const {
-    action,
+    checkCodeExists,
     setOpenAlert,
+    setCurrentSpool,
+    currentSpool,
     setMessage,
+    openQRCode,
     setSpool,
+    setData,
+    action,
     result,
     spool,
-    currentSpool,
-    openQRCode,
     data,
-    setData,
   } = useQRCode();
 
   const [isMaxHeightText, setIsMaxHeightText] = useState(false);
@@ -90,14 +94,19 @@ export default function QRCodeFlowCustom() {
     const regex = /^(SP(?:-[A-Za-z0-9]+)+)\s+([\s\S]*)$/;
     const normalized = normalizedText(text);
     const match = normalized.match(regex);
+
     // const match = normalized
     //   .trim()
     //   .match(/^(SP-[A-Za-z0-9]{4}-[A-Za-z0-9]{5}-[A-Za-z0-9]{3})\s+(.*)$/);
     if (!match) {
-      setMessage(
-        "QRCODE-FLOW-CUSTOM: Escanear um QRCode do SPOOL, ou este QRCODE é inválido!",
-      );
-      setOpenAlert(true);
+      // setSpool(null);
+      // console.log(">>parseQrSpoolToJson dentro IF");
+      // console.log(match);
+      // setMessage(
+      //   "Escanear um QRCode do SPOOL, ou este QRCODE é inválido!",
+      // );
+      // setSpool(null);
+      // setOpenAlert(true);
       return null;
     }
     return { codigo: match[1], descricao: match[2] };
@@ -106,20 +115,21 @@ export default function QRCodeFlowCustom() {
 
   const checkIfCodeExists = useCallback(
     async (code) => {
-      if (!currentSpool) {
-        await action(code);
+      code = normalizeAlphanumeric(code);
 
-        return;
+      // if (!currentSpool && checkCodeExists) {
+      if (checkCodeExists && code) {
+        const result = await action({ code });
+
+        return (await result?.codigo) === code ? result : null;
       }
 
-      if (currentSpool?.codigo !== code) {
-        setMessage(
-          `QRCODE-FLOW-CUSTOM: O código escaneado é diferente, escanei o QRCode do SPOOL código: ${currentSpool?.codigo}`,
-        );
-        setOpenAlert(true);
-      }
+      return currentSpool?.codigo === code ? currentSpool : null;
     },
-    [action, currentSpool, setOpenAlert, setMessage],
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+    // [action, checkCodeExists, currentSpool],
   );
 
   // function onChangeReversible(value) {}
@@ -129,23 +139,56 @@ export default function QRCodeFlowCustom() {
   // }
 
   const handleQrDecoded = useCallback(async () => {
-    if ((!spool && !result) || spool !== null) {
+    if (!result) {
       return;
     }
 
-    const parsedSpool = parseQrSpoolToJson(result);
-    if (parsedSpool) {
+    const parsedSpool = await parseQrSpoolToJson(result);
+    if (!parsedSpool) {
+      // setSpool(null);
       setMessage(
-        `QRCODE-FLOW-CUSTOM Spool: ${parsedSpool.codigo} - ${parsedSpool.descricao}`,
+        "Ler um QRCode de SPOOL, ou este QRCODE está danificado ou é inválido!",
       );
+      setSpool(null);
+      setOpenAlert(true);
+      return null;
+    }
+
+    const isEqualCode = await checkIfCodeExists(parsedSpool?.codigo);
+    if ((!spool && !result) || (spool !== null && currentSpool !== null)) {
+      return;
+    }
+
+    // if (currentSpool?.codigo !== parsedSpool.codigo) {
+    if (!isEqualCode) {
+      if (checkCodeExists) {
+        setMessage(
+          `O código escaneado não cadastrado ou não foi encontrado no sistema`,
+        );
+        setCurrentSpool(null);
+      } else {
+        setMessage(
+          `O código escaneado é diferente, para continuar ler o QRCode do SPOOL código: ${formatCodeDefault(currentSpool?.codigo)}`,
+        );
+      }
+      setSpool(null);
+      setOpenAlert(true);
+      return;
+    }
+
+    if (!currentSpool && checkCodeExists) {
+      setCurrentSpool(isEqualCode);
+    }
+
+    if (parsedSpool && isEqualCode) {
+      setMessage(`Spool: ${parsedSpool.codigo} - ${parsedSpool.descricao}`);
       setSpool(parsedSpool);
       setOpenAlert(true);
 
       //await action(parsedSpool.codigo);
-      await checkIfCodeExists(parsedSpool.codigo);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parseQrSpoolToJson, checkIfCodeExists, setSpool, spool, result]);
+  }, [spool, result]);
 
   useEffect(() => {}, [isMaxHeightText]);
 
