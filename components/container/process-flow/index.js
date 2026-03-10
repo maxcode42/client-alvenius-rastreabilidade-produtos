@@ -30,7 +30,7 @@ import api from "infra/provider/api-web";
 import QuantitiesItens from "components/ui/quantities-itens";
 
 const cardCustom = Boolean(
-  process.env.NEXT_PUBLIC_APP_CARD_CUSTOM.toLowerCase() === "true",
+  process.env.NEXT_PUBLIC_APP_CARD_CUSTOM?.toLowerCase() === "true",
 );
 
 export default function ProcessFlow({
@@ -145,6 +145,8 @@ export default function ProcessFlow({
           : newStatus,
     };
 
+    // console.log(">>PROCESS FLOW: HANDLER_DATA");
+    // console.log(objectData);
     await api.execute[route].create({
       data: objectData,
     });
@@ -195,9 +197,9 @@ export default function ProcessFlow({
           const dateEnd = formatToPtBR(item?.dateEnd);
 
           const itemFiltered =
-            code.includes(searchText.toUpperCase()) ||
-            codeFormat.includes(searchText.toUpperCase()) ||
-            status.includes(searchText.toLowerCase()) ||
+            code.includes(searchText?.toUpperCase()) ||
+            codeFormat.includes(searchText?.toUpperCase()) ||
+            status.includes(searchText?.toLowerCase()) ||
             dateStart?.includes(searchText) ||
             dateEnd?.includes(searchText);
 

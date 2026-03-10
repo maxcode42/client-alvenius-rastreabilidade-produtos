@@ -19,6 +19,7 @@ export default function QRCodeButton({ children }) {
     setNewStatus,
     setScannerLocked,
   } = useQRCode();
+  const textAreaCharactersMin = 15;
 
   async function execute(status) {
     await setScannerLocked(true);
@@ -26,8 +27,10 @@ export default function QRCodeButton({ children }) {
     //await action?.handlerData();
     await onClose();
   }
-  const currentSpoolAlt = currentSpool;
-  currentSpoolAlt.status_acronym = "FI";
+  // const currentSpoolAlt = !currentSpool ? {} : currentSpool;
+  // if (currentSpool) {
+  //   currentSpoolAlt.status_acronym = "FI";
+  // }
 
   // const buttonsDisplay = Object.keys(PROCESS_STATUS.acronym).reduce(
   //   (acc, status) => {
@@ -55,8 +58,8 @@ export default function QRCodeButton({ children }) {
   // );
 
   const buttonsDisplay =
-    PROCESS_STATUS.acronym_next[currentSpoolAlt.status_acronym];
-  console.log(buttonsDisplay);
+    PROCESS_STATUS?.acronym_next[currentSpool?.status_acronym];
+
   const buttonAttribute = {
     EX: {
       name: "Iniciar",
@@ -110,42 +113,45 @@ export default function QRCodeButton({ children }) {
       title: "Avaliar qualidade produto",
       disabled:
         !spool ||
-        PROCESS_STATUS.acronym.finalizado !== currentSpool?.status_acronym,
+        PROCESS_STATUS.acronym.finalizado !== currentSpool?.status_acronym ||
+        data?.qualityText?.length < textAreaCharactersMin,
       process_next: PROCESS_STATUS.acronym.romaneio,
       class_name: `
                   disabled:bg-sky-500/50 disabled:text-sky-100/50 bg-sky-600 
                   text-sky-100 hover:bg-sky-800 hover:text-sky-100 hover:shadow-sky-500
                   ${data?.accordance && !data?.reversible ? "" : "hidden"}
                   `,
-      icon: "RefreshCcwDotIcon",
+      icon: "CheckCheckIcon",
     },
     RV: {
       name: "Reverter",
       title: "Retornar inicio do processo",
       disabled:
         !spool ||
-        PROCESS_STATUS.acronym.finalizado !== currentSpool?.status_acronym,
-      process_next: PROCESS_STATUS.acronym.reservado,
+        PROCESS_STATUS.acronym.finalizado !== currentSpool?.status_acronym ||
+        data?.qualityText?.length < textAreaCharactersMin,
+      process_next: PROCESS_STATUS.acronym.reverte,
       class_name: `
-                  disabled:bg-stone-500/50 disabled:text-stone-100/50 bg-stone-500 
-                  text-stone-100 hover:bg-stone-800 hover:text-stone-100 hover:shadow-stone-600
+                  disabled:bg-lime-500/50 disabled:text-lime-100/50 bg-lime-500 
+                  text-lime-100 hover:bg-lime-800 hover:text-lime-100 hover:shadow-lime-600
                   ${!data?.accordance && data?.reversible ? "" : "hidden"}
                   `,
-      icon: "PackageOpenIcon",
+      icon: "Repeat2Icon",
     },
     SU: {
       name: "Sucata",
       title: "Descarte do produto",
       disabled:
         !spool ||
-        PROCESS_STATUS.acronym.finalizado !== currentSpool?.status_acronym,
+        PROCESS_STATUS.acronym.finalizado !== currentSpool?.status_acronym ||
+        data?.qualityText?.length < textAreaCharactersMin,
       process_next: PROCESS_STATUS.acronym.sucata,
       class_name: `
-                  disabled:bg-stone-500/50 disabled:text-stone-100/50 bg-stone-500 
-                  text-stone-100 hover:bg-stone-800 hover:text-stone-100 hover:shadow-stone-600
+                  disabled:bg-red-500/50 disabled:text-red-100/50 bg-red-500 
+                  text-red-100 hover:bg-red-800 hover:text-red-100 hover:shadow-red-600
                   ${!data?.accordance && !data?.reversible ? "" : "hidden"}
                   `,
-      icon: "TriangleAlertIcon",
+      icon: "RefreshCwOffIcon", //"PackageXIcon", //"TriangleAlertIcon",
     },
   };
 
@@ -153,7 +159,7 @@ export default function QRCodeButton({ children }) {
     <section className="w-full max-w-md h-full flex flex-row  py-8 gap-4 sm:w-1/2">
       {children}
 
-      {buttonsDisplay.map((acronym) => {
+      {buttonsDisplay?.map((acronym) => {
         const attribute = buttonAttribute[acronym];
         const Icon = Icons[attribute?.icon];
         return (
@@ -174,9 +180,7 @@ export default function QRCodeButton({ children }) {
             {Icon && <Icon className="size-4" />}
 
             <span className="text-sm sm:text-base truncate">
-              <small>
-                {attribute?.name} - {acronym}
-              </small>
+              {attribute?.name}
             </span>
           </Button>
         );
@@ -184,9 +188,6 @@ export default function QRCodeButton({ children }) {
       <Button
         type="button"
         title="Fechar e cancelar a leitura QRCode"
-        // onClick={() => {
-        //   onClose(), setScannerLocked(true), setSpool(null);
-        // }}
         onClick={() => {
           onClose(), setScannerLocked(true), setSpool(null);
         }}

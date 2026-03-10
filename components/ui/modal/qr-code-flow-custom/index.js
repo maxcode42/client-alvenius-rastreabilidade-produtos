@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CircleQuestionMarkIcon, FilePenLineIcon } from "lucide-react";
 
 import Input from "components/ui/input";
@@ -9,6 +9,7 @@ import Separator from "components/ui/separator";
 import { useQRCode } from "hooks/qr-code-context";
 import { normalizeAlphanumeric } from "util/formatters/text";
 import { formatCodeDefault } from "util/formatters/code";
+import { PROCESS_STATUS } from "types/process-status";
 
 export default function QRCodeFlowCustom() {
   const {
@@ -25,10 +26,11 @@ export default function QRCodeFlowCustom() {
     spool,
     data,
   } = useQRCode();
-
+  const textareaRef = useRef(null);
   const [isMaxHeightText, setIsMaxHeightText] = useState(false);
   const maxTextArea = useMemo(() => {
     return {
+      characters_min: 15,
       characters: 120,
       lines: 3,
     };
@@ -193,6 +195,15 @@ export default function QRCodeFlowCustom() {
   useEffect(() => {}, [isMaxHeightText]);
 
   useEffect(() => {
+    textareaRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+
+    textareaRef.current?.focus();
+  }, [data]);
+
+  useEffect(() => {
     handleQrDecoded();
   }, [handleQrDecoded]);
 
@@ -218,7 +229,7 @@ export default function QRCodeFlowCustom() {
           <TextSpool spool={spool} />
 
           {String(currentSpool?.status_acronym).toUpperCase() === "FI" && (
-            <div
+            <form
               className={`flex flex-col py-2
                   opacity-0
                   translate-y-4
@@ -323,24 +334,41 @@ export default function QRCodeFlowCustom() {
                   />
                   Disposição qualidade produto.
                 </label>
-                <p
-                  className={`text-xs text-red-600 mb-2 ${!isMaxHeightText ? "hidden" : ""}`}
-                >
-                  <span>
-                    * Limite máximo de <strong>{maxTextArea.characters}</strong>{" "}
-                    caracteres ou <strong>{maxTextArea.lines}</strong> linhas.
-                  </span>
+                <p className={`text-xs text-red-600 mb-2 min-h-4`}>
+                  {isMaxHeightText && (
+                    <span>
+                      * Limite máximo de{" "}
+                      <strong>{maxTextArea.characters}</strong> caracteres ou{" "}
+                      <strong>{maxTextArea.lines}</strong> linhas.
+                    </span>
+                  )}
+
+                  {!textareaRef ||
+                    (data.qualityText.length <= maxTextArea.characters_min && (
+                      <span>
+                        * Descrição obrigatória mínimo de{" "}
+                        <strong>{maxTextArea.characters_min}</strong>{" "}
+                        caracteres.
+                      </span>
+                    ))}
                 </p>
                 <textarea
+                  ref={textareaRef}
                   rows={maxTextArea.lines}
                   value={data?.qualityText}
-                  maxLength={maxTextArea.characters}
                   onChange={(e) => limitLines(e)}
+                  minLength={maxTextArea.characters_min}
+                  maxLength={maxTextArea.characters}
+                  required={
+                    currentSpool?.status_acronym === PROCESS_STATUS?.finalizado
+                  }
                   placeholder="Digite texto direto e objetivo para disposição qualidade."
-                  className="overflow-y-scroll leading-6 w-full h-24 resize-none border-2 border-stone-300/50 placeholder:text-gray-400 outline-none focus:border-blue-400/50 focus:ring-0 focus:ring-blue-200 focus:shadow-md focus:shadow-blue-300/50 rounded-md px-1 py-1"
+                  className={`overflow-y-scroll leading-6 w-full h-24 resize-none border-2 border-stone-300/50 placeholder:text-gray-400 outline-none focus:border-blue-400/50 focus:ring-0 focus:ring-blue-200 focus:shadow-md focus:shadow-blue-300/50 rounded-md px-1 py-1
+                    ${data.qualityText.length < maxTextArea.characters_min ? "focus:border-red-300 border-2 invalid:border-red-300" : ""}
+                    `}
                 />
               </div>
-            </div>
+            </form>
           )}
           {/* <div className="flex flex-col border-2 border-stone-300/50 w-full mt-8 rounded-lg shadow-sm shadow-blue-600/50" /> */}
         </div>
