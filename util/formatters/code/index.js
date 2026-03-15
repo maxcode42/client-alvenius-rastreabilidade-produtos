@@ -1,23 +1,6 @@
 import { normalizeAlphanumeric } from "util/formatters/text";
 
-// function formatCodeDefault(code) {
-//   const result = code.replace(
-//     /^([A-Z]{2})(\d{4})(\d{5})(\d{3})$/,
-//     "$1-$2-$3-$4",
-//   );
-//   return result;
-// }
 export function formatCodeDefault(code) {
-  // const result = code.replace(
-  //   /^([A-Z]{2})(\d{4})(\d{5})(\d{4})$/,
-  //   "$1-$2-$3-$4",
-  // );
-  // const result = code.replace(
-  //   /^(?=.{15}$)([A-Z]{2})([A-Za-z0-9]{4})([A-Za-z0-9]{5})([A-Za-z0-9]{4,5})$/,
-  //   (_, g1, g2, g3, g4) => `${g1}-${g2}-${g3}-${g4}`,
-  // );
-  // return result;
-
   const text = normalizeAlphanumeric(code);
   const match = text.match(/^(?=.{6,15}$)([A-Z]{2})([A-Za-z0-9]+)$/);
   if (!match) return null;

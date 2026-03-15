@@ -12,8 +12,15 @@ const PROCESS_STATUS = {
   acronym_next: {
     RE: ["EX"],
     PU: ["CO"],
-    EX: ["FI", "PU"],
+    EX: ["PU", "FI"],
     FI: ["RO", "RV", "SU"],
+  },
+  acronym_next_card: {
+    RE: ["EX", "FI", "RO"],
+    PU: ["CO", "FI", "RO"],
+    EX: ["PU", "FI", "RO"],
+    FI: ["EX", "FI", "RO"],
+    RO: ["EX", "FI", "RO"],
   },
   name: {
     RE: "reservado",

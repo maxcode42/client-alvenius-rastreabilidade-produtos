@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useState, useCallback } from "react";
-import { LockKeyhole, User2Icon } from "lucide-react";
+import { LockKeyhole, LogInIcon, User2Icon } from "lucide-react";
 
 import { STATUS_CODE } from "types/status-code";
 import { useAuth } from "../../auth/auth-context";
@@ -125,11 +125,23 @@ export default function Login() {
             </section>
 
             <section className="w-full">
-              <Button type="submit" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className={`${isSubmitting ? "disabled:bg-blue-800/50 hover:shadow-blue-600/50" : ""}`}
+              >
                 {isSubmitting ? (
-                  <span className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span className="flex flex-row w-full justify-center items-center gap-2">
+                    <span className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span className="text-xs">Entrando...</span>
+                  </span>
                 ) : (
-                  "ENTRAR"
+                  <span className="flex flex-row w-full justify-center items-center gap-2">
+                    <span className="w-6 h-6">
+                      <LogInIcon />
+                    </span>
+                    <span className="text-xs">ENTRAR</span>
+                  </span>
                 )}
               </Button>
             </section>

@@ -28,6 +28,16 @@ const PROCESS_FLOW = {
     RR: "revestimento",
     PI: "pintura",
   },
+  text_next_allowed: {
+    RE: "Iniciar",
+    EX: "Pausar ou Finalizar",
+    PU: "Continuar",
+    FI: "Qualificar",
+    RV: "Reservar",
+    SU: "Descartar",
+    RO: "Romaneio",
+    default: "para seguir",
+  },
 };
 
 exports.PROCESS_FLOW = PROCESS_FLOW;
