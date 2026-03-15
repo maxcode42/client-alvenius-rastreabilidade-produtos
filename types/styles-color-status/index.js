@@ -9,7 +9,7 @@ export function styleColorStatus(acronym) {
     RV: "bg-lime-400 text-lime-100",
     SU: "bg-red-400 text-red-100",
     RO: "bg-sky-500 text-sky-100",
-    default: "bg-stone-200 text-stone-950",
+    default: "bg-stone-400 text-stone-950",
   };
 
   return colorStatus?.[acronym] || colorStatus.default;

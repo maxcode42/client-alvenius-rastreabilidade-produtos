@@ -1,4 +1,4 @@
-import { InfoIcon } from "lucide-react";
+import { InfoIcon, XCircleIcon } from "lucide-react";
 
 import { AlertPanel } from "../base/panel";
 import { AlertHeader } from "../base/header";
@@ -12,16 +12,17 @@ export default function AlertInfo({
   action = null,
   setScannerLocked,
 }) {
-  async function handlerActionAlert(e) {
+  function handlerActionAlert(e) {
     e.preventDefault();
-
-    await setOpenAlert(false);
-    await setScannerLocked(false);
 
     if (action) {
       action();
     }
+
+    setScannerLocked(false);
+    setOpenAlert(false);
   }
+
   return (
     <AlertPanel openAlert={openAlert}>
       <AlertHeader title={"Informação"} setOpenAlert={setOpenAlert}>
@@ -33,8 +34,9 @@ export default function AlertInfo({
         <div className="flex flex-col w-full h-full py-4 ">
           <button
             onClick={(e) => handlerActionAlert(e)}
-            className="w-full text-sm bg-red-600 px-3 py-1 rounded-md text-stone-100 h-16"
+            className="w-full flex flex-row justify-center items-center gap-2 text-sm bg-red-600 px-3 py-1 rounded-md text-stone-100 h-16"
           >
+            <XCircleIcon className="size-4" />
             Fechar
           </button>
         </div>

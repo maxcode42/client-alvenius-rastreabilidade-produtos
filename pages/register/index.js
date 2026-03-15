@@ -101,17 +101,6 @@ function Register() {
           <Separator />
 
           <HeaderPageText>
-            {/* <p className="mt-2 text-sm sm:text-lg break-all font-semibold ">
-              SPOOL
-            </p>
-            <p>
-              <span className="font-semibold">Código: </span>
-              <span className="font-normal">{spool?.codigo}</span>
-            </p>
-            <p>
-              <span className="font-semibold">Descrição: </span>
-              <span className="font-normal truncate">{spool?.descricao}</span>
-            </p> */}
             <TextSpool spool={spool} />
           </HeaderPageText>
 

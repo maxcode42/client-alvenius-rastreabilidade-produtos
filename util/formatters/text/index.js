@@ -1,9 +1,13 @@
 export function normalizedText(text) {
   return new TextDecoder("utf-8")
     .decode(new TextEncoder().encode(text))
-    .normalize("NFC");
+    .normalize("NFC")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 export function normalizeAlphanumeric(text) {
-  return text?.replace(/[^A-Za-z0-9]/g, "")?.trim();
+  return normalizedText(text)
+    ?.replace(/[^A-Za-z0-9]/g, "")
+    .trim();
 }

@@ -10,7 +10,7 @@ export default function withAuth(Page) {
     useEffect(() => {
       if (loading) return;
 
-      if (process.env.NEXT_PUBLIC_APP_ENVIRONMENT.toLowerCase() === "true") {
+      if (process.env.NEXT_PUBLIC_APP_ENVIRONMENT?.toLowerCase() === "true") {
         router.replace("/maintenance");
         return;
       }

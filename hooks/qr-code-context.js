@@ -1,11 +1,11 @@
 "use client";
-
 import { createContext, useContext, useState, useMemo } from "react";
 
 const QRCodeContext = createContext(null);
 
 export function QRCodeProvider({ children }) {
   const [scannerLocked, setScannerLocked] = useState(false);
+  const [currentProcess, setCurrentProcess] = useState(null);
   const [currentSpool, setCurrentSpool] = useState(null);
   const [openQRCode, setOpenQRCode] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
@@ -55,6 +55,8 @@ export function QRCodeProvider({ children }) {
       setOpenQRCode,
       currentSpool,
       setCurrentSpool,
+      currentProcess,
+      setCurrentProcess,
       newStatus,
       setNewStatus,
       text,
@@ -75,6 +77,7 @@ export function QRCodeProvider({ children }) {
       isOpen,
       openQRCode,
       currentSpool,
+      currentProcess,
       newStatus,
       text,
       checkCodeExists,
