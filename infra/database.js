@@ -29,8 +29,10 @@ function getSSLValues() {
     };
   }
 
+  const localHosts = ["localhost", "127.0.0.1"];
+
   return process.env.NODE_ENV === "production" &&
-    process.env.POSTGRES_HOST !== "localhost"
+    !localHosts.includes(process.env.POSTGRES_HOST)
     ? true
     : false;
 }
