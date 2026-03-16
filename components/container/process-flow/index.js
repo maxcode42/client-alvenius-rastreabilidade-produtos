@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { ArchiveXIcon } from "lucide-react";
 
 import Header from "../../header";
@@ -8,16 +9,14 @@ import PanelDefault from "../../ui/panel-default";
 import PanelPrimary from "../../ui/panel-primary";
 import HeaderPageTitle from "../../header-page-title";
 import HeaderPageButtons from "../../header-page-buttons";
-import CardItemsCustom from "../../ui/card-items-custom";
-import QRCodeFlowCustom from "../../ui/modal/qr-code-flow-custom";
+
 import QRCodeFlow from "../../ui/modal/qr-code-flow";
 import AlertInfo from "../../ui/alert/info";
 
-import QRCodeQuestion from "components/ui/modal/qr-code-question";
-import Loading from "components/ui/loading";
+import QuantitiesItens from "components/ui/quantities-itens";
 import Separator from "components/ui/separator";
+import Loading from "components/ui/loading";
 
-import { PROCESS_STATUS } from "types/process-status";
 import { PROCESS_FLOW } from "types/process-flow";
 
 import { normalizeAlphanumeric } from "util/formatters/text";
@@ -27,22 +26,16 @@ import { formatToPtBR } from "util/formatters/date";
 import { useQRCode } from "hooks/qr-code-context";
 
 import api from "infra/provider/api-web";
-import QuantitiesItens from "components/ui/quantities-itens";
-
-const cardCustom = Boolean(
-  process.env.NEXT_PUBLIC_APP_CARD_CUSTOM.toLowerCase() === "true",
-);
 
 export default function ProcessFlow({
-  textModal = "",
+  //textModal = "",
   title = "",
   info = "",
   route,
 }) {
-  const [text, setText] = useState("");
-
   const {
     setCheckCodeExists,
+    setCurrentProcess,
     setScannerLocked,
     setCurrentSpool,
     setOpenQRCode,
@@ -50,7 +43,6 @@ export default function ProcessFlow({
     setNewStatus,
     setOpenAlert,
     setOnClose,
-    openQRCode,
     openAlert,
     setAction,
     newStatus,
@@ -59,15 +51,14 @@ export default function ProcessFlow({
     message,
     setData,
     data,
-    //spool,
   } = useQRCode();
 
-  const [isOpenQuestion, setIsOpenQuestion] = useState(false);
   const [itensFiltered, setItensFiltered] = useState(null);
   const [quantities, setQuantities] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(true);
   const [itens, setItens] = useState(null);
+  const currentRoute = usePathname();
 
   async function findOnByCode({ code }) {
     //= "SP0414FL005003") {
@@ -93,26 +84,22 @@ export default function ProcessFlow({
     //   total: 1,
     // };
 
-    // console.log(">>PROCESS-FLOW findInByCode IS CHECKING AQUI");
+    // console.log(">>PROCESS-FLOW findInByCode IS CHECKING");
     // console.log(code);
     // console.log(results?.data?.[0]);
     return results?.data?.[0] ?? {};
   }
 
-  async function openModalQRCode(e) {
+  function openModalQRCode(e) {
     e.preventDefault();
 
-    //await setCurrentSpool(item);
-    await setResult(null);
-    await setScannerLocked(false);
-    await setOpenQRCode(true);
-    // }
-    // function openModalQRCode(e) {
-    //   e.preventDefault();
-    //setText("para buscar o SPOOL e seguir fluxo do");
-    setText(textModal);
+    setResult(null);
+    setOpenQRCode(true);
     setOpenAlert(false);
-    //setOpenQRCode(true);
+    setCurrentSpool(null);
+    setCheckCodeExists(true);
+    setScannerLocked(false);
+    setCurrentProcess(currentRoute.replace("/", ""));
   }
 
   function resetDataDefault() {
@@ -145,6 +132,8 @@ export default function ProcessFlow({
           : newStatus,
     };
 
+    // console.log(">>PROCESS FLOW: HANDLER_DATA");
+    // console.log(objectData);
     await api.execute[route].create({
       data: objectData,
     });
@@ -175,15 +164,11 @@ export default function ProcessFlow({
             !currentSpool) ||
           (searchText.length > 0 && searchText.length < 3)
         ) {
-          //setLoading(false);
           return;
         }
 
-        // console.log(itensFiltered);
-
         if (!itensFiltered) {
           setItensFiltered(itens);
-          //setLoading(false);
           return;
         }
 
@@ -195,9 +180,9 @@ export default function ProcessFlow({
           const dateEnd = formatToPtBR(item?.dateEnd);
 
           const itemFiltered =
-            code.includes(searchText.toUpperCase()) ||
-            codeFormat.includes(searchText.toUpperCase()) ||
-            status.includes(searchText.toLowerCase()) ||
+            code.includes(searchText?.toUpperCase()) ||
+            codeFormat.includes(searchText?.toUpperCase()) ||
+            status.includes(searchText?.toLowerCase()) ||
             dateStart?.includes(searchText) ||
             dateEnd?.includes(searchText);
 
@@ -240,35 +225,18 @@ export default function ProcessFlow({
   );
 
   const assignDefaultStandards = useCallback(() => {
+    // setOpenAlert(false);
     // setOnClose(() => {
     //   return () => {
-    //     setOpenQRCode(false), setSpool(null), setScannerLocked(true);
+    //     setOpenQRCode(false), setScannerLocked(true), setCheckCodeExists(false);
     //   };
     // });
-
-    // setAction(() => {
-    //   return () => {
-    //     findOnByCode(), handlerData();
-    //   };
-    // });
-    // setAction(() => {
-    //   return () => {
-    //     handlerData();
-    //   };
-    // });
-    setCurrentSpool(null);
     setOnClose(() => {
-      // return () => {
-      //   setOpenQRCode(false), setSpool(null), setScannerLocked(true);
-      // };
       return () => {
-        setOpenQRCode(false), setScannerLocked(true), setCheckCodeExists(false);
+        setOpenQRCode(false), setScannerLocked(true), resetDataDefault();
       };
     });
-    // FUNCIONA
-    // setAction(() => () => handlerData());
 
-    // 08-0-2026 NEW IMPLEMENTS
     setAction(() => findOnByCode);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -292,21 +260,17 @@ export default function ProcessFlow({
   useEffect(() => {
     if (!newStatus) return;
 
-    if (newStatus === PROCESS_STATUS.acronym.romaneio && !cardCustom) {
-      setIsOpenQuestion(true);
-      return;
-    }
-
     setLoading(true);
     handlerData();
-    // setNewStatus(null);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newStatus]);
 
   useEffect(() => {
+    // setOpenAlert(false);
     assignDefaultStandards();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [route]);
 
   //if (!itens) return null;
 
@@ -334,18 +298,17 @@ export default function ProcessFlow({
           <HeaderPageButtons
             searchText={searchText}
             setSearchText={setSearchText}
-            setCurrentSpool={setCurrentSpool}
+            //setCurrentSpool={setCurrentSpool}
             openModalQRCode={openModalQRCode}
           />
 
           <Separator />
 
           <PanelPrimary className={`border-none`}>
-            {(!itens || !itens?.length) && loading && <Loading />}
+            {(loading || !itens) && <Loading />}
 
-            {itens?.length === 0 && !loading && (
+            {!loading && itens?.length === 0 && (
               <div
-                //className="w-full h-full flex flex-col min-h-72 flex-1 px-2 py-8 gap-8 border-blue-300/50 border-2 rounded-md text-center"
                 className={`w-full h-full flex flex-col min-h-72 flex-1 px-2 py-8 gap-8 border-blue-300/50 border-2 rounded-md text-center
                             opacity-0
                             translate-y-4
@@ -373,73 +336,24 @@ export default function ProcessFlow({
               </div>
             )}
 
-            {!loading &&
-              (cardCustom ? (
-                <CardItemsCustom
-                  setText={setText}
-                  items={itensFiltered}
-                  //setMessage={setMessage}
-                  //setOpenAlert={setOpenAlert}
-                  // setOpenQRCode={setOpenQRCode}
-                  // setCurrentSpool={setCurrentSpool}
-                >
-                  <QuantitiesItens data={quantities} />
-                </CardItemsCustom>
-              ) : (
-                <CardItems
-                  setText={setText}
-                  items={itensFiltered}
-                  //setOpenQRCode={setOpenQRCode}
-                  //setCurrentSpool={setCurrentSpool}
-                  //setNewStatus={setNewStatus}
-                >
-                  <QuantitiesItens data={quantities} />
-                </CardItems>
-              ))}
+            {!loading && (
+              <CardItems items={itensFiltered}>
+                <QuantitiesItens data={quantities} />
+              </CardItems>
+            )}
           </PanelPrimary>
         </PanelDefault>
       </Body>
-      {openQRCode && cardCustom && (
-        <QRCodeFlowCustom
-        // // itens={itens}
-        // // spool={spool}
-        // // setSpool={setSpool}
-        // // isOpen={openQRCode}
-        // // currentSpool={currentSpool}
-        // // action={findOnByCode}
-        // // onClose={() => {
-        // //   setOpenQRCode(false), setSpool(null);
-        // }}
-        />
-      )}
-      {openQRCode && !cardCustom && (
-        <QRCodeFlow
-          text={text}
-          // itens={itens}
-          // spool={spool}
-          // setSpool={setSpool}
-          // isOpen={openQRCode}
-          // currentSpool={currentSpool}
-          // action={(findOnByCode, handlerData)}
-          // onClose={() => {
-          //   setOpenQRCode(false), setSpool(null);
-          // }}
-        />
-      )}
-      {openAlert && cardCustom && (
+
+      <QRCodeFlow />
+
+      {openAlert && (
         <AlertInfo
           action={null}
           message={message}
           openAlert={openAlert}
           setOpenAlert={setOpenAlert}
           setScannerLocked={setScannerLocked}
-        />
-      )}
-      {isOpenQuestion && (
-        <QRCodeQuestion
-          setIsOpenQuestion={setIsOpenQuestion}
-          resetDataDefault={resetDataDefault}
-          handlerData={handlerData}
         />
       )}
     </div>

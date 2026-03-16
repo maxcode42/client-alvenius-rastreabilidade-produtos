@@ -6,6 +6,7 @@ import Input from "../../input";
 import AlertInfo from "components/ui/alert/info";
 import TextSpool from "components/ui/text-spool";
 import { PRODUCTS_TYPES } from "types/acronyms-tubes";
+import { COMPONENT_VARIABLES } from "types/component-variables";
 
 export default function QRCode({
   isOpen,
@@ -35,20 +36,21 @@ export default function QRCode({
   function normalizedText(text) {
     return new TextDecoder("utf-8")
       .decode(new TextEncoder().encode(text))
-      .normalize("NFC");
+      .normalize("NFC")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   const parseQrSpoolToJson = useCallback((text) => {
-    const regex = /^(SP(?:-[A-Za-z0-9]+)+)\s+([\s\S]*)$/;
+    const regex = /^\s*(SP(?:-[A-Za-z0-9]+)+)\s+(.+)$/;
+
     const normalized = normalizedText(text);
+
     const match = normalized.match(regex);
-    // const match = normalized
-    //   .trim()
-    //   .match(/^(SP-[A-Za-z0-9]{4}-[A-Za-z0-9]{5}-[A-Za-z0-9]{3})\s+(.*)$/);
 
     if (!match) {
       setMessage(
-        "Escanear primeiro o QRCode do SPOOL, ou este QRCODE é inválido MATCH 2!",
+        "Escanear primeiro o QRCode do SPOOL, ou este QRCODE é inválido!",
       );
       setOpenAlert(true);
       return null;
@@ -65,21 +67,54 @@ export default function QRCode({
 
     const textNormalized = normalizeDelimiter(normalized);
 
-    const obj = textNormalized
-      .split("|")
-      .map((p) => p.trim())
-      .reduce((acc, item) => {
-        const [k, ...v] = item.split(":");
-        if (k && v.length) acc[k.trim().toUpperCase()] = v.join(":").trim();
-        return acc;
-      }, {});
+    // const obj = textNormalized
+    //   .split("|")
+    //   .map((p) => p.trim())
+    //   .reduce((acc, item) => {
+    //     const [k, ...v] = item.split(":");
+    //     if (k && v.length) acc[k.trim().toUpperCase()] = v.join(":").trim();
+    //     return acc;
+    //   }, {});
 
-    if (!obj.COD_PRODUTO) {
+    const regex = /([A-Z_]+):\s*(.*?)(?=\s+[A-Z_]+:|$)/g;
+
+    const result = {};
+
+    for (const match of textNormalized.matchAll(regex)) {
+      result[match[1]] = match[2].replace(/\|/g, "").trim();
+    }
+
+    // if (!obj.COD_PRODUTO) {
+    if (!result.COD_PRODUTO) {
       setMessage("QRCode de COMPONENTE inválido");
       setOpenAlert(true);
       return null;
     }
-    return obj;
+
+    const requiredFields = COMPONENT_VARIABLES;
+
+    function validateFields(obj, required) {
+      const missing = required.filter(
+        (field) => !(field in obj) || !obj[field],
+      );
+
+      return {
+        valid: missing.length === 0,
+        missingFields: missing,
+      };
+    }
+
+    const validation = validateFields(result, requiredFields);
+
+    if (!validation.valid) {
+      setMessage(
+        `CAMPO INVALIDO: ${validation.missingFields}. O QRCode deste COMPONENTE está fora do modelo e padrão definido, gerar um novo QRCode`,
+      );
+      setOpenAlert(true);
+      return null;
+    }
+
+    return result; //obj;
   }, []);
 
   const checkIfItContainsProductType = useCallback(
@@ -394,22 +429,8 @@ export default function QRCode({
         <div className="flex flex-col border-2 border-stone-300/50 w-full rounded-full" />
         {spool && (
           <div className="flex flex-col py-4">
-            {/* <p className="mt-2 text-md break-all ">Spool:</p>
-            <div className="text-xs sm:text-lg">
-              <div className="flex flex-col ">
-                <p>
-                  <span className="font-semibold">Código: </span>
-                  <span className="font-normal">{spool?.codigo}</span>
-                </p>
-                <p>
-                  <span className="font-semibold">Descrição: </span>
-                  <span className="font-normal truncate">
-                    {spool?.descricao}
-                  </span>
-                </p>
-              </div>
-            </div> */}
             <TextSpool spool={spool} />
+
             <div className="flex flex-col py-4 mb-4">
               <p className="mt-2 text-md break-all ">Componentes:</p>
               <div className="flex flex-col ">
@@ -483,7 +504,7 @@ export default function QRCode({
 
       {/* Alert */}
       <AlertInfo
-        message={message}
+        message={"ALERT MODAL QRCODE:".concat(message)}
         openAlert={openAlert}
         setOpenAlert={setOpenAlert}
         setScannerLocked={setScannerLocked}

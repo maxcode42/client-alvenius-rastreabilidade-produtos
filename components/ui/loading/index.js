@@ -8,8 +8,8 @@ export default function Loading() {
               opacity-0
               translate-y-4
               animate-scaleInCenter
-              //[animation-delay:${120}ms]
               animation-fill-mode:forwards
+              //[animation-delay:${120}ms]
       `}
     >
       <Loader2Icon className="-mt-12 size-44 animate-spin text-blue-400/50" />

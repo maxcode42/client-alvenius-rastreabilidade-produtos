@@ -5,74 +5,30 @@ import QRCodeHeader from "./qr-code-header";
 import QRCodeFooter from "./qr-code-footer";
 import QRCodeCamera from "./qr-code-camera";
 import QRCodeButton from "./qr-code-button";
-import AlertInfo from "../alert/info";
+// import AlertInfo from "../alert/info";
 
-import { useQRCode } from "hooks/qr-code-context";
+// import { useQRCode } from "hooks/qr-code-context";
 
-export default function QRCode({
-  //   message,
-  //   openAlert,
-  //   setScannerLocked,
-  //   scannerLocked,
-  //   setOpenAlert,
-  //   setMessage,
-  //   setResult,
-  //   setSpool,
-  //   result,
-  children,
-  //   currentSpool,
-  //   onClose,
-  //   spool,
-  //   action,
-}) {
-  const {
-    message,
-    openAlert,
-    //setScannerLocked,
-    //scannerLocked,
-    setOpenAlert,
-    //setMessage,
-    //setResult,
-    //setSpool,
-    // result,
-    // currentSpool,
-    // onClose,
-    // spool,
-    // action,
-  } = useQRCode();
+export default function QRCode({ children }) {
+  // const { message, openAlert, setOpenAlert } = useQRCode();
+
   return (
     <QRCodePanel>
       <QRCodeHeader>
-        <QRCodeCamera
-        // setScannerLocked={setScannerLocked}
-        // scannerLocked={scannerLocked}
-        // setOpenAlert={setOpenAlert}
-        // setMessage={setMessage}
-        // setResult={setResult}
-        // setSpool={setSpool}
-        />
+        <QRCodeCamera />
       </QRCodeHeader>
       <QRCodeBody>{children}</QRCodeBody>
-      <QRCodeFooter
-      //result={result}
-      />
+      <QRCodeFooter />
 
-      <QRCodeButton
-      // spool={spool}
-      // action={action}
-      // onClose={onClose}
-      // currentSpool={currentSpool}
-      // className="flex flex-row w-full h-full py-8 gap-4 sm:w-1/2"
-      />
+      <QRCodeButton />
 
       {/* Alert */}
-      <AlertInfo
+      {/* <AlertInfo
         message={message}
         openAlert={openAlert}
         setOpenAlert={setOpenAlert}
-        // setScannerLocked={setScannerLocked}
         setScannerLocked={() => {}}
-      />
+      /> */}
     </QRCodePanel>
   );
 }

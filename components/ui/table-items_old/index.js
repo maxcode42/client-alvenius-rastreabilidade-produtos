@@ -80,9 +80,9 @@ export default function TableItems({ titles, items }) {
               <td className="capitalize px-4 py-3 text-center text-xs sm:text-sm md:text-base text-stone-800">
                 <span
                   className={`
-                  ${String(item?.status).toLowerCase() === "reservado" && "bg-yellow-400"}
-                  ${String(item?.status).toLowerCase() === "execução" && "bg-red-400"}
-                  ${String(item?.status).toLowerCase() === "finalizado" && "bg-green-400"}
+                  ${String(item?.status)?.toLowerCase() === "reservado" && "bg-yellow-400"}
+                  ${String(item?.status)?.toLowerCase() === "execução" && "bg-red-400"}
+                  ${String(item?.status)?.toLowerCase() === "finalizado" && "bg-green-400"}
                   p-1 text-xs  rounded-full flex flex-row justify-center items-center text-stone-100`}
                 >
                   <small> {item?.status}</small>
