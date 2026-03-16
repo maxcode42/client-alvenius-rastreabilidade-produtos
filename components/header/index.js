@@ -83,7 +83,7 @@ export default function Header() {
             <div
               className={`mt-40 md:mt-0 fixed md:relative inset-0 z-40 bg-zinc-300/95 text-zinc-900 transform transition-all 
               duration-300 ease-in-out h-[100vh] md:h-full w-full sm:static sm:translate-x-0 sm:opacity-100 sm:bg-transparent 
-              md:pointer-events-auto ${
+              md:pointer-events-auto overflow-y-auto max-h-dvh min-h-0 md:max-h-none md:overflow-hidden pb-44 md:pb-0 ${
                 open
                   ? "translate-x-0 opacity-100"
                   : "translate-x-full opacity-0 pointer-events-none"
@@ -91,7 +91,7 @@ export default function Header() {
             `}
             >
               <nav
-                className={`flex flex-col md:flex-row w-full gap-4 py-8 md:justify-center justify-end items-center`}
+                className={`flex flex-col md:flex-row w-full md:gap-4 gap-2 py-8 md:justify-center justify-end items-center`}
               >
                 <div className="order-2 md:order-1 w-full md:w-fit flex flex-col md:flex-row h-full items-center justify-center px-4">
                   {currentRoute !== "/" && (
@@ -106,14 +106,13 @@ export default function Header() {
                                 w-full md:w-fit flex flex-col md:flex-row justify-center items-center
                                 `}
                             >
-                              <div className="md:hidden order-2 flex flex-col border-2 border-blue-950/50 w-full" />
                               <Link
                                 href={i?.href}
                                 target={i?.target}
                                 onClick={() => setOpen(false)}
                                 className={`${
                                   currentRoute === i?.href
-                                    ? "pointer-events-none opacity-40 cursor-not-allowed md:border-zinc-500 font-extrabold  md:border-b-4 md:inline-block"
+                                    ? "pointer-events-none opacity-40 cursor-not-allowed md:border-zinc-500 font-extrabold md:border-b-4 md:inline-block"
                                     : "hover:text-zinc-500 cursor-pointer"
                                 }  
                                       w-full md:w-fit flex flex-row items-center justify-between md:justify-center px-4 md:px-0  pt-3 
@@ -137,6 +136,7 @@ export default function Header() {
                                   <ChevronRightIcon className="size-6 text-blue-950/50" />
                                 </span>
                               </Link>
+                              <div className="md:hidden order-2 flex flex-col border-2 border-blue-950/50 w-full" />
                             </div>
                           );
                         });
@@ -154,7 +154,7 @@ export default function Header() {
                     </span>
                   </p>
                 </div>
-                <div className="md:hidden order-1 flex flex-col border-2 border-blue-950/50 w-[90%]" />
+                <div className="md:hidden order-1 flex flex-col border-2 border-blue-950/50 w-[92%]" />
                 <div className="hidden md:block md:order-2 border-l-2 border-blue-950/50 w-1 h-7" />
 
                 <div className="order-3 md:order-3 w-full flex flex-col md:w-1/2 md:items-end py-4 md:px-0 px-4">
