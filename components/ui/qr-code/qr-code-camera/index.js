@@ -3,8 +3,14 @@ import { Html5Qrcode } from "html5-qrcode";
 import { useQRCode } from "hooks/qr-code-context";
 
 export default function QRCodeCamera() {
-  const { openQRCode, openAlert, setOpenAlert, setResult, setSpool } =
-    useQRCode();
+  const {
+    openQRCode,
+    openAlert,
+    setOpenAlert,
+    setResult,
+    //setSpool,
+    scannerLocked,
+  } = useQRCode();
 
   const qrRegionId = "qr-reader";
 
@@ -101,7 +107,7 @@ export default function QRCodeCamera() {
 
           /* limpa resultado antes da nova leitura */
           setResult(null);
-          setSpool(null);
+          //setSpool(null);
 
           /* garante novo ciclo de render */
           setTimeout(() => {
@@ -135,10 +141,20 @@ export default function QRCodeCamera() {
      ALERT CONTROL
      ========================= */
   useEffect(() => {
-    if (!openAlert) {
+    if (!openAlert || !scannerLocked) {
       resumeScanner();
     }
-  }, [openAlert, resumeScanner]);
+  }, [openAlert, resumeScanner, scannerLocked]);
+  // useEffect(() => {
+  //   console.log(">>resumeScanner");
+  //   console.log({
+  //     openAlert,
+  //     scannerLocked,
+  //   });
+  //   if (!openAlert && !scannerLocked) {
+  //     resumeScanner();
+  //   }
+  // }, [openAlert, resumeScanner, scannerLocked]);
 
   /* =========================
      MODAL CONTROL

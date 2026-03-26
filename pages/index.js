@@ -38,8 +38,12 @@ function Home() {
             >
               {list.item.map((i) => {
                 const Icon = Icons[i?.icon];
+
                 return (
-                  <div key={i?.key} className="w-full sm:w-1/2 h-32">
+                  <div
+                    key={i?.key.concat(index)}
+                    className="w-full sm:w-1/2 h-32"
+                  >
                     <ButtonPanel
                       key={i?.key}
                       href={i?.href}
@@ -50,6 +54,7 @@ function Home() {
                       onClick={() => (
                         setLoading(true), setCurrentButton(i?.key)
                       )}
+                      className={`${i?.key === currentButton && loading ? "opacity-50 pointer-events-none cursor-not-allowed" : ""}`}
                     >
                       {i?.key === currentButton && loading ? (
                         <div className="flex flex-row w-full h-16 justify-center items-center gap-2">

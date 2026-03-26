@@ -17,7 +17,8 @@ export default function ButtonFlow({
   const textAreaCharactersMin = 15;
   const { currentSpool, spool, data } = useQRCode();
   const [buttonDisabled, setButtonDisabled] = useState(
-    displayButtonsOnCard ? !spool : false,
+    // displayButtonsOnCard ? !spool : false,
+    displayButtonsOnCard ? !displayButtonsOnCard : !spool,
   );
 
   let buttonsDisplay = displayButtonsOnCard
@@ -25,11 +26,6 @@ export default function ButtonFlow({
     : PROCESS_STATUS?.acronym_next[currentSpool?.status_acronym];
 
   async function execute(e, item, status) {
-    //await setScannerLocked(true);
-    //await setNewStatus(status);
-    // //await action?.handlerData();
-    // await onClose();
-
     await action(e, item, status);
   }
 
@@ -38,7 +34,7 @@ export default function ButtonFlow({
       name: "Iniciar",
       title: "Incia processo produção",
       disabled:
-        !buttonDisabled ||
+        buttonDisabled ||
         PROCESS_STATUS.acronym.reservado !== item?.status_acronym,
       process_next: PROCESS_STATUS.acronym.executando,
       class_name: `disabled:text-amber-100/50 bg-amber-500 text-amber-100 
@@ -49,7 +45,7 @@ export default function ButtonFlow({
       name: "Pausar",
       title: "Pausar processo produção",
       disabled:
-        !buttonDisabled ||
+        buttonDisabled ||
         PROCESS_STATUS.acronym.executando !== item?.status_acronym,
       process_next: PROCESS_STATUS.acronym.pausado,
       class_name: `disabled:text-orange-100/50 bg-orange-500 text-orange-100
@@ -60,7 +56,7 @@ export default function ButtonFlow({
       name: "Continuar",
       title: "Continuar processo produção",
       disabled:
-        !buttonDisabled ||
+        buttonDisabled ||
         PROCESS_STATUS.acronym.pausado !== item?.status_acronym,
       process_next: PROCESS_STATUS.acronym.continua,
       class_name: `disabled:text-orange-100/50 bg-orange-500 text-orange-100
@@ -71,7 +67,7 @@ export default function ButtonFlow({
       name: "Finalizar",
       title: "Finaliza processo produção",
       disabled:
-        !buttonDisabled ||
+        buttonDisabled ||
         PROCESS_STATUS.acronym.executando !== item?.status_acronym,
       process_next: PROCESS_STATUS.acronym.finalizado,
       class_name: `disabled:text-green-100/50 bg-green-600 text-green-100
@@ -82,7 +78,7 @@ export default function ButtonFlow({
       name: "Aprova CQ",
       title: "Avaliar qualidade produto",
       disabled:
-        !buttonDisabled ||
+        buttonDisabled ||
         PROCESS_STATUS.acronym.finalizado !== item?.status_acronym ||
         (!displayButtonsOnCard &&
           data?.qualityText?.length < textAreaCharactersMin),
@@ -97,7 +93,7 @@ export default function ButtonFlow({
       name: "Reverter",
       title: "Retornar inicio do processo",
       disabled:
-        !buttonDisabled ||
+        buttonDisabled ||
         PROCESS_STATUS.acronym.finalizado !== item?.status_acronym ||
         data?.qualityText?.length < textAreaCharactersMin,
       process_next: PROCESS_STATUS.acronym.reverte,
@@ -111,7 +107,7 @@ export default function ButtonFlow({
       name: "Sucata",
       title: "Descarte do produto",
       disabled:
-        !buttonDisabled ||
+        buttonDisabled ||
         PROCESS_STATUS.acronym.finalizado !== item?.status_acronym ||
         data?.qualityText?.length < textAreaCharactersMin,
       process_next: PROCESS_STATUS.acronym.sucata,
@@ -125,7 +121,7 @@ export default function ButtonFlow({
 
   useEffect(() => {
     if (!displayButtonsOnCard) {
-      setButtonDisabled(spool !== null);
+      setButtonDisabled(!spool);
     }
   }, [spool, item, displayButtonsOnCard]);
 
