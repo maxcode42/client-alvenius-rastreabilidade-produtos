@@ -1,13 +1,20 @@
 import { XCircleIcon } from "lucide-react";
 
 import Button from "components/ui/button";
+import ButtonFlow from "components/ui/button-flow";
 
 import { useQRCode } from "hooks/qr-code-context";
 
-import ButtonFlow from "components/ui/button-flow";
+import { QRCODE_TYPES } from "types/qr-code-reading";
 
 export default function QRCodeButton({ children, ...props }) {
-  const { currentSpool, onClose, setNewStatus, setScannerLocked } = useQRCode();
+  const {
+    currentSpool,
+    onClose,
+    setNewStatus,
+    setScannerLocked,
+    qrCodeReadingType,
+  } = useQRCode();
 
   async function execute(e, item, status) {
     await setScannerLocked(true);
@@ -34,7 +41,7 @@ export default function QRCodeButton({ children, ...props }) {
           // onClose(), setScannerLocked(true), setSpool(null);
           onClose(), setScannerLocked(true);
         }}
-        className={`${currentSpool ? "w-1/2" : "w-full"} h-16 gap-1 flex flex-row px-3 py-1 truncate 
+        className={`${currentSpool && qrCodeReadingType.includes(QRCODE_TYPES.spool) ? "w-1/2" : "w-full"} h-16 gap-1 flex flex-row px-3 py-1 truncate 
         text-sm text-center items-center justify-center rounded-md bg-red-600 text-red-100 
         hover:bg-red-800 hover:text-red-100 hover:shadow-red-500`}
       >

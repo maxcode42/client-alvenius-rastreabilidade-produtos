@@ -1,16 +1,28 @@
-export default function Table({ titles, items }) {
+export default function Table({ items }) {
   return (
     <table className="text-sm w-full min-w-full border border-stone-200 bg-white rounded-lg">
       <thead>
         <tr className="bg-stone-200">
-          {titles.map((title) => (
-            <th
-              key={title}
-              className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600"
-            >
-              {title}
-            </th>
-          ))}
+          <th
+            colSpan={4}
+            className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600 border-b-[.1rem] border-stone-100"
+          >
+            Componentes
+          </th>
+        </tr>
+        <tr className="bg-stone-200">
+          <th
+            colSpan={2}
+            className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600"
+          >
+            Itens
+          </th>
+          <th className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600">
+            Descrição
+          </th>
+          <th className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600">
+            QTD.
+          </th>
         </tr>
       </thead>
       <tbody className="divide-y divide-stone-200">
@@ -19,30 +31,30 @@ export default function Table({ titles, items }) {
             key={item?.codigo + index}
             className="hover:bg-stone-50 transition odd:bg-white"
           >
-            <td className="px-4 py-3 text-xs sm:text-sm md:text-base text-center text-stone-800">
+            <td className="px-1 py-1 max-w-4 text-xs sm:text-sm md:text-base text-center text-stone-800">
               {index + 1}
             </td>
-            <td className="px-4 py-3 text-xs sm:text-sm md:text-base text-stone-800">
-              {item?.codigo}
+            <td className="min-w-14 tracking-wider px-1 py-1 text-xs sm:text-sm md:text-base text-stone-800">
+              <small className="flex flex-col justify-center">
+                <span className="flex flex-row gap-1 items-center">
+                  <strong>Código:</strong> {item?.codigo}
+                </span>
+                <span className="flex flex-row gap-1 items-center">
+                  <strong>Fornecedor:</strong> {item?.fornecedor}
+                </span>
+                <span className="flex flex-row gap-1 items-center">
+                  <strong>Corrida:</strong> {item?.fluxo}
+                </span>
+              </small>
+            </td>
+            <td className="tracking-wider px-1 py-1 text-xs sm:text-sm md:text-base text-stone-800">
+              <span>{item?.descricao}</span>
             </td>
             {item?.quantidade && (
-              <td className="px-4 py-3 text-xs sm:text-sm md:text-base text-center text-stone-800">
+              <td className="px-1 py-1 text-xs sm:text-sm md:text-base text-center text-stone-800">
                 {String(item?.quantidade).replace(".", ",")}
               </td>
             )}
-            {item?.fluxo && (
-              <td className="truncate px-4 py-3 text-xs sm:text-sm md:text-base text-stone-800">
-                {item?.fluxo}
-              </td>
-            )}
-            {item?.fornecedor && (
-              <td className="px-4 py-3 text-xs sm:text-sm md:text-base text-center text-stone-800">
-                {item?.fornecedor}
-              </td>
-            )}
-            <td className="truncate px-4 py-3 text-xs sm:text-sm md:text-base text-stone-800">
-              {item?.descricao}
-            </td>
           </tr>
         ))}
       </tbody>
@@ -52,7 +64,7 @@ export default function Table({ titles, items }) {
             {items?.length || 0}
           </td>
           <td
-            colSpan={Number(titles?.length - 1)}
+            colSpan={4}
             className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider text-stone-600"
           >
             TOTAL ITENS

@@ -6,7 +6,13 @@ export default function Input({ label, children, ...props }) {
       <label htmlFor={props.id} className="flex flex-row">
         {children} {label}
       </label>
-      <input className="w-full px-3 py-4" {...props} />
+      <input
+        className={`w-full px-3 py-4 outline-none 
+          border-2 border-stone-300/50 placeholder:text-gray-400 
+          focus:border-blue-600/50 focus:ring-0 focus:ring-blue-200 
+          focus:shadow-md focus:shadow-blue-300/50`}
+        {...props}
+      />
     </div>
   );
 }

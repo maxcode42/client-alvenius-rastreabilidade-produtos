@@ -1,9 +1,13 @@
 "use client";
 import { createContext, useContext, useState, useMemo } from "react";
+import { QRCODE_TYPES } from "types/qr-code-reading";
 
 const QRCodeContext = createContext(null);
 
 export function QRCodeProvider({ children }) {
+  const [qrCodeReadingType, setQrCodeReadingType] = useState([
+    QRCODE_TYPES.spool,
+  ]);
   const [scannerLocked, setScannerLocked] = useState(false);
   const [currentProcess, setCurrentProcess] = useState(null);
   const [currentSpool, setCurrentSpool] = useState(null);
@@ -15,11 +19,13 @@ export function QRCodeProvider({ children }) {
   const [action, setAction] = useState(() => () => {});
 
   const [checkCodeExists, setCheckCodeExists] = useState(false);
+  const [pendingItem, setPendingItem] = useState(null);
   const [newStatus, setNewStatus] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [result, setResult] = useState(null);
   const [spool, setSpool] = useState(null);
+  const [itens, setItens] = useState([]);
   const [text, setText] = useState("");
   const [item, setItem] = useState(null);
   const [data, setData] = useState({
@@ -39,6 +45,10 @@ export function QRCodeProvider({ children }) {
       setMessage,
       scannerLocked,
       setScannerLocked,
+      qrCodeReadingType,
+      setQrCodeReadingType,
+      setPendingItem,
+      pendingItem,
       openAlert,
       setOpenAlert,
       result,
@@ -63,12 +73,17 @@ export function QRCodeProvider({ children }) {
       setText,
       checkCodeExists,
       setCheckCodeExists,
+      itens,
+      setItens,
     }),
     [
       data,
       item,
+      itens,
       message,
       scannerLocked,
+      qrCodeReadingType,
+      pendingItem,
       openAlert,
       result,
       onClose,

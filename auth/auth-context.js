@@ -4,16 +4,18 @@ import useSWR from "swr";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
+import AlertCustom from "components/ui/alert";
+
 import { STATUS_CODE } from "types/status-code";
 import { AUTH_EVENTS } from "./auth-events";
-import api from "infra/provider/api-web";
 
-import AlertInfo from "components/ui/alert/info";
+import { useQRCode } from "hooks/qr-code-context";
+
+import api from "infra/provider/api-web";
 
 const AuthContext = createContext(null);
 
 const fetchUser = async () => {
-  // const result = await api.getUser();
   const result = await api?.execute?.user?.read();
 
   if (result.status_code === STATUS_CODE.UNAUTHORIZED) {
@@ -27,10 +29,10 @@ const fetchUser = async () => {
 
 export function AuthProvider({ children }) {
   const currentRoute = usePathname();
+  const { setMessage, setOpenAlert } = useQRCode();
   const router = useRouter();
 
-  const [message, setMessage] = useState("");
-  const [openAlert, setOpenAlert] = useState(false);
+  const [openAlertAuth, setOpenAlertAuth] = useState(false);
   const [refreshInterval, setRefreshInterval] = useState(0);
   const [hasAuthenticated, setHasAuthenticated] = useState(false);
 
@@ -63,13 +65,13 @@ export function AuthProvider({ children }) {
   }
 
   async function signIn({ username, password }) {
-    // const result = await api.createSession({ username, password });
     const result = await api.execute.session.create({
       data: { username, password },
     });
 
     if (result?.status_code === STATUS_CODE.SERVER_ERROR) {
       setMessage(`${result.action} ${result.message}`);
+      setOpenAlertAuth(true);
       setOpenAlert(true);
       return result;
     }
@@ -103,28 +105,21 @@ export function AuthProvider({ children }) {
   }
 
   async function signOut() {
-    //await api.deleteSession();
     await api.execute.session.delete();
     await clearLogout();
   }
 
   useEffect(() => {
-    // if (!shouldFetch) return;
-    // if (shouldFetch) return;
-
     function handleUnauthorized() {
-      //if (!shouldFetch) return;
-
       if (
         (!shouldFetch && !hasAuthenticated) ||
         (!hasAuthenticated && currentRoute === "/")
       ) {
         return;
       }
-      //if (!hasAuthenticated) return;
 
-      // if (hasAuthenticated && error?.status === STATUS_CODE.UNAUTHORIZED) {
       setMessage("Sessão expirou. Faça login novamente.");
+      setOpenAlertAuth(true);
       setOpenAlert(true);
       //}
     }
@@ -133,16 +128,19 @@ export function AuthProvider({ children }) {
     return () => {
       window.removeEventListener(AUTH_EVENTS.UNAUTHORIZED, handleUnauthorized);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error, shouldFetch, hasAuthenticated, currentRoute]);
 
-  if (openAlert && !pagesPublic.includes(currentRoute)) {
+  if (openAlertAuth && !pagesPublic.includes(currentRoute)) {
     return (
-      <AlertInfo
-        message={message}
-        openAlert={openAlert}
-        setOpenAlert={setOpenAlert}
-        setScannerLocked={() => {}}
-        action={clearLogout}
+      <AlertCustom
+        action={null}
+        actionClose={() => {
+          clearLogout();
+          setOpenAlertAuth(false);
+        }}
+        title="Informação"
+        type="info"
       />
     );
   }

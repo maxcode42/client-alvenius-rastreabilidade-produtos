@@ -2,38 +2,33 @@ import { useCallback, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ArchiveXIcon } from "lucide-react";
 
-import Header from "../../header";
-import Body from "../../body";
-import CardItems from "../../ui/card-items";
-import PanelDefault from "../../ui/panel-default";
-import PanelPrimary from "../../ui/panel-primary";
-import HeaderPageTitle from "../../header-page-title";
-import HeaderPageButtons from "../../header-page-buttons";
-
-import QRCodeFlow from "../../ui/modal/qr-code-flow";
-import AlertInfo from "../../ui/alert/info";
-
-import QuantitiesItens from "components/ui/quantities-itens";
-import Separator from "components/ui/separator";
+import Header from "components/header";
+import Body from "components/body";
 import Loading from "components/ui/loading";
-
-import { PROCESS_FLOW } from "types/process-flow";
+import AlertCustom from "components/ui/alert";
+import Separator from "components/ui/separator";
+import CardItems from "components/ui/card-items";
+import PanelDefault from "components/ui/panel-default";
+import PanelPrimary from "components/ui/panel-primary";
+import HeaderPageTitle from "components/header-page-title";
+import QRCodeFlow from "components/ui/modal/qr-code-flow";
+import QuantitiesItens from "components/ui/quantities-itens";
+import HeaderPageButtons from "components/header-page-buttons";
 
 import { normalizeAlphanumeric } from "util/formatters/text";
 import { formatCodeDefault } from "util/formatters/code";
 import { formatToPtBR } from "util/formatters/date";
 
+import { QRCODE_TYPES } from "types/qr-code-reading";
+import { PROCESS_FLOW } from "types/process-flow";
+
 import { useQRCode } from "hooks/qr-code-context";
 
 import api from "infra/provider/api-web";
 
-export default function ProcessFlow({
-  //textModal = "",
-  title = "",
-  info = "",
-  route,
-}) {
+export default function ProcessFlow({ title = "", info = "", route }) {
   const {
+    setQrCodeReadingType,
     setCheckCodeExists,
     setCurrentProcess,
     setScannerLocked,
@@ -43,52 +38,22 @@ export default function ProcessFlow({
     setNewStatus,
     setOpenAlert,
     setOnClose,
-    openAlert,
+    openQRCode,
     setAction,
     newStatus,
     setResult,
     setSpool,
-    message,
     setData,
     data,
   } = useQRCode();
 
+  const [openAlertInfo, setOpenAlertInfo] = useState(false);
   const [itensFiltered, setItensFiltered] = useState(null);
   const [quantities, setQuantities] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(true);
   const [itens, setItens] = useState(null);
   const currentRoute = usePathname();
-
-  async function findOnByCode({ code }) {
-    //= "SP0414FL005003") {
-    const results = await api.execute[route].find({ params: code });
-    // const results = {
-    //   data: [
-    //     {
-    //       codigo: "SP041500345003",
-    //       dateEnd: "",
-    //       dateStart: "20260302",
-    //       descricao: "Carretel FS+FF 16pol x 6,35 x 4500mm 150 PSI",
-    //       process: "caldeiraria",
-    //       process_acronym: "CA",
-    //       sequence: "0001",
-    //       status: "execução",
-    //       status_acronym: "FI",
-    //       timeEnd: "",
-    //       timeStart: "17:02",
-    //       user: "josuel",
-    //     },
-    //   ],
-    //   quantities: [{}],
-    //   total: 1,
-    // };
-
-    // console.log(">>PROCESS-FLOW findInByCode IS CHECKING");
-    // console.log(code);
-    // console.log(results?.data?.[0]);
-    return results?.data?.[0] ?? {};
-  }
 
   function openModalQRCode(e) {
     e.preventDefault();
@@ -117,6 +82,12 @@ export default function ProcessFlow({
     });
   }
 
+  async function findOnByCode({ code }) {
+    const results = await api.execute[route].find({ params: code });
+
+    return results?.data?.[0] ?? {};
+  }
+
   async function handlerData() {
     if (!currentSpool) return;
 
@@ -132,8 +103,6 @@ export default function ProcessFlow({
           : newStatus,
     };
 
-    // console.log(">>PROCESS FLOW: HANDLER_DATA");
-    // console.log(objectData);
     await api.execute[route].create({
       data: objectData,
     });
@@ -225,12 +194,7 @@ export default function ProcessFlow({
   );
 
   const assignDefaultStandards = useCallback(() => {
-    // setOpenAlert(false);
-    // setOnClose(() => {
-    //   return () => {
-    //     setOpenQRCode(false), setScannerLocked(true), setCheckCodeExists(false);
-    //   };
-    // });
+    setQrCodeReadingType([QRCODE_TYPES.spool]);
     setOnClose(() => {
       return () => {
         setOpenQRCode(false), setScannerLocked(true), resetDataDefault();
@@ -267,7 +231,6 @@ export default function ProcessFlow({
   }, [newStatus]);
 
   useEffect(() => {
-    // setOpenAlert(false);
     assignDefaultStandards();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
@@ -285,7 +248,7 @@ export default function ProcessFlow({
   // }
 
   return (
-    <div className="w-full h-full bg-zinc-100">
+    <div className="w-full h-full bg-stone-100">
       <Header />
       {/* 
             //EXIBE A ESTRUTURA DA TELA
@@ -345,15 +308,27 @@ export default function ProcessFlow({
         </PanelDefault>
       </Body>
 
-      <QRCodeFlow />
+      {openQRCode && <QRCodeFlow />}
 
-      {openAlert && (
+      {/* {openQRCode && <QRCodeRegister />} */}
+
+      {/* {openAlert && (
         <AlertInfo
           action={null}
           message={message}
           openAlert={openAlert}
           setOpenAlert={setOpenAlert}
           setScannerLocked={setScannerLocked}
+        />
+      )} */}
+      {openAlertInfo && (
+        <AlertCustom
+          action={null}
+          actionClose={() => {
+            setOpenAlertInfo(false);
+          }}
+          title="Informação"
+          type="info"
         />
       )}
     </div>

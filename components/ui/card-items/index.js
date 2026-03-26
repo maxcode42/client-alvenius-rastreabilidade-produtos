@@ -8,7 +8,7 @@ import { useQRCode } from "hooks/qr-code-context";
 
 export default function CardItems({ items, children }) {
   const displayButtonsOnCard = Boolean(
-    process.env.NEXT_PUBLIC_APP_DISPLAY_BUTTON_ON_CARD_CUSTOM?.toLowerCase() ===
+    process.env.NEXT_PUBLIC_APP_DISPLAY_BUTTON_ON_CARD?.toLowerCase() ===
       "true",
   );
 
