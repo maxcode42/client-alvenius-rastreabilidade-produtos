@@ -1,27 +1,37 @@
-import { usePathname } from "next/navigation";
+import { useRouter } from "next/router";
 import { useEffect, useState, useCallback } from "react";
-import { SaveIcon, QrCodeIcon, Trash2Icon } from "lucide-react";
+import {
+  SaveIcon,
+  QrCodeIcon,
+  Trash2Icon,
+  CircleQuestionMarkIcon,
+} from "lucide-react";
 
 import LayoutPage from "components/layout-page";
-import Table from "components/ui/table";
 import Button from "components/ui/button";
 import AlertCustom from "components/ui/alert";
 import Separator from "components/ui/separator";
-import TextSpool from "components/ui/text-spool";
 import PanelDefault from "components/ui/panel-default";
 import PanelPrimary from "components/ui/panel-primary";
 import HeaderPageTitle from "components/header-page-title";
 import HeaderPageText from "components/header-page-text";
-import QRCodeRegister from "components/ui/modal/qr-code-register";
+import TextSupplier from "components/ui/text-supplier";
+import TableTransfer from "components/ui/table-transfer";
+import QRCodeTransfer from "components/ui/modal/qr-code-transfer";
 
 import { QRCODE_TYPES } from "types/qr-code-reading";
+import { PROCESS_FLOW } from "types/process-flow";
 import { STATUS_CODE } from "types/status-code";
 
 import { useQRCode } from "hooks/qr-code-context";
 
 import api from "infra/provider/api-web";
 
-export default function ProcessRegister({ title = "", info = "", route }) {
+export default function ProcessTransferCreate({
+  title = "",
+  info = "",
+  route,
+}) {
   const {
     setQrCodeReadingType,
     setCheckCodeExists,
@@ -31,55 +41,69 @@ export default function ProcessRegister({ title = "", info = "", route }) {
     setOpenQRCode,
     setNewStatus,
     setOpenAlert,
-    currentSpool,
     setOnClose,
     openQRCode,
     setMessage,
     setAction,
     setResult,
     setSpool,
-    setItens,
-    setData,
-    spool,
-    itens,
   } = useQRCode();
 
   const [openAlertQuestion, setOpenAlertQuestion] = useState(false);
   const [openAlertInfo, setOpenAlertInfo] = useState(false);
   const [loading, setLoading] = useState(false);
-  const currentRoute = usePathname();
+
+  const router = useRouter();
+  const { params } = router.query;
+
+  const routeAcronym = PROCESS_FLOW.route[params].acronym;
+  const routeName = PROCESS_FLOW.name[routeAcronym];
+  const [suppliers, setSuppliers] = useState(null);
+  const [data, setData] = useState({
+    supplier: null,
+    spools: null,
+    process: null,
+    third: true,
+  });
 
   function openModalQRCode(e) {
     e.preventDefault();
 
     setResult(null);
     setOpenQRCode(true);
-    setCheckCodeExists(false);
-    setScannerLocked(false);
+    setCheckCodeExists(true);
+    setScannerLocked(true);
 
     setSpool(null);
     setOpenAlert(false);
-    setCurrentProcess(currentRoute.replace("/", ""));
+    // setCurrentProcess(currentRoute.replace("/", ""));
+    setCurrentProcess(params);
   }
 
   function resetDataDefault() {
-    setQrCodeReadingType([QRCODE_TYPES.spool, QRCODE_TYPES.component]);
+    setQrCodeReadingType([QRCODE_TYPES.spool]);
     setCheckCodeExists(false);
     setNewStatus(null);
     setResult(null);
-    setData({
-      accordance: true,
-      reversible: false,
-      qualityText: "",
-    });
+    // setData({
+    //   supplier: null,
+    //   spools: null,
+    //   process: null,
+    //   third: true
+    // });
   }
 
   function clearData() {
-    setQrCodeReadingType([QRCODE_TYPES.spool, QRCODE_TYPES.component]);
+    setQrCodeReadingType([QRCODE_TYPES.spool]);
     setOpenAlertInfo(false);
     setCurrentSpool(null);
     setSpool(null);
-    setItens([]);
+    setData({
+      supplier: null,
+      spools: null,
+      process: null,
+      third: true,
+    });
   }
 
   function handleConfirmClear(e) {
@@ -90,23 +114,42 @@ export default function ProcessRegister({ title = "", info = "", route }) {
     setOpenAlert(true);
   }
 
-  async function handleCreateRegister(e) {
+  async function findOnByCode({ code }) {
+    const results = await api.execute[params].find({ params: code });
+
+    return results?.data?.[0] ?? {};
+  }
+
+  async function handlerData(e) {
+    if (!data) return;
+
     try {
       e.preventDefault();
+
       setLoading(true);
 
-      const results = await api.execute[route].create({
-        data: { spool: currentSpool, itens },
+      const results = await api.execute[
+        PROCESS_FLOW.route.transfer.name
+      ].create({
+        data: {
+          spools: data?.spools,
+          supplier: data?.supplier?.code,
+          process: data?.process,
+          third: data?.third ? "S" : "N",
+        },
+        params: routeAcronym,
       });
 
-      setOpenAlertInfo(true);
-
       if (results?.status_code !== STATUS_CODE.CREATE) {
-        setMessage(results?.message);
+        // setMessage(results?.message);
+        setMessage("Sucesso: Informações gravadas!");
+        setOpenAlertInfo(true);
+        setOpenAlert(true);
         return;
       }
 
       setMessage(results?.message);
+      setOpenAlert(true);
       clearData();
     } catch (error) {
       setMessage("Error: Ocorreu uma falha ao gravar dados!");
@@ -118,8 +161,19 @@ export default function ProcessRegister({ title = "", info = "", route }) {
     }
   }
 
+  const fetchData = useCallback(async () => {
+    const results = await api.execute["supplier"].read(routeAcronym);
+
+    setSuppliers([]);
+    setSuppliers(results);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const assignDefaultStandards = useCallback(() => {
-    setQrCodeReadingType([QRCODE_TYPES.spool, QRCODE_TYPES.component]);
+    setQrCodeReadingType([QRCODE_TYPES.spool]);
+    setData({ ...data, process: routeAcronym });
+    fetchData();
 
     setOnClose(() => {
       return () => {
@@ -127,7 +181,7 @@ export default function ProcessRegister({ title = "", info = "", route }) {
       };
     });
 
-    setAction(() => {});
+    setAction(() => findOnByCode);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -136,19 +190,35 @@ export default function ProcessRegister({ title = "", info = "", route }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
 
+  useEffect(() => {
+    console.log(">>CREATE");
+    console.log(data);
+  }, [data]);
+
   return (
-    <LayoutPage title={true} subTitle={title}>
+    <LayoutPage title={true} subTitle={routeName}>
       <PanelDefault>
-        <HeaderPageTitle title={"SPOOL"} text={info} />
+        <HeaderPageTitle title={title} text={info} />
 
         <Separator />
 
         <HeaderPageText>
-          <TextSpool spool={currentSpool} />
+          <TextSupplier supplier={data?.supplier} />
         </HeaderPageText>
 
+        <div className={`flex flex-col justify-center gap-1 py-4`}>
+          <label className="w-full flex flex-row item-center gap-2 font-semibold">
+            <CircleQuestionMarkIcon
+              className="text-stone-400 mr-2 mt-0.5"
+              size={18}
+            />
+            Serviço realizado por terceiro?
+          </label>
+          <p className="px-8">{data?.third ? "SIM" : "NÃO"}</p>
+        </div>
+
         <PanelPrimary className="mt-2">
-          <Table items={itens} />
+          <TableTransfer items={data?.spools} />
         </PanelPrimary>
 
         <section className="w-full sm:w-full h-16 flex gap-2 flex-row">
@@ -159,7 +229,7 @@ export default function ProcessRegister({ title = "", info = "", route }) {
 
           <Button
             onClick={(e) => handleConfirmClear(e)}
-            disabled={itens?.length === 0 && spool === null}
+            disabled={!data?.spools && !data?.supplier}
             className={
               "bg-red-500 text-red-100  hover:bg-red-700 hover:text-stone-100 hover:shadow-red-600 disabled:bg-stone-300 disabled:shadow-none"
             }
@@ -169,8 +239,8 @@ export default function ProcessRegister({ title = "", info = "", route }) {
           </Button>
 
           <Button
-            disabled={itens?.length === 0 || loading}
-            onClick={(e) => handleCreateRegister(e)}
+            disabled={(!data?.spools && !data?.supplier) || loading}
+            onClick={(e) => handlerData(e)}
             className={
               "bg-green-500 text-green-100  hover:bg-green-700 hover:text-stone-100 hover:shadow-green-600 disabled:bg-stone-300 disabled:shadow-none"
             }
@@ -186,9 +256,10 @@ export default function ProcessRegister({ title = "", info = "", route }) {
           </Button>
         </section>
       </PanelDefault>
-      {/* </Body> */}
 
-      {openQRCode && <QRCodeRegister />}
+      {openQRCode && (
+        <QRCodeTransfer data={data} setData={setData} suppliers={suppliers} />
+      )}
 
       {openAlertQuestion && (
         <AlertCustom
@@ -200,6 +271,7 @@ export default function ProcessRegister({ title = "", info = "", route }) {
           type="confirm"
         />
       )}
+
       {openAlertInfo && (
         <AlertCustom
           actionClose={() => {

@@ -17,16 +17,28 @@ const PROCESS_FLOW = {
       name: "painting",
       acronym: "PI",
     },
+    supplier: {
+      name: "supplier",
+      acronym: "FO",
+    },
+    transfer: {
+      name: "transfer",
+      acronym: "TR",
+    },
   },
   acronym: {
     caldeiraria: "CA",
     revestimento: "RR",
     pintura: "PI",
+    supplier: "FO",
+    transfer: "TR",
   },
   name: {
     CA: "caldeiraria",
     RR: "revestimento",
     PI: "pintura",
+    FO: "fornecedor",
+    TR: "transfere",
   },
   text_next_allowed: {
     RE: "Iniciar",

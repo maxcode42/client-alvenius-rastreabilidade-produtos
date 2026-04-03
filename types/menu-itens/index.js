@@ -3,6 +3,7 @@ const ITENS_MENU = [
     classCss: "",
     item: [
       {
+        type: "link",
         name: "Cadastro",
         href: "/register",
         target: "",
@@ -11,6 +12,7 @@ const ITENS_MENU = [
         icon: "PackagePlusIcon",
       },
       {
+        type: "link",
         name: "Caldeiraria",
         href: "/boilermaking",
         target: "",
@@ -24,6 +26,7 @@ const ITENS_MENU = [
     classCss: "",
     item: [
       {
+        type: "link",
         name: "Revestimento",
         href: "/coating",
         target: "",
@@ -33,6 +36,7 @@ const ITENS_MENU = [
         icon: "SprayCanIcon",
       },
       {
+        type: "link",
         name: "Pintura",
         href: "/painting",
         target: "",
@@ -46,6 +50,22 @@ const ITENS_MENU = [
     classCss: "justify-center",
     item: [
       {
+        type: "button",
+        name: "Romaneio",
+        href: "/transfer",
+        target: "",
+        key: "supllier",
+        text: "Ler QRCode Spool criar romaneio / próximas etapas processo",
+        icon: "BoxesIcon",
+        // icon: "TruckIcon",
+      },
+    ],
+  },
+  {
+    classCss: "justify-center",
+    item: [
+      {
+        type: "link",
         name: "IR PARA SITE ALVENIUS",
         key: "site-alvenius",
         target: "_blank",

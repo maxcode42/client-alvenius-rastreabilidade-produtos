@@ -43,9 +43,9 @@ export default function CardItems({ items, children }) {
   if (!items || items?.length === 0) return null;
 
   return (
-    <ul className="divide-y divide-stone-200 flex flex-col gap-4 py-2">
+    <ul className="md:justify-center md:items-center divide-y divide-stone-200 flex flex-col gap-4 py-2">
       {!displayButtonsOnCard && (
-        <div className="w-full border-2 border-stone-300 rounded-lg bg-stone-100 shadow-sm shadow-blue-500/50">
+        <div className="w-full md:w-1/2 border-2 border-stone-300 rounded-lg bg-stone-100 shadow-sm shadow-blue-500/50">
           <h3 className="text-md text-center font-semibold py-2">
             Clique no código SPOOL para continuar
           </h3>
@@ -58,20 +58,21 @@ export default function CardItems({ items, children }) {
         <li
           key={String(item?.codigo).concat(index)}
           className={`
-            hover:bg-stone-50 transition border-2 border-stone-200 rounded-lg shadow-lg
-            px-2 py-2   
+            md:w-1/2 transition border-2 border-stone-200 
+            shadow-stone-200 shadow-lg rounded-lg px-2 py-2 overflow-hidden  
+            hover:shadow-blue-600/50 hover:shadow-md hover:bg-stone-50
             opacity-0
-              translate-y-4
-              animate-fadeInDown
-              [animation-delay:${Math.min(index * 80, 800)}ms]
-              animation-fill-mode:forwards
-              ${
-                !displayButtonsOnCard &&
-                PROCESS_STATUS?.acronym_next?.FI?.includes(item?.status_acronym)
-                  ? "bg-stone-300/50 shadow-none text-stone-800"
-                  : "bg-white"
-              }
-            `}
+            translate-y-4
+            animate-fadeInDown
+            [animation-delay:${Math.min(index * 80, 800)}ms]
+            animation-fill-mode:forwards
+            ${
+              !displayButtonsOnCard &&
+              PROCESS_STATUS?.acronym_next?.FI?.includes(item?.status_acronym)
+                ? "bg-stone-300/50 shadow-none text-stone-800"
+                : "bg-white"
+            }
+          `}
         >
           {!displayButtonsOnCard && (
             <CardItemsButton

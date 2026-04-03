@@ -17,7 +17,10 @@ async function handleSend(path, method, dataObject) {
 }
 
 async function handlerResponse(response) {
-  if (response.status === STATUS_CODE.UNAUTHORIZED) {
+  if (
+    response.status === STATUS_CODE.UNAUTHORIZED ||
+    response.status === STATUS_CODE.NOT_FOUND
+  ) {
     dispatchUnauthorized();
   }
 
@@ -95,6 +98,40 @@ const execute = {
         null,
       );
     },
+  },
+  supplier: {
+    read: async (params) => {
+      // return await handleSend(`${PROCESS_FLOW.route.supplier.name}/${params}`, "GET", null);
+      return await handleSend(
+        `${PROCESS_FLOW.route.supplier.name}/${params}`,
+        "GET",
+        null,
+      );
+    },
+  },
+  transfer: {
+    read: async (params) => {
+      // return await handleSend(`${PROCESS_FLOW.route.supplier.name}/${params}`, "GET", null);
+      return await handleSend(
+        `${PROCESS_FLOW.route.transfer.name}/${params}`,
+        "GET",
+        null,
+      );
+    },
+    create: async ({ data, params }) => {
+      return await handleSend(
+        `${PROCESS_FLOW.route.transfer.name}/${params}`,
+        "POST",
+        data,
+      );
+    },
+    // find: async ({ params }) => {
+    //   return await handleSend(
+    //     `${PROCESS_FLOW.route.supplier.name}/${params}`,
+    //     "GET",
+    //     null,
+    //   );
+    // },
   },
 };
 

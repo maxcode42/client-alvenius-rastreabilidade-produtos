@@ -2,13 +2,12 @@ import Link from "next/link";
 import { useState, useCallback } from "react";
 import { LockKeyhole, LogInIcon, User2Icon } from "lucide-react";
 
-import { STATUS_CODE } from "types/status-code";
-import { useAuth } from "../../auth/auth-context";
-
-import Body from "../../components/body";
-import Header from "../../components/header";
+import LayoutPage from "components/layout-page";
 import Input from "components/ui/input";
 import Button from "components/ui/button";
+
+import { STATUS_CODE } from "types/status-code";
+import { useAuth } from "../../auth/auth-context";
 
 export default function Login() {
   const { signIn } = useAuth();
@@ -65,105 +64,98 @@ export default function Login() {
   }
 
   return (
-    <div className="w-full h-full bg-zinc-100 overflow-hidden">
-      <Header />
+    <LayoutPage className="overflow-hidden">
+      <div className="w-full h-full flex flex-col py-6 px-4 md:mt-16 justify-center items-center">
+        <form
+          onSubmit={handleSendLogin}
+          className="flex flex-col w-full sm:w-1/2 lg:w-1/3 p-4 gap-8 justify-center border-blue-950/50 border-2 rounded-sm"
+        >
+          <section className="flex flex-col w-full items-center gap-4">
+            <h2 className="text-2xl font-semibold text-blue-900">Login</h2>
+            <p className="text-sm">
+              Entre com seu usuário e senha para continuar.
+            </p>
+          </section>
 
-      <Body>
-        <div className="flex flex-col w-full h-full py-6 md:mt-16 justify-center items-center px-4">
-          <form
-            onSubmit={handleSendLogin}
-            className="flex flex-col w-full sm:w-1/2 lg:w-1/3 p-4 gap-8 justify-center border-blue-950/50 border-2 rounded-sm"
-          >
-            <section className="flex flex-col w-full items-center gap-4">
-              <h2 className="text-2xl font-semibold text-blue-900">Login</h2>
-              <p className="text-sm">
-                Entre com seu usuário e senha para continuar.
-              </p>
-            </section>
-
-            <section className="flex flex-col w-full gap-4">
-              <div className="flex flex-col">
-                <Input
-                  id="code"
-                  type="text"
-                  value={username}
-                  label="Usuário"
-                  placeholder="Digite seu nome de usuário"
-                  onChange={(e) => setUsername(e.target.value)}
-                >
-                  <User2Icon className="text-stone-400 mr-2" size={18} />
-                </Input>
-
-                {usernameMessage && (
-                  <span className="py-1 text-sm text-red-500">
-                    * {usernameMessage}
-                  </span>
-                )}
-              </div>
-
-              <div>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  label="Senha"
-                  placeholder="Digite sua senha"
-                  onChange={(e) => setPassword(e.target.value)}
-                >
-                  <LockKeyhole
-                    className="text-stone-400 mr-2 mt-0.5"
-                    size={18}
-                  />
-                </Input>
-
-                {passwordMessage && (
-                  <span className="py-1 text-sm text-red-500">
-                    * {passwordMessage}
-                  </span>
-                )}
-              </div>
-            </section>
-
-            <section className="w-full">
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className={`${isSubmitting ? "disabled:bg-blue-800/50 hover:shadow-blue-600/50" : ""}`}
+          <section className="flex flex-col w-full gap-4">
+            <div className="flex flex-col">
+              <Input
+                id="code"
+                type="text"
+                value={username}
+                label="Usuário"
+                placeholder="Digite seu nome de usuário"
+                onChange={(e) => setUsername(e.target.value)}
               >
-                {isSubmitting ? (
-                  <span className="flex flex-row w-full justify-center items-center gap-2">
-                    <span className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span className="text-xs">Entrando...</span>
-                  </span>
-                ) : (
-                  <span className="flex flex-row w-full justify-center items-center gap-2">
-                    <span className="w-6 h-6">
-                      <LogInIcon />
-                    </span>
-                    <span className="text-xs">ENTRAR</span>
-                  </span>
-                )}
-              </Button>
-            </section>
+                <User2Icon className="text-stone-400 mr-2" size={18} />
+              </Input>
 
-            <section className="flex flex-col w-full mt-4">
-              <p className="flex items-center justify-end text-stone-400 w-full text-sm">
-                <small>
-                  &#174; {new Date().getFullYear()} -{" "}
-                  <Link
-                    target="_blank"
-                    href="https://alvenius.ind.br/"
-                    className="border-b-2 border-transparent transition-all duration-300 hover:border-stone-500 hover:text-stone-500"
-                  >
-                    Alvenius Tubos e Conexões -{" "}
-                  </Link>
-                  {process.env.NEXT_PUBLIC_APP_VERSION}
-                </small>
-              </p>
-            </section>
-          </form>
-        </div>
-      </Body>
-    </div>
+              {usernameMessage && (
+                <span className="py-1 text-sm text-red-500">
+                  * {usernameMessage}
+                </span>
+              )}
+            </div>
+
+            <div>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                label="Senha"
+                placeholder="Digite sua senha"
+                onChange={(e) => setPassword(e.target.value)}
+              >
+                <LockKeyhole className="text-stone-400 mr-2 mt-0.5" size={18} />
+              </Input>
+
+              {passwordMessage && (
+                <span className="py-1 text-sm text-red-500">
+                  * {passwordMessage}
+                </span>
+              )}
+            </div>
+          </section>
+
+          <section className="w-full">
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className={`${isSubmitting ? "disabled:bg-blue-800/50 hover:shadow-blue-600/50" : ""}`}
+            >
+              {isSubmitting ? (
+                <span className="flex flex-row w-full justify-center items-center gap-2">
+                  <span className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span className="text-xs">Entrando...</span>
+                </span>
+              ) : (
+                <span className="flex flex-row w-full justify-center items-center gap-2">
+                  <span className="w-6 h-6">
+                    <LogInIcon />
+                  </span>
+                  <span className="text-xs">ENTRAR</span>
+                </span>
+              )}
+            </Button>
+          </section>
+
+          <section className="flex flex-col w-full mt-4">
+            <p className="flex items-center justify-end text-stone-400 w-full text-sm">
+              <small>
+                &#174; {new Date().getFullYear()} -{" "}
+                <Link
+                  target="_blank"
+                  href="https://alvenius.ind.br/"
+                  className="border-b-2 border-transparent transition-all duration-300 hover:border-stone-500 hover:text-stone-500"
+                >
+                  Alvenius Tubos e Conexões -{" "}
+                </Link>
+                {process.env.NEXT_PUBLIC_APP_VERSION}
+              </small>
+            </p>
+          </section>
+        </form>
+      </div>
+    </LayoutPage>
   );
 }

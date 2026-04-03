@@ -14,9 +14,12 @@ import * as Icons from "lucide-react";
 import { ITENS_MENU } from "types/menu-itens";
 import { useAuth } from "../../auth/auth-context";
 
-import logo from "../../assets/imagens/logo.png";
+// import logo from "../../assets/imagens/logo.png";
 
-export default function Header() {
+import logo from "../../assets/imagens/logo_icon.png";
+
+export default function Header({ title }) {
+  const titleDefault = title ? "Rastreio de produtos" : "";
   const currentRoute = usePathname();
   const { user, signOut } = useAuth();
   const [open, setOpen] = useState(false);
@@ -50,21 +53,32 @@ export default function Header() {
   }, [open]);
 
   return (
-    <header className="flex-col w-full h-36 shadow-blue-600/50 shadow-md md:overflow-hidden inset-0 z-10 relative md:fixed">
-      <div className="w-full h-full px-16 sm:px-24 flex flex-row justify-between items-center bg-zinc-300 md:overflow-hidden">
-        <div className="flex flex-col w-1/2 h-full justify-center">
-          <div className="w-[210px] h-8">
+    <header className="flex flex-col w-full h-36 shadow-blue-600/50 shadow-md md:overflow-hidden inset-0 z-10 relative md:fixed">
+      {/* <div className="w-full h-full px-16 sm:px-24 flex flex-row justify-between items-center bg-zinc-300 md:overflow-hidden"> */}
+      <div className="flex flex-row bg-red-200 w-full h-full px-6 sm:px-24 flex flex-row justify-between items-center bg-zinc-300 md:overflow-hidden">
+        <div className="flex flex-col w-full h-full justify-center gap-1">
+          {/* <div className="w-[210px] h-8">
             <Image src={logo} alt="Logo alvenius" priority />
+          </div> */}
+          <div className="flex flex-row items-base h-8">
+            <div className="w-[64px] h-8">
+              <Image src={logo} alt="Logo alvenius" priority />
+            </div>
+            {title && (
+              <h2 className="font-semibold text-md sm:text-2xl py-4 uppercase">
+                {titleDefault}
+              </h2>
+            )}
           </div>
-          <div className="w-32 h-8">
+          <div className="w-32 h-8 w-[64px] px-4">
             <p className="text-sm text-stone-400">
               <small>{process.env.NEXT_PUBLIC_APP_VERSION}</small>
             </p>
           </div>
         </div>
         {user && (
-          <div className="flex flex-row w-fit right-0 items-end justify-end md:justify-center md:items-center">
-            <div className="flex flex-col bg-red items-center justify-end p-4 -mr-16">
+          <div className="flex flex-row w-fit right-0 items-end justify-end md:justify-center md:items-center ">
+            <div className="flex flex-col items-center justify-end -mr-2 md:-mr-18">
               <button
                 className={`p-4 text-4xl flex flex-col text-right w-full md:hidden ${open ? "hidden transition-all duration-200" : ""}`}
                 onClick={() => setOpen(true)}

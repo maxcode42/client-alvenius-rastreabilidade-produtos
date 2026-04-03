@@ -1,9 +1,10 @@
 import { createRouter } from "next-connect";
 
-import user from "models/user";
-import session from "models/session";
+import { STATUS_CODE } from "/types/status-code";
+
 import controller from "infra/controller";
-import { STATUS_CODE } from "types/status-code";
+import supplier from "models/supplier";
+import session from "models/session";
 
 const router = createRouter();
 
@@ -12,22 +13,25 @@ router.get(getHandler);
 export default router.handler(controller.errorHandlers);
 
 async function getHandler(req, res) {
+  const params = req?.query?.process;
   const token = req.cookies[process.env.COOKIE_NAME];
 
   const sessionObject = await session.findOneValidByToken(token);
 
-  //await session.findOneValidByTokenProtheus(sessionObject.token_protheus);
-  //const renewedSessionObject = await session.renew(sessionObject.id);
+  const results = await supplier.findAll(sessionObject.token_protheus, params);
 
-  const result = await user.findOnById(sessionObject.user_id);
+  if (results === true) {
+    await controller.clearSessionCookie(res);
+
+    res.status(STATUS_CODE.SUCCESS).json(sessionObject.id);
+  }
 
   await controller.setSessionCookie(res, sessionObject.token);
 
-  // Desativa o cache do navegador obrigando a carregar dados em todas requisições
   res.setHeader(
     "Cache-Control",
     "no-store, no-cache, max-age=0, must-revalidate",
   );
 
-  res.status(STATUS_CODE.SUCCESS).json(result);
+  res.status(STATUS_CODE.SUCCESS).json(results);
 }

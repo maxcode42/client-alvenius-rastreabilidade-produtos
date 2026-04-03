@@ -62,6 +62,64 @@ const execute = {
 
     return results;
   },
+  parseSupplier: async (data) => {
+    const results =
+      data?.objects?.map((item) => {
+        const formattedItem = {
+          code: item.CODIGO,
+          store: item.LOJA,
+          name: item.NOME,
+          boolikings: item.CALDERARIA,
+          coating: item.REVESTIMENTO,
+          pincture: item.PINCTURE,
+        };
+        return formattedItem;
+      }) || [];
+
+    console.log("API PARSED");
+    console.log(results);
+
+    return results;
+  },
+  parseTransfer: async (data) => {
+    console.log(">>API PROTHEUS TRANSFER PARSE OBJECTS");
+    console.log(data);
+
+    const statusActive = ["SC", "AP", "AN", "NT"];
+
+    function getRandomProgressive() {
+      if (!statusActive?.length) return [];
+
+      const index = Math.floor(Math.random() * statusActive.length);
+
+      const results = statusActive.slice(0, index + 1);
+
+      return results;
+    }
+
+    const results =
+      data?.objects?.map((item) => {
+        const formattedItem = {
+          code: item.CODIGO,
+          spools: item.SPOOLS,
+          supplier: item.FORNECEDOR,
+          store: item.LOJA,
+          number_sc: item.NUM_SC,
+          order: item.PEDIDO,
+          romaneio: item.ROMANEIO,
+          revision: item.REVISAO,
+          aet: item.AET,
+          process: item.PROCESSO,
+          status: getRandomProgressive(), //"Aguardando SC",
+        };
+        return formattedItem;
+      }) || [];
+
+    console.log("API PARSED");
+    console.log(results);
+
+    return results;
+  },
 };
 
 const responseProtheus = {

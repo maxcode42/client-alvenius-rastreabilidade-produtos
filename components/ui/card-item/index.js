@@ -8,7 +8,7 @@ import { formatDateCustom } from "util/formatters/date";
 
 export default function CardItem({ item, index, children }) {
   return (
-    <div className=" w-full">
+    <div className="w-full">
       <div className="flex flex-row w-full justify-between px-2">
         <div className="flex flex-col  justify-center items-center text-sm sm:text-sm md:text-base text-center text-stone-800  ">
           <small className="px-2 bg-stone-300/50 rounded-full w-fit">
@@ -37,8 +37,8 @@ export default function CardItem({ item, index, children }) {
             <small>{formatDateCustom(item.dateStart, item.timeStart)}</small>
           </p>
           <div className="flex flex-col items-center justify-center bg-stone-200 w-[.2rem] h-8 rounded-full" />
-          <p className="text-xs flex flex-col w-1/2 px-4 gap-1 items-start">
-            <small className="flex flex-row gap-1">
+          <p className="text-xs flex flex-col w-1/2 gap-1 items-end">
+            <small className="flex flex-row items-start px-4 gap-1">
               <CalendarDaysIcon className="size-4 text-stone-400" />
               <strong>Finalizado:</strong>{" "}
             </small>
