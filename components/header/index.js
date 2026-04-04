@@ -53,9 +53,12 @@ export default function Header({ title }) {
   }, [open]);
 
   return (
-    <header className="flex flex-col w-full h-36 shadow-blue-600/50 shadow-md md:overflow-hidden inset-0 z-10 relative md:fixed">
-      {/* <div className="w-full h-full px-16 sm:px-24 flex flex-row justify-between items-center bg-zinc-300 md:overflow-hidden"> */}
-      <div className="flex flex-row bg-red-200 w-full h-full px-6 sm:px-24 flex flex-row justify-between items-center bg-zinc-300 md:overflow-hidden">
+    <header className="flex flex-col w-full h-36 shadow-blue-600/50 shadow-md lg:overflow-hidden inset-0 z-10 relative lg:fixed">
+      {/* <div className="w-full h-full px-16 sm:px-24 flex flex-row justify-between items-center bg-zinc-300 lg:overflow-hidden"> */}
+      <div
+        className="flex flex-row bg-red-200 w-full h-full px-6 lg:px-44
+       flex flex-row justify-between items-center bg-zinc-300 lg:overflow-hidden"
+      >
         <div className="flex flex-col w-full h-full justify-center gap-1">
           {/* <div className="w-[210px] h-8">
             <Image src={logo} alt="Logo alvenius" priority />
@@ -77,17 +80,17 @@ export default function Header({ title }) {
           </div>
         </div>
         {user && (
-          <div className="flex flex-row w-fit right-0 items-end justify-end md:justify-center md:items-center ">
-            <div className="flex flex-col items-center justify-end -mr-2 md:-mr-18">
+          <div className="flex flex-row w-fit right-0 items-end justify-end lg:justify-center lg:items-center">
+            <div className="flex flex-col items-center justify-end -mr-2 lg:-mr-18">
               <button
-                className={`p-4 text-4xl flex flex-col text-right w-full md:hidden ${open ? "hidden transition-all duration-200" : ""}`}
+                className={`p-4 text-4xl flex flex-col text-right w-full lg:hidden ${open ? "hidden transition-all duration-200" : ""}`}
                 onClick={() => setOpen(true)}
                 type="button"
               >
                 <MenuIcon className="text-blue-950/50" size={32} />
               </button>
               <button
-                className={`p-4 text-4xl flex flex-col text-right w-full  sm:hidden ${!open ? "hidden  transition-all duration-200" : ""}`}
+                className={`p-4 text-4xl flex flex-col text-right w-full  lg:hidden ${!open ? "hidden transition-all duration-200" : ""}`}
                 onClick={() => setOpen(false)}
                 type="button"
               >
@@ -95,9 +98,9 @@ export default function Header({ title }) {
               </button>
             </div>
             <div
-              className={`mt-40 md:mt-0 fixed md:relative inset-0 z-40 bg-zinc-300/95 text-zinc-900 transform transition-all 
-              duration-300 ease-in-out h-[100vh] md:h-full w-full sm:static sm:translate-x-0 sm:opacity-100 sm:bg-transparent 
-              md:pointer-events-auto overflow-y-auto max-h-dvh min-h-0 md:max-h-none md:overflow-hidden pb-44 md:pb-0 ${
+              className={`mt-40 lg:mt-0 fixed lg:relative inset-0 z-40 bg-zinc-300/95 text-zinc-900 transform transition-all 
+              duration-300 ease-in-out h-[100vh] lg:h-full w-full lg:static lg:translate-x-0 lg:opacity-100 lg:bg-transparent 
+              lg:pointer-events-auto overflow-y-auto max-h-dvh min-h-0 lg:max-h-none lg:overflow-hidden pb-44 lg:pb-0 ${
                 open
                   ? "translate-x-0 opacity-100"
                   : "translate-x-full opacity-0 pointer-events-none"
@@ -105,19 +108,19 @@ export default function Header({ title }) {
             `}
             >
               <nav
-                className={`flex flex-col md:flex-row w-full md:gap-4 gap-2 py-8 md:justify-center justify-end items-center`}
+                className={`flex flex-col lg:flex-row w-full lg:gap-4 gap-2 py-8 lg:justify-center justify-end items-center`}
               >
-                <div className="order-2 md:order-1 w-full md:w-fit flex flex-col md:flex-row h-full items-center justify-center px-4">
+                <div className="order-2 lg:order-1 w-full lg:w-fit flex flex-col lg:flex-row h-full items-center justify-center px-4">
                   {currentRoute !== "/" && (
-                    <div className="w-full md:w-fit flex flex-col md:flex-row gap-2 md:gap-4 justify-center items-center">
+                    <div className="w-full lg:w-fit flex flex-col lg:flex-row gap-2 lg:gap-4 justify-center items-center">
                       {itens?.map((list) => {
                         return list.item.map((i) => {
                           const Icon = Icons[i?.icon];
                           return (
                             <div
                               key={i.key.concat(i.name)}
-                              className={`${i?.key === "site-alvenius" && "md:hidden"} 
-                                w-full md:w-fit flex flex-col md:flex-row justify-center items-center
+                              className={`${i?.key === "site-alvenius" && "lg:hidden"} 
+                                w-full lg:w-fit flex flex-col lg:flex-row justify-center items-center
                                 `}
                             >
                               <Link
@@ -126,18 +129,18 @@ export default function Header({ title }) {
                                 onClick={() => setOpen(false)}
                                 className={`${
                                   currentRoute === i?.href
-                                    ? "pointer-events-none opacity-40 cursor-not-allowed md:border-zinc-500 font-extrabold md:border-b-4 md:inline-block"
+                                    ? "pointer-events-none opacity-40 cursor-not-allowed lg:border-zinc-500 font-extrabold lg:border-b-4 lg:inline-block"
                                     : "hover:text-zinc-500 cursor-pointer"
                                 }  
-                                      w-full md:w-fit flex flex-row items-center justify-between md:justify-center px-4 md:px-0  pt-3 
-                                      md:pt-5 pb-4 md:min-w-[${Math.min(Math.ceil(i?.name.length * 1.25), 20)}ch] md:max-w-[${Math.min(Math.ceil(i?.name.length * 1.5), 34)}ch] shrink-0
-                                      text-center text-lg md:text-md 
-                                      md:inline-block md:border-b-4 md:md:border-transparent transition-all duration-300 
+                                      w-full lg:w-fit flex flex-row items-center justify-between lg:justify-center px-4 lg:px-0  pt-3 
+                                      lg:pt-5 pb-4 lg:min-w-[${Math.min(Math.ceil(i?.name.length * 1.25), 20)}ch] lg:max-w-[${Math.min(Math.ceil(i?.name.length * 1.5), 34)}ch] shrink-0
+                                      text-center text-lg lg:text-md 
+                                      lg:inline-block lg:border-b-4 lg:border-transparent transition-all duration-300 
                                       hover:scale-120 hover:font-extrabold hover:border-zinc-500 
                                   `}
                               >
                                 <span className="flex flex-row gap-2 items-center justify-center">
-                                  <span className="md:hidden">
+                                  <span className="lg:hidden">
                                     {Icon && (
                                       <Icon className="w-auto" size={24} />
                                     )}
@@ -146,11 +149,11 @@ export default function Header({ title }) {
                                     {i?.name}
                                   </span>
                                 </span>
-                                <span className="md:hidden">
+                                <span className="lg:hidden">
                                   <ChevronRightIcon className="size-6 text-blue-950/50" />
                                 </span>
                               </Link>
-                              <div className="md:hidden order-2 flex flex-col border-2 border-blue-950/50 w-full" />
+                              <div className="lg:hidden order-2 flex flex-col border-2 border-blue-950/50 w-full" />
                             </div>
                           );
                         });
@@ -158,22 +161,22 @@ export default function Header({ title }) {
                     </div>
                   )}
                 </div>
-                <div className="order-1 md:order-2 w-full inline-flex justify-center items-center px-4 py-4 md:px-2 gap-4">
-                  <div className="hidden md:block border-l-2 border-blue-950/50 w-1 h-7" />
-                  <UserRound className="w-auto" size={32} />{" "}
-                  <p className="text-lg text-left w-full md:text-xs md:w-fit lowercase first-letter:uppercase">
+                <div className="order-1 lg:order-2 w-full inline-flex justify-center items-center px-4 py-4 sm:px-0 gap-4 sm:gap-2">
+                  <div className="hidden lg:block border-l-2 border-blue-950/50 w-12 h-7" />
+                  <UserRound className="w-auto" size={32} />
+                  <p className="text-lg text-left w-full lg:text-xs lowercase first-letter:uppercase">
                     <span className="font-semibold"> Bem vindo, </span>
                     <span className="lowercase first-letter:uppercase">
                       {user?.username}
                     </span>
                   </p>
                 </div>
-                <div className="md:hidden order-1 flex flex-col border-2 border-blue-950/50 w-[92%]" />
-                <div className="hidden md:block md:order-2 border-l-2 border-blue-950/50 w-1 h-7" />
+                <div className="lg:hidden order-1 flex flex-col border-2 border-blue-950/50 w-[92%]" />
+                <div className="hidden lg:block lg:order-2 border-l-2 border-blue-950/50 w-1 h-7" />
 
-                <div className="order-3 md:order-3 w-full flex flex-col md:w-1/2 md:items-end py-4 md:px-0 px-4">
+                <div className="order-3 lg:order-3 w-full flex flex-col lg:w-1/2 lg:items-end py-4 lg:pr-2 lg:px-0 px-4">
                   <button
-                    className="w-full sx:mr-0 sx:w-1/6 m-0 p-0 text-md text-red-600 font-semibold hover:underline underline-offset-2 hover:text-red-400 justify-center items-center flex flex-row gap-2 md:border-none border-2 border-blue-950/50 py-2"
+                    className="w-full sx:mr-0 sx:w-1/6 m-0 p-0 text-md text-red-600 font-semibold hover:underline underline-offset-2 hover:text-red-400 justify-center items-center flex flex-row gap-2 lg:border-none border-2 border-blue-950/50 py-2"
                     onClick={handlerLogout}
                   >
                     <span>

@@ -138,13 +138,13 @@ function HomeModal() {
         {itens?.map((list, index) => (
           <div
             key={index}
-            className={`w-full h-1/2 flex flex-col sm:flex-row gap-2 ${list.classCss}`}
+            className={`w-full h-1/2 flex flex-col lg:flex-row gap-2 ${list.classCss}`}
           >
             {list.item.map((i) => (
               <div
                 // key={item?.key.concat(index)}
                 key={i?.key}
-                className="w-full sm:w-1/2 h-32 bg-red"
+                className="w-full lg:w-1/2 h-32 bg-red"
               >
                 {buttonType(i)}
               </div>
@@ -165,7 +165,7 @@ function HomeModal() {
           {itensMenuSelect?.map((i) => (
             <div
               key={String(i?.item?.key).concat("-modal")}
-              className="w-full sm:w-1/2 h-32"
+              className="w-full h-32"
             >
               {buttonType(i.item)}
             </div>

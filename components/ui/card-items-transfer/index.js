@@ -6,14 +6,14 @@ export default function CardItemsTransfer({ items, children }) {
   if (!items || items?.length === 0) return null;
 
   return (
-    <ul className="md:justify-center md:items-center divide-y divide-stone-200 flex flex-col gap-4 py-2">
+    <ul className="lg:justify-center lg:items-center divide-y divide-stone-200 flex flex-col gap-4 py-2">
       {children}
 
       {items?.map((item, index) => (
         <li
           key={String(item?.codigo).concat(index)}
           className={`
-            md:w-1/2  transition border-2 border-stone-200 
+            lg:w-1/2  transition border-2 border-stone-200 
             shadow-stone-200 shadow-lg rounded-lg px-2 py-2 overflow-hidden 
             hover:shadow-blue-600/50 hover:shadow-md hover:bg-stone-50
             opacity-0

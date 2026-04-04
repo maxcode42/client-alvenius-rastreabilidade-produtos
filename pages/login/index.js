@@ -68,7 +68,8 @@ export default function Login() {
       <div className="w-full h-full flex flex-col py-6 px-4 md:mt-16 justify-center items-center">
         <form
           onSubmit={handleSendLogin}
-          className="flex flex-col w-full sm:w-1/2 lg:w-1/3 p-4 gap-8 justify-center border-blue-950/50 border-2 rounded-sm"
+          className="flex flex-col flex-wrap w-full sm:w-1/2 md:w-1/2 lg:w-1/2 max-w-lg 
+          p-4 gap-8 justify-center border-blue-950/50 border-2 rounded-sm"
         >
           <section className="flex flex-col w-full items-center gap-4">
             <h2 className="text-2xl font-semibold text-blue-900">Login</h2>

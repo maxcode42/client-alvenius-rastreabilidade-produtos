@@ -10,7 +10,7 @@ export default function CardItem({ item, index, children }) {
   return (
     <div className="w-full">
       <div className="flex flex-row w-full justify-between px-2">
-        <div className="flex flex-col  justify-center items-center text-sm sm:text-sm md:text-base text-center text-stone-800  ">
+        <div className="flex flex-col justify-center items-center text-sm sm:text-sm md:text-base text-center text-stone-800  ">
           <small className="px-2 bg-stone-300/50 rounded-full w-fit">
             {formatSixDigits(index + 1)}
           </small>

@@ -101,7 +101,7 @@ export default function CardItemTransfer({ item, index, children }) {
           <div className="flex flex-row w-full gap-4 justify-start items-center">
             <p
               colSpan={5}
-              className="w-10 md:w-12 px-2 text-xs sm:text-sm md:text-base text-left"
+              className="w-10 lg:w-12 px-2 text-xs sm:text-sm md:text-base text-left"
             >
               <small>
                 <strong>SPOOLS:</strong>
@@ -219,7 +219,7 @@ export default function CardItemTransfer({ item, index, children }) {
                     : "bg-stone-200 border-r-2 border-stone-100 pr-[.2rem] text-stone-400"
                 } 
                   ${i?.style} min-w-20 max-w-fit w-fit flex flex-row 
-                  py-1 pr-1 md:pl-6 md:pr-6
+                  py-1 pr-1 md:pl-6 md:pr-6 
                   text-xs rounded-full justify-center items-center`}
               >
                 <small className="capitalize">

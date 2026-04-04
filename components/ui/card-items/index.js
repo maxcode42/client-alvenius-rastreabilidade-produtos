@@ -43,9 +43,9 @@ export default function CardItems({ items, children }) {
   if (!items || items?.length === 0) return null;
 
   return (
-    <ul className="md:justify-center md:items-center divide-y divide-stone-200 flex flex-col gap-4 py-2">
+    <ul className="lg:justify-center lg:items-center divide-y divide-stone-200 flex flex-col gap-4 py-2">
       {!displayButtonsOnCard && (
-        <div className="w-full md:w-1/2 border-2 border-stone-300 rounded-lg bg-stone-100 shadow-sm shadow-blue-500/50">
+        <div className="w-full lg:w-1/2 border-2 border-stone-300 rounded-lg bg-stone-100 shadow-sm shadow-blue-500/50">
           <h3 className="text-md text-center font-semibold py-2">
             Clique no código SPOOL para continuar
           </h3>
@@ -58,7 +58,7 @@ export default function CardItems({ items, children }) {
         <li
           key={String(item?.codigo).concat(index)}
           className={`
-            md:w-1/2 transition border-2 border-stone-200 
+            lg:w-1/2 transition border-2 border-stone-200 
             shadow-stone-200 shadow-lg rounded-lg px-2 py-2 overflow-hidden  
             hover:shadow-blue-600/50 hover:shadow-md hover:bg-stone-50
             opacity-0
