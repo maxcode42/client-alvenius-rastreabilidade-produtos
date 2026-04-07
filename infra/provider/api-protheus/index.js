@@ -208,8 +208,8 @@ const execute = {
     create: async ({ params, data, tokenProtheus }) => {
       console.log(">>API PROTHEUS TRANSPORT CREATE");
       console.log({ params, data, tokenProtheus });
-      return [{}];
-      //return await handleSend("wsrastreio/new", "POST", data, tokenProtheus);
+      // return [{}];
+      return await handleSend("wsrastreio/list", "POST", data, tokenProtheus);
     },
     // find: async ({ params, tokenProtheus }) => {
     //   return await handleSend(

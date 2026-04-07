@@ -82,8 +82,8 @@ const execute = {
     return results;
   },
   parseTransfer: async (data) => {
-    console.log(">>API PROTHEUS TRANSFER PARSE OBJECTS");
-    console.log(data);
+    // console.log(">>API PROTHEUS TRANSFER PARSE OBJECTS");
+    // console.log(data);
 
     const statusActive = ["SC", "AP", "AN", "NT"];
 
@@ -115,8 +115,10 @@ const execute = {
         return formattedItem;
       }) || [];
 
-    console.log("API PARSED");
-    console.log(results);
+    // console.log("API PARSED RESULTS PROTHEUS");
+    // console.log(data);
+    // console.log("API PARSED");
+    // console.log(results);
 
     return results;
   },

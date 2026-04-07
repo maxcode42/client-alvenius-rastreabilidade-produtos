@@ -23,6 +23,21 @@ function HomeModal() {
     return ITENS_MENU;
   }, []);
 
+  const itensMenuTransfer = {
+    boilermaking: {
+      name: "Revestimento",
+      icon: "SprayCanIcon",
+    },
+    coating: {
+      name: "Pintura",
+      icon: "PaintRollerIcon",
+    },
+    painting: {
+      name: "Faturamento",
+      icon: "ReceiptIcon",
+    },
+  };
+
   const itensMenuSelect = useMemo(() => {
     return itens.reduce((acc, group) => {
       group.item.filter((item) => {
@@ -35,8 +50,10 @@ function HomeModal() {
                 params: item.key,
               },
             },
-            text: `Romaneio ${item.name} / listar e criar novo romaneiro`,
+            text: `${item.name} / listar e criar nova transferência`,
+            next: itensMenuTransfer[item.key],
           };
+
           return acc.push({ ...group, item });
         }
       });
@@ -53,6 +70,7 @@ function HomeModal() {
 
   function buttonType(item) {
     const Icon = Icons[item?.icon];
+    const Icon2 = Icons[item?.next?.icon];
     const buttonSelect = {
       button: (
         <Button
@@ -108,14 +126,42 @@ function HomeModal() {
             <div className="flex flex-row w-full h-16 justify-center items-center gap-2">
               <span className="w-6 h-6 border-2 border-stone-100 border-t-transparent rounded-full animate-spin" />
             </div>
-          ) : (
-            <span className="flex flex-col justify-center items-center">
-              <span className="text-sm">
-                {Icon && <Icon className="size-8" />}
+          ) : !item?.next ? (
+            <span>
+              <span className="flex flex-col justify-center items-center">
+                <span className="text-sm">
+                  {Icon && <Icon className="size-8" />}
+                </span>
               </span>
+              {item?.name}
             </span>
+          ) : (
+            <div className="flex flex-row justify-center items-center w-full px-2">
+              <div className="flex flex-col items-center min-w-24 max-w-24">
+                <span className="flex flex-col justify-center items-center">
+                  <icon className="text-sm">
+                    {Icon && <Icon className="size-8" />}
+                  </icon>
+                </span>
+                <span className="text-sm">{item?.name}</span>
+              </div>
+              <div className="flex flex-col items-center min-w-24 max-w-24">
+                <span className="flex flex-col justify-center items-center">
+                  <icon className="text-sm">
+                    {<Icons.MoveRightIcon className="size-8" />}
+                  </icon>
+                </span>
+              </div>
+              <div className="flex flex-col items-center min-w-24 max-w-24">
+                <span className="flex flex-col justify-center items-center">
+                  <icon className="text-sm">
+                    {Icon2 && <Icon2 className="size-8" />}
+                  </icon>
+                </span>
+                <span className="text-sm">{item?.next?.name}</span>
+              </div>
+            </div>
           )}
-          {item?.name}
         </ButtonPanel>
       ),
     };
@@ -154,7 +200,7 @@ function HomeModal() {
       </PanelDefault>
       {openModalMenuSelect && (
         <MenuSelect
-          title={"Selecione qual processo de ROMANEIO"}
+          title={"Selecione qual processo de TRANSFERÊNCIA"}
           openAlert={openModalMenuSelect}
           actionClose={() => {
             setOpenModalMenuSelect(false),

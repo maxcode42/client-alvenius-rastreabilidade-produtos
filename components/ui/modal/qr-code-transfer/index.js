@@ -33,6 +33,7 @@ export default function QRCodeTransfer({ data, setData, suppliers }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spool]);
 
+  // CONFIMAR A NECESSIDADE DO USEEFFECT
   useEffect(() => {
     console.log(data);
   }, [data]);
@@ -89,8 +90,47 @@ export default function QRCodeTransfer({ data, setData, suppliers }) {
 
         <Separator className={"via-stone-300/50"} />
 
+        <section
+          className={`w-full flex flex-col w-full mt-4 mb-4 
+           
+            `}
+        >
+          <label className={`${!data.third ? "disabled text-stone-400" : ""}`}>
+            Origem Terceiro:
+          </label>
+          <select
+            className={`py-4
+            rounded-md text-lg 
+            bg-transparent px-3 py-4 outline-none 
+            border-2 border-stone-300/50 placeholder:text-gray-400 
+            focus:border-blue-600/50 focus:ring-0 focus:ring-blue-200 
+            focus:shadow-md focus:shadow-blue-300/50 w-full
+             ${!data.third ? "disabled text-stone-400" : ""}
+            `}
+            onChange={(e) =>
+              setData({
+                ...data,
+                supplier: suppliers?.find((f) => f.code === e.target.value),
+              })
+            }
+            disabled={!data?.third}
+          >
+            <option className="">Selecione...</option>
+            {suppliers?.map((item) => (
+              <option
+                className="max-w-xs truncate"
+                value={item?.code}
+                key={item?.code}
+              >
+                {item?.code} - {item?.store} -{" "}
+                {item?.name?.trimStart().trimEnd()}
+              </option>
+            ))}
+          </select>
+        </section>
+
         <section className="w-full flex flex-col w-full mt-4 mb-4">
-          <label>Selecione o Fornecedor:</label>
+          <label>Destino Fornecedor:</label>
           <select
             className="py-4
             rounded-md text-lg 

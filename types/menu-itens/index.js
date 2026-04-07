@@ -32,7 +32,6 @@ const ITENS_MENU = [
         target: "",
         key: "coating",
         text: "Ler QRCode Spool revestimento / próximas etapas processo",
-
         icon: "SprayCanIcon",
       },
       {
@@ -51,13 +50,13 @@ const ITENS_MENU = [
     item: [
       {
         type: "button",
-        name: "Romaneio",
+        name: "Transferência",
         href: "/transfer",
         target: "",
-        key: "supllier",
-        text: "Ler QRCode Spool criar romaneio / próximas etapas processo",
-        icon: "BoxesIcon",
-        // icon: "TruckIcon",
+        key: "transfer",
+        text: "Ler QRCode e criar transferência / próximas etapas processo",
+        icon: "TruckIcon",
+        // icon: "BoxesIcon",
       },
     ],
   },

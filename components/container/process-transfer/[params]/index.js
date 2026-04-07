@@ -127,18 +127,20 @@ export default function ProcessTransferFlow({ title = "", info = "", route }) {
 
           <div className="w-1/2 md:w-1/4 sm:w-full h-16 flex gap-4 flex-row">
             <Link
-              alt="criar romaneio"
+              alt="criar transfêrencia"
               href={`/transfer/create?params=${params}`}
               className="w-full py-4 mt-2 rounded-sm text-lg text-center flex flex-row gap-2 
                 justify-center items-center bg-blue-700 text-blue-100  
                 hover:bg-blue-800 hover:text-blue-100 hover:shadow-blue-600/50 hover:shadow-md
                 disabled:bg-stone-300"
-              title="Criar novo romaneio"
+              title="Criar transferência"
             >
               <PlusCircleIcon className="size-6 sm:size-8" />
               <span className="flex flex-col">
-                <span className="text-xs sm:text-base">Novo</span>
-                <span className="text-xs sm:text-base">Romaneio</span>
+                <span className="text-xs sm:text-base">Criar</span>
+                <span className="text-xs sm:text-base">
+                  <small> Transferência</small>
+                </span>
               </span>
             </Link>
           </div>

@@ -95,7 +95,7 @@ export default function ProcessTransferCreate({
 
   function clearData() {
     setQrCodeReadingType([QRCODE_TYPES.spool]);
-    setOpenAlertInfo(false);
+    //setOpenAlertInfo(false);
     setCurrentSpool(null);
     setSpool(null);
     setData({
@@ -141,14 +141,14 @@ export default function ProcessTransferCreate({
       });
 
       if (results?.status_code !== STATUS_CODE.CREATE) {
-        // setMessage(results?.message);
-        setMessage("Sucesso: Informações gravadas!");
+        setMessage(results?.message);
         setOpenAlertInfo(true);
         setOpenAlert(true);
         return;
       }
 
       setMessage(results?.message);
+      setOpenAlertInfo(true);
       setOpenAlert(true);
       clearData();
     } catch (error) {
@@ -190,10 +190,8 @@ export default function ProcessTransferCreate({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
 
-  useEffect(() => {
-    console.log(">>CREATE");
-    console.log(data);
-  }, [data]);
+  // VERIFICAR A NECESSIDADE DE USAR ESSE EFFECT
+  useEffect(() => {}, [data]);
 
   return (
     <LayoutPage title={true} subTitle={routeName}>
@@ -274,6 +272,9 @@ export default function ProcessTransferCreate({
 
       {openAlertInfo && (
         <AlertCustom
+          // actionClose={() => {
+          //   setOpenAlertInfo(false), clearData();
+          // }}
           actionClose={() => {
             setOpenAlertInfo(false);
           }}

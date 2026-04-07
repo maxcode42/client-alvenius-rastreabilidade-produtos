@@ -13,6 +13,9 @@ async function findAll(tokenProtheus, params) {
     params,
   });
 
+  console.log(">> MODELS REPONSE PROTHEUS");
+  console.log(response);
+
   const results = await responseProtheus.execute.parseTransfer(response);
 
   return results;
@@ -26,13 +29,13 @@ async function create(tokenProtheus, transferInputValues, params) {
     aet: String(transferInputValues?.third),
   };
 
-  const result = await runInsertAPIProtheus({
+  const response = await runInsertAPIProtheus({
     data: dataObject,
     tokenProtheus,
     params,
   });
 
-  return result;
+  return response;
 }
 
 const transfer = {
