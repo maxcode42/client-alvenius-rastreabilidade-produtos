@@ -205,7 +205,7 @@ const execute = {
 
       return results;
     },
-    create: async ({ params, data, tokenProtheus }) => {
+    create: async ({ data, tokenProtheus }) => {
       return await handleSend("wsrastreio/list", "POST", data, tokenProtheus);
     },
     // find: async ({ params, tokenProtheus }) => {

@@ -169,7 +169,7 @@ export default function Header({ title }) {
           onClick={() => (setLoading(true), setCurrentButton(item?.key))}
           className={`${item?.key === currentButton ? "opacity-50 pointer-events-none cursor-not-allowed" : ""}`}
         >
-          {item?.key === currentButton ? (
+          {item?.key === currentButton && loading ? (
             <div className="flex flex-row w-full h-16 justify-center items-center gap-2">
               <span className="w-6 h-6 border-2 border-stone-100 border-t-transparent rounded-full animate-spin" />
             </div>

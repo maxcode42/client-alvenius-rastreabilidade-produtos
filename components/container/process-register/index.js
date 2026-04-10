@@ -99,8 +99,6 @@ export default function ProcessRegister({ title = "", info = "", route }) {
         data: { spool: currentSpool, itens },
       });
 
-      setOpenAlertInfo(true);
-
       if (results?.status_code !== STATUS_CODE.CREATE) {
         setMessage(results?.message);
         return;
@@ -110,11 +108,11 @@ export default function ProcessRegister({ title = "", info = "", route }) {
       clearData();
     } catch (error) {
       setMessage("Error: Ocorreu uma falha ao gravar dados!");
-      setOpenAlertInfo(true);
-      setOpenAlert(true);
       console.error(error);
     } finally {
       setLoading(false);
+      setOpenAlert(true);
+      setOpenAlertInfo(true);
     }
   }
 

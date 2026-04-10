@@ -2,7 +2,6 @@ import { PROCESS_STATUS } from "types/process-status";
 import { PROCESS_FLOW } from "types/process-flow";
 
 import { normalizeAlphanumeric } from "../../../util/formatters/text";
-import supplier from "models/supplier";
 
 const execute = {
   parse: async (data) => {

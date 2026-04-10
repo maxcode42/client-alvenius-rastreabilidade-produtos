@@ -11,19 +11,8 @@ import { formatDateCustom } from "util/formatters/date";
 
 export default function CardItemTransfer({ item, status, index, children }) {
   const [expandItemIndex, setExpandItemIndex] = useState(null);
-
-  if (!item || item?.spools?.length === 0) return null;
-
-  function onExpandDetails(e, index) {
-    e.preventDefault();
-
-    setExpandItemIndex((prev) =>
-      String(prev) === String(index) ? null : index,
-    );
-  }
-
-  const statusList = useMemo(() => {
-    return [
+  const statusList = useMemo(
+    () => [
       {
         text: status[0].text,
         // style: `z-40 text-[0.8em] text-center -ml-0 p-3 pr-3 `,
@@ -63,8 +52,20 @@ export default function CardItemTransfer({ item, status, index, children }) {
         color: styleColorStatus("FI"),
         acronym: status[4].acronym,
       },
-    ];
-  }, []);
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  if (!item || item?.spools?.length === 0) return null;
+
+  function onExpandDetails(e, index) {
+    e.preventDefault();
+
+    setExpandItemIndex((prev) =>
+      String(prev) === String(index) ? null : index,
+    );
+  }
 
   function typeLayoutStatus(type) {
     const typesStatus = {
