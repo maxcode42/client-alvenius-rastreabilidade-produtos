@@ -2,7 +2,7 @@ import { twMerge } from "tailwind-merge";
 
 export default function PanelPrimary({ children, ...props }) {
   return (
-    <div className="w-full h-full lg:h-1/2 flex flex-col sm:flex-col gap-4 pb-8 lg:min-h-[40vh]">
+    <div className="w-full h-full min-h-[40vh] lg:h-1/2 flex flex-col sm:flex-col gap-4 pb-8 lg:min-h-[40vh]">
       <section
         {...props}
         className={twMerge(

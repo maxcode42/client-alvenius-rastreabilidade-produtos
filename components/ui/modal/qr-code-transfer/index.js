@@ -110,13 +110,15 @@ export default function QRCodeTransfer({ data, setData, suppliers }) {
             onChange={(e) =>
               setData({
                 ...data,
-                supplier: suppliers?.find((f) => f.code === e.target.value),
+                supplier_origin: suppliers?.origin?.find(
+                  (f) => f.code === e.target.value,
+                ),
               })
             }
             disabled={!data?.third}
           >
             <option className="">Selecione...</option>
-            {suppliers?.map((item) => (
+            {suppliers?.origin?.map((item) => (
               <option
                 className="max-w-xs truncate"
                 value={item?.code}
@@ -141,12 +143,14 @@ export default function QRCodeTransfer({ data, setData, suppliers }) {
             onChange={(e) =>
               setData({
                 ...data,
-                supplier: suppliers?.find((f) => f.code === e.target.value),
+                supplier_destination: suppliers?.destination?.find(
+                  (f) => f.code === e.target.value,
+                ),
               })
             }
           >
             <option className="">Selecione...</option>
-            {suppliers?.map((item) => (
+            {suppliers?.destination?.map((item) => (
               <option
                 className="max-w-xs truncate"
                 value={item?.code}

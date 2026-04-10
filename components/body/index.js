@@ -9,7 +9,7 @@ export default function Body({ children, title, ...props }) {
         <h2
           className={twMerge(
             `relative lg:fixed z-30 shadow-blue-600/50 shadow-md font-semibold py-4 px-8 mt-[-38px]
-            rounded-lg bg-stone-50 min-h-14 lg:min-h-16 min-w-56 lg:min-w-72 text-center 
+            rounded-lg bg-stone-50 min-h-14 lg:min-h-16 min-w-56 lg:min-w-72 text-center
             ${title ? "capitalize text-xl" : "text-lg sm:text-2xl"}`,
             props.className,
           )}

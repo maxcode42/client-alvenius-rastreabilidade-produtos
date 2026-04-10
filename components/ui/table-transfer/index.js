@@ -2,7 +2,7 @@ export default function TableTransfer({ items }) {
   // if (!items || items.length === 0) return null;
 
   return (
-    <table className="text-sm w-full min-w-full min-h-[30vh] border border-stone-200 bg-white rounded-lg">
+    <table className="text-sm w-full min-w-full border border-stone-200 bg-white rounded-lg">
       <thead>
         <tr className="bg-stone-200">
           <th

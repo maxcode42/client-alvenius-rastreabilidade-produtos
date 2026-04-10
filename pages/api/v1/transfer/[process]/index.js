@@ -51,8 +51,7 @@ async function postHandler(req, res) {
     transferInputValues,
     params,
   );
-  console.log(">>CONTROLLER");
-  console.log(results);
+
   await controller.setSessionCookie(res, sessionObject.token);
 
   res.setHeader(

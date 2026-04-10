@@ -25,9 +25,7 @@ async function handleSend(path, method, dataObject, token) {
 
 async function handlerResponse(response) {
   try {
-    console.log(response);
     const responseBody = await response?.json();
-    console.log(responseBody);
 
     if (Number(responseBody?.status_code) === STATUS_CODE.UNAUTHORIZED) {
       throw new UnauthorizedError({
@@ -198,17 +196,16 @@ const execute = {
   },
   transfer: {
     read: async ({ tokenProtheus, params }) => {
-      return await handleSend(
+      const results = await handleSend(
         `wsrastreio/listrom?process=${params}`,
         "GET",
         null,
         tokenProtheus,
       );
+
+      return results;
     },
     create: async ({ params, data, tokenProtheus }) => {
-      console.log(">>API PROTHEUS TRANSPORT CREATE");
-      console.log({ params, data, tokenProtheus });
-      // return [{}];
       return await handleSend("wsrastreio/list", "POST", data, tokenProtheus);
     },
     // find: async ({ params, tokenProtheus }) => {

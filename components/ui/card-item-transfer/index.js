@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { CalendarDaysIcon, EyeIcon, EyeOffIcon } from "lucide-react";
+import { useMemo, useState } from "react";
+import { CalendarDaysIcon } from "lucide-react";
 
 import Button from "../button";
 
@@ -9,7 +9,7 @@ import { formatSixDigits } from "util/formatters/numeric";
 import { formatCodeDefault } from "util/formatters/code";
 import { formatDateCustom } from "util/formatters/date";
 
-export default function CardItemTransfer({ item, index, children }) {
+export default function CardItemTransfer({ item, status, index, children }) {
   const [expandItemIndex, setExpandItemIndex] = useState(null);
 
   if (!item || item?.spools?.length === 0) return null;
@@ -22,32 +22,49 @@ export default function CardItemTransfer({ item, index, children }) {
     );
   }
 
-  const status = [
-    {
-      text: "Aguardando SC",
-      style: `z-50 -ml-0`,
-      color: styleColorStatus("PU"),
-      acronym: "SC",
-    },
-    {
-      text: "Aguardando Pedido",
-      style: `z-40 -ml-6 pl-6`,
-      color: styleColorStatus("EX"),
-      acronym: "AP",
-    },
-    {
-      text: "Aguardando Nota",
-      style: `z-30 -ml-6 pl-6`,
-      color: styleColorStatus("RO"),
-      acronym: "AN",
-    },
-    {
-      text: "Nota Emitida",
-      style: `z-20 -ml-6 pl-6`,
-      color: styleColorStatus("FI"),
-      acronym: "NT",
-    },
-  ];
+  const statusList = useMemo(() => {
+    return [
+      {
+        text: status[0].text,
+        // style: `z-40 text-[0.8em] text-center -ml-0 p-3 pr-3 `,
+        style: `z-50 ml-1 md:pl-1`,
+        color: styleColorStatus("PU"),
+        acronym: status[0].acronym,
+      },
+      {
+        text: status[1].text,
+        // style: `z-40 text-[0.8em] text-center -ml-10 pl-9 md:pl-14 bg-gradient-to-r`,
+        // style: `z-40 w-6 text-[0.8em] text-center relative px-4 text-stone-100 rounded-full -ml-3`,
+        style: `z-40 pl-5`,
+        color: styleColorStatus("EX"),
+        acronym: status[1].acronym,
+      },
+      {
+        text: status[2].text,
+        // style: `z-30 text-[0.8em] text-center -ml-10 pl-9 md:pl-14`,
+        // style: `z-30 w-6 text-[0.8em] text-center relative px-4 text-white rounded-full -ml-3`,
+        style: `z-30 pl-5`,
+        color: styleColorStatus("RO"),
+        acronym: status[2].acronym,
+      },
+      {
+        text: status[3].text,
+        // style: `z-20 text-[0.8em] text-center -ml-10 pl-9 md:pl-14`,
+        // tyle: `z-20 w-6 text-[0.8em] text-center relative px-4 text-white rounded-full -ml-3`,
+        style: `z-20 pl-5`,
+        color: styleColorStatus("RV"),
+        acronym: status[3].acronym,
+      },
+      {
+        text: status[4].text,
+        // style: `z-10 text-[0.8em] text-center -ml-10 pl-9 md:pl-14`,
+        // tyle: `z-10 w-6 text-[0.8em] text-center relative px-4 text-white rounded-full -ml-3`,
+        style: `z-10 pl-5`,
+        color: styleColorStatus("FI"),
+        acronym: status[4].acronym,
+      },
+    ];
+  }, []);
 
   function typeLayoutStatus(type) {
     const typesStatus = {
@@ -59,13 +76,15 @@ export default function CardItemTransfer({ item, index, children }) {
                 <small className="px-2 bg-stone-300/50 rounded-full w-fit">
                   {formatSixDigits(index + 1)}
                 </small>
-              </div>
+              </div>{" "}
               <div className="capitalize text-center min-w-20 text-xs sm:text-sm md:text-base text-stone-800">
                 <span
-                  className={`${item.status.includes("NT") ? styleColorStatus("FI") : styleColorStatus("RE")} p-1 text-xs rounded-full flex flex-row justify-center items-center`}
+                  className={`${item.status.length === status.length ? styleColorStatus("FI") : styleColorStatus("RE")} p-1 text-xs rounded-full flex flex-row justify-center items-center`}
                 >
                   <small>
-                    {item.status.includes("NT") ? "Finalizado" : "Em trânsito"}
+                    {item.status.length === status.length
+                      ? "Finalizado"
+                      : "Em trânsito"}
                   </small>
                 </span>
               </div>
@@ -76,12 +95,52 @@ export default function CardItemTransfer({ item, index, children }) {
                 {item?.code}
               </p>
 
-              <p className="w-full text-left px-2 py-1 text-xs sm:text-sm md:text-base">
-                <strong>Fornecedor: </strong>
-                {item?.supplier}
-              </p>
+              <div className="w-full flex flex-col py-1">
+                <p className="w-full text-left px-2 text-xs sm:text-sm md:text-base">
+                  <small>
+                    <strong>Fornecedor: </strong>
+                  </small>
+                </p>
 
-              <div className="flex flex-row w-full items-center justify-between px-2 py-1">
+                <p className="w-full flex flex-row text-left px-2 gap-1 text-xs sm:text-sm md:text-base">
+                  <small className="flex flex-row gap-1">
+                    <strong>Origem:</strong>
+                    <span className="max-w-8 min-w-8">
+                      {item?.supplier?.origin?.code}
+                    </span>
+                    {" - "}
+                    <span className="max-w-4 min-w-4 text-center">
+                      {item?.supplier?.origin?.store}
+                    </span>
+                    {" - "}
+                    <span className="truncate w-fit max-w-[60%]">
+                      {item?.supplier?.origin?.name}
+                    </span>
+                  </small>
+                </p>
+
+                <p className="w-full text-left px-2 text-xs sm:text-sm md:text-base">
+                  <small className="flex flex-row gap-1">
+                    <strong>Destino: </strong>
+
+                    <span className="max-w-8 min-w-8">
+                      {item?.supplier?.destination?.code}
+                    </span>
+                    {" - "}
+
+                    <span className="max-w-4 min-w-4 text-center">
+                      {item?.supplier?.destination?.store}
+                    </span>
+                    {" - "}
+
+                    <span className="truncate w-fit max-w-[60%]">
+                      {item?.supplier?.destination?.name}
+                    </span>
+                  </small>
+                </p>
+              </div>
+
+              <div className="flex flex-row w-full items-center justify-between px-2 py-2">
                 <p className="text-xs flex flex-col w-1/2 gap-1 items-start">
                   <small className="flex flex-row gap-1">
                     <CalendarDaysIcon className="size-4 text-slate-400" />
@@ -101,14 +160,11 @@ export default function CardItemTransfer({ item, index, children }) {
                 </p>
               </div>
 
-              <div key={index}>
+              <div>
                 <div className="flex flex-row w-full gap-4 justify-start items-center">
-                  <p
-                    colSpan={5}
-                    className="w-10 lg:w-12 px-2 text-xs sm:text-sm md:text-base text-left"
-                  >
+                  <p className="w-10 lg:w-12 px-2 text-xs sm:text-sm md:text-base text-left">
                     <small>
-                      <strong>SPOOLS:</strong>
+                      <strong>Spools:</strong>
                     </small>
                   </p>
                   <Button
@@ -176,31 +232,50 @@ export default function CardItemTransfer({ item, index, children }) {
                       </p>
                     </div>
                   ))}
-                <div className="w-full flex flex-col">
-                  <p
-                    colSpan={5}
-                    className="gap-1 justify-center px-2 py-2 text-xs sm:text-sm md:text-base text-left"
-                  >
-                    <small>
-                      <strong>Status:</strong>
-                    </small>
-                  </p>
-                </div>
+              </div>
+
+              <div className="w-full flex flex-col">
+                <p className="gap-1 justify-center px-2 py-2 text-xs sm:text-sm md:text-base text-left">
+                  <small>
+                    <strong>Status:</strong>
+                  </small>
+                </p>
                 <div className="flex flex-row w-full gap-1 items-center">
-                  {status.map((i, index) => (
+                  {statusList.map((i, index) => (
+                    // <div
+                    //   key={i.acronym.concat(index)}
+                    //   className={`${
+                    //     item?.status?.includes(i.acronym)
+                    //       ? i.color
+                    //       : "bg-stone-200 border-r-2 border-stone-100 pr-[.2rem] text-stone-400"
+                    //   }
+                    //   ${i?.style} min-w-20 max-w-fit w-fit flex flex-row
+                    //   py-1 pr-1 md:pl-6 md:pr-6
+                    //   text-xs rounded-full justify-center items-center`}
+                    // >
                     <div
                       key={i.acronym.concat(index)}
-                      className={`${
-                        item?.status?.includes(i.acronym)
-                          ? i.color
-                          : "bg-stone-200 border-r-2 border-stone-100 pr-[.2rem] text-stone-400"
-                      } 
-                      ${i?.style} min-w-20 max-w-fit w-fit flex flex-row 
-                      py-1 pr-1 md:pl-6 md:pr-6 
-                      text-xs rounded-full justify-center items-center`}
+                      className={`relative
+                        ${
+                          item?.status?.includes(i.acronym)
+                            ? i.color
+                            : "bg-stone-200 text-stone-400"
+                        }
+                        text-[0.6em] md:text-[0.8em] text-left rounded-r-full
+                        min-w-18 md:min-w-20 max-w-fit w-fit
+                        flex items-center justify-center
+                        py-1 pr-1 md:pr-1 -ml-4 
+                        ${i?.style}
+                      `}
+                      // ${index !== 0 ? "-ml-3" : ""}
+                      // style={{ zIndex: statusList.length - index }}
                     >
-                      <small className="capitalize">
-                        {i?.text.trimStart().trimEnd()}
+                      {index !== 0 && (
+                        <div className=" absolute left-0 top-0 h-full w-8 bg-stone-100 rounded-full -translate-x-1/2" />
+                      )}
+
+                      <small className="capitalize relative">
+                        {i?.text.trim()}
                       </small>
                     </div>
                   ))}
@@ -225,10 +300,10 @@ export default function CardItemTransfer({ item, index, children }) {
               <div className="flex flex-row">
                 <div className="z-50 capitalize text-center min-w-20 text-xs sm:text-sm md:text-base text-stone-800">
                   <span
-                    className={`${item.status.includes("NT") ? styleColorStatus("FI") : styleColorStatus("RE")} p-1 text-xs rounded-full flex flex-row justify-center items-center`}
+                    className={`${item.status.length === status.length ? styleColorStatus("FI") : styleColorStatus("RE")} p-1 text-xs rounded-full flex flex-row justify-center items-center`}
                   >
                     <small>
-                      {item.status.includes("NT")
+                      {item.status.length === status.length
                         ? "Finalizado"
                         : "Em trânsito"}
                     </small>
@@ -241,7 +316,9 @@ export default function CardItemTransfer({ item, index, children }) {
                     text-xs rounded-full justify-end items-center`}
                 >
                   <small className="capitalize">
-                    {status[item.status.length - 1]?.text.trimStart().trimEnd()}
+                    {statusList[item.status.length - 1]?.text
+                      .trimStart()
+                      .trimEnd()}
                   </small>
                 </div>
               </div>

@@ -13,7 +13,7 @@ export default function Search({ text, action }) {
         value={text}
         onChange={(e) => action(e.target.value)}
         className="outline-none focus:outline-none focus:ring-0 focus:border-blue-400/50 text-xs w-full bg-transparent
-        h-16 shadow-md shadow-blue-300/50 border-stone-300/50 rounded-md border-2 pl-10 lg:pl-14 pr-2"
+        h-14 shadow-md shadow-blue-300/50 border-stone-300/50 rounded-md border-2 pl-10 lg:pl-14 pr-2"
         placeholder="Buscar por código, status, data"
       />
     </div>

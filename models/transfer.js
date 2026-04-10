@@ -13,9 +13,6 @@ async function findAll(tokenProtheus, params) {
     params,
   });
 
-  console.log(">> MODELS REPONSE PROTHEUS");
-  console.log(response);
-
   const results = await responseProtheus.execute.parseTransfer(response);
 
   return results;

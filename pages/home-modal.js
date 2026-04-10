@@ -1,7 +1,5 @@
 import * as Icons from "lucide-react";
 
-import Body from "../components/body";
-import Header from "../components/header";
 import Separator from "components/ui/separator";
 import ButtonPanel from "components/ui/button-panel";
 import PanelDefault from "components/ui/panel-default";
@@ -70,7 +68,7 @@ function HomeModal() {
 
   function buttonType(item) {
     const Icon = Icons[item?.icon];
-    const Icon2 = Icons[item?.next?.icon];
+    const IconNext = Icons[item?.next?.icon];
     const buttonSelect = {
       button: (
         <Button
@@ -139,24 +137,18 @@ function HomeModal() {
             <div className="flex flex-row justify-center items-center w-full px-2">
               <div className="flex flex-col items-center min-w-24 max-w-24">
                 <span className="flex flex-col justify-center items-center">
-                  <icon className="text-sm">
-                    {Icon && <Icon className="size-8" />}
-                  </icon>
+                  {Icon && <Icon className="size-8" />}
                 </span>
                 <span className="text-sm">{item?.name}</span>
               </div>
               <div className="flex flex-col items-center min-w-24 max-w-24">
                 <span className="flex flex-col justify-center items-center">
-                  <icon className="text-sm">
-                    {<Icons.MoveRightIcon className="size-8" />}
-                  </icon>
+                  {<Icons.MoveRightIcon className="size-8" />}
                 </span>
               </div>
               <div className="flex flex-col items-center min-w-24 max-w-24">
                 <span className="flex flex-col justify-center items-center">
-                  <icon className="text-sm">
-                    {Icon2 && <Icon2 className="size-8" />}
-                  </icon>
+                  {IconNext && <IconNext className="size-8" />}
                 </span>
                 <span className="text-sm">{item?.next?.name}</span>
               </div>

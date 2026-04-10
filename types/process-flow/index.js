@@ -3,27 +3,32 @@ const PROCESS_FLOW = {
     register: {
       name: "register",
       acronym: "",
+      acronym_next: "",
     },
     boilermaking: {
       name: "boilermaking",
       acronym: "CA",
+      acronym_next: "RR",
     },
-
     coating: {
       name: "coating",
       acronym: "RR",
+      acronym_next: "PI",
     },
     painting: {
       name: "painting",
       acronym: "PI",
+      acronym_next: "",
     },
     supplier: {
       name: "supplier",
       acronym: "FO",
+      acronym_next: "",
     },
     transfer: {
       name: "transfer",
       acronym: "TR",
+      acronym_next: "",
     },
   },
   acronym: {

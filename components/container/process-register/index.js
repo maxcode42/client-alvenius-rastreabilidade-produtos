@@ -76,7 +76,7 @@ export default function ProcessRegister({ title = "", info = "", route }) {
 
   function clearData() {
     setQrCodeReadingType([QRCODE_TYPES.spool, QRCODE_TYPES.component]);
-    setOpenAlertInfo(false);
+    //setOpenAlertInfo(false);
     setCurrentSpool(null);
     setSpool(null);
     setItens([]);

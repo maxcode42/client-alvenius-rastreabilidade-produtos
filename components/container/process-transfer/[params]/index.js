@@ -13,9 +13,6 @@ import PanelPrimary from "components/ui/panel-primary";
 import HeaderPageTitle from "components/header-page-title";
 import CardItemsTransfer from "components/ui/card-items-transfer";
 
-import { formatCodeDefault } from "util/formatters/code";
-import { formatToPtBR } from "util/formatters/date";
-
 import { PROCESS_FLOW } from "types/process-flow";
 
 import { useQRCode } from "hooks/qr-code-context";
@@ -29,6 +26,7 @@ export default function ProcessTransferFlow({ title = "", info = "", route }) {
   const [itensFiltered, setItensFiltered] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(true);
+  const [status, setStatus] = useState(null);
   const [itens, setItens] = useState(null);
 
   const router = useRouter();
@@ -45,11 +43,12 @@ export default function ProcessTransferFlow({ title = "", info = "", route }) {
   const routeName = PROCESS_FLOW.name[routeAcronym];
 
   const fetchData = useCallback(async () => {
-    const results = await api.execute[route].read(routeAcronym);
+    const response = await api.execute[route].read(routeAcronym);
+    console.log(">> TRANSFER");
+    console.log(response);
 
-    setItens([]);
-    setItens(results);
-
+    setItens(response?.results);
+    setStatus(response?.status_list);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -181,7 +180,7 @@ export default function ProcessTransferFlow({ title = "", info = "", route }) {
           )}
 
           {!loading && (
-            <CardItemsTransfer items={itensFiltered}>
+            <CardItemsTransfer items={itensFiltered} status={status}>
               {/* <QuantitiesItens data={quantities} /> */}
             </CardItemsTransfer>
           )}

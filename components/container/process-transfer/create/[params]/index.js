@@ -60,7 +60,8 @@ export default function ProcessTransferCreate({
   const routeName = PROCESS_FLOW.name[routeAcronym];
   const [suppliers, setSuppliers] = useState(null);
   const [data, setData] = useState({
-    supplier: null,
+    supplier_destination: null,
+    supplier_origin: null,
     spools: null,
     process: null,
     third: true,
@@ -85,12 +86,6 @@ export default function ProcessTransferCreate({
     setCheckCodeExists(false);
     setNewStatus(null);
     setResult(null);
-    // setData({
-    //   supplier: null,
-    //   spools: null,
-    //   process: null,
-    //   third: true
-    // });
   }
 
   function clearData() {
@@ -99,7 +94,8 @@ export default function ProcessTransferCreate({
     setCurrentSpool(null);
     setSpool(null);
     setData({
-      supplier: null,
+      supplier_destination: null,
+      supplier_origin: null,
       spools: null,
       process: null,
       third: true,
@@ -133,39 +129,48 @@ export default function ProcessTransferCreate({
       ].create({
         data: {
           spools: data?.spools,
-          supplier: data?.supplier?.code,
           process: data?.process,
           third: data?.third ? "S" : "N",
+          supplier_origin: data?.supplier_origin?.code,
+          supplier_destination: data?.supplier_destination.code,
         },
         params: routeAcronym,
       });
 
-      if (results?.status_code !== STATUS_CODE.CREATE) {
-        setMessage(results?.message);
-        setOpenAlertInfo(true);
-        setOpenAlert(true);
-        return;
-      }
-
       setMessage(results?.message);
-      setOpenAlertInfo(true);
-      setOpenAlert(true);
+
+      if (results?.status_code !== STATUS_CODE.CREATE) return;
+
       clearData();
     } catch (error) {
       setMessage("Error: Ocorreu uma falha ao gravar dados!");
-      setOpenAlertInfo(true);
-      setOpenAlert(true);
+
       console.error(error);
     } finally {
       setLoading(false);
+      setOpenAlert(true);
+      setOpenAlertInfo(true);
     }
   }
 
   const fetchData = useCallback(async () => {
-    const results = await api.execute["supplier"].read(routeAcronym);
+    const route_supplier = PROCESS_FLOW.route.supplier.name;
+    const acronym = {
+      current: PROCESS_FLOW.route[params].acronym,
+      next: PROCESS_FLOW.route[params].acronym_next,
+    };
 
-    setSuppliers([]);
-    setSuppliers(results);
+    const supplier_origin = await api.execute[route_supplier].read(
+      acronym.current,
+    );
+    const supplier_destination = await api.execute[route_supplier].read(
+      acronym.next,
+    );
+
+    setSuppliers({
+      origin: supplier_origin,
+      destination: supplier_destination,
+    });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
