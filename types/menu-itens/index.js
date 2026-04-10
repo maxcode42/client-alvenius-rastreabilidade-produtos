@@ -3,6 +3,7 @@ const ITENS_MENU = [
     classCss: "",
     item: [
       {
+        type: "link",
         name: "Cadastro",
         href: "/register",
         target: "",
@@ -11,6 +12,7 @@ const ITENS_MENU = [
         icon: "PackagePlusIcon",
       },
       {
+        type: "link",
         name: "Caldeiraria",
         href: "/boilermaking",
         target: "",
@@ -24,15 +26,16 @@ const ITENS_MENU = [
     classCss: "",
     item: [
       {
+        type: "link",
         name: "Revestimento",
         href: "/coating",
         target: "",
         key: "coating",
         text: "Ler QRCode Spool revestimento / próximas etapas processo",
-
         icon: "SprayCanIcon",
       },
       {
+        type: "link",
         name: "Pintura",
         href: "/painting",
         target: "",
@@ -46,6 +49,22 @@ const ITENS_MENU = [
     classCss: "justify-center",
     item: [
       {
+        type: "button",
+        name: "Transferência",
+        href: "/transfer",
+        target: "",
+        key: "transfer",
+        text: "Ler QRCode e criar transferência / próximas etapas processo",
+        icon: "TruckIcon",
+        // icon: "BoxesIcon",
+      },
+    ],
+  },
+  {
+    classCss: "justify-center",
+    item: [
+      {
+        type: "link",
         name: "IR PARA SITE ALVENIUS",
         key: "site-alvenius",
         target: "_blank",

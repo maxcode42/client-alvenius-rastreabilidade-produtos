@@ -2,8 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ArchiveXIcon } from "lucide-react";
 
-import Header from "components/header";
-import Body from "components/body";
+import LayoutPage from "components/layout-page";
 import Loading from "components/ui/loading";
 import AlertCustom from "components/ui/alert";
 import Separator from "components/ui/separator";
@@ -26,7 +25,7 @@ import { useQRCode } from "hooks/qr-code-context";
 
 import api from "infra/provider/api-web";
 
-export default function ProcessFlow({ title = "", info = "", route }) {
+export default function ProcessFlow({ info = "", route }) {
   const {
     setQrCodeReadingType,
     setCheckCodeExists,
@@ -54,6 +53,9 @@ export default function ProcessFlow({ title = "", info = "", route }) {
   const [loading, setLoading] = useState(true);
   const [itens, setItens] = useState(null);
   const currentRoute = usePathname();
+
+  const routeAcronym = PROCESS_FLOW.route[route].acronym;
+  const routeName = PROCESS_FLOW.name[routeAcronym];
 
   function openModalQRCode(e) {
     e.preventDefault();
@@ -248,79 +250,66 @@ export default function ProcessFlow({ title = "", info = "", route }) {
   // }
 
   return (
-    <div className="w-full h-full bg-stone-100">
-      <Header />
-      {/* 
-            //EXIBE A ESTRUTURA DA TELA
-            {loading &&
-              Array.from({ length: 6 }).map((_, i) => <SkeletonRow key={i} />)} */}
-      <Body>
-        <PanelDefault>
-          <HeaderPageTitle title={title} text={info} />
+    <LayoutPage title={true} subTitle={routeName}>
+      {/* //EXIBE A ESTRUTURA DA TELA
+      {loading &&
+        Array.from({ length: 6 }).map((_, i) => <SkeletonRow key={i} />)}{" "}
+      */}
 
-          <HeaderPageButtons
-            searchText={searchText}
-            setSearchText={setSearchText}
-            //setCurrentSpool={setCurrentSpool}
-            openModalQRCode={openModalQRCode}
-          />
+      <PanelDefault>
+        <HeaderPageTitle title={"Processo"} text={info} />
 
-          <Separator />
+        <HeaderPageButtons
+          searchText={searchText}
+          setSearchText={setSearchText}
+          //setCurrentSpool={setCurrentSpool}
+          openModalQRCode={openModalQRCode}
+        />
 
-          <PanelPrimary className={`border-none`}>
-            {(loading || !itens) && <Loading />}
+        <Separator />
 
-            {!loading && itens?.length === 0 && (
-              <div
-                className={`w-full h-full flex flex-col min-h-72 flex-1 px-2 py-8 gap-8 border-blue-300/50 border-2 rounded-md text-center
+        <PanelPrimary className={`border-none`}>
+          {(loading || !itens) && <Loading />}
+
+          {!loading && itens?.length === 0 && (
+            <div
+              className={`w-full h-full flex flex-col min-h-72 flex-1 px-2 py-8 gap-8 border-blue-300/50 border-2 rounded-md text-center
                             opacity-0
                             translate-y-4
                             animate-scaleInCenter
                             [animation-delay:${120}ms]
                             animation-fill-mode:forwards
                           `}
-              >
-                <div
-                  className={`flex flex-col justify-center items-center
+            >
+              <div
+                className={`flex flex-col justify-center items-center
                               opacity-0
                             translate-y-4
                             animate-scaleInCenter
                             [animation-delay:${600}ms]
                             animation-fill-mode:forwards
                           `}
-                >
-                  <i className="border-[.1rem] border-blue-400/50 rounded-full p-6 shadow-lg bg-stone-100 shadow-blue-300/50">
-                    <ArchiveXIcon className="size-8 text-blue-950/50 " />
-                  </i>
-                </div>
-                <p className="font-semibold text-blue-950/50 px-4">
-                  Nenhum registro cadastrado ou encontrado no sistema!
-                </p>
+              >
+                <i className="border-[.1rem] border-blue-400/50 rounded-full p-6 shadow-lg bg-stone-100 shadow-blue-300/50">
+                  <ArchiveXIcon className="size-8 text-blue-950/50 " />
+                </i>
               </div>
-            )}
+              <p className="font-semibold text-blue-950/50 px-4">
+                Nenhum registro cadastrado ou encontrado no sistema!
+              </p>
+            </div>
+          )}
 
-            {!loading && (
-              <CardItems items={itensFiltered}>
-                <QuantitiesItens data={quantities} />
-              </CardItems>
-            )}
-          </PanelPrimary>
-        </PanelDefault>
-      </Body>
+          {!loading && (
+            <CardItems items={itensFiltered}>
+              <QuantitiesItens data={quantities} />
+            </CardItems>
+          )}
+        </PanelPrimary>
+      </PanelDefault>
 
       {openQRCode && <QRCodeFlow />}
 
-      {/* {openQRCode && <QRCodeRegister />} */}
-
-      {/* {openAlert && (
-        <AlertInfo
-          action={null}
-          message={message}
-          openAlert={openAlert}
-          setOpenAlert={setOpenAlert}
-          setScannerLocked={setScannerLocked}
-        />
-      )} */}
       {openAlertInfo && (
         <AlertCustom
           action={null}
@@ -331,6 +320,6 @@ export default function ProcessFlow({ title = "", info = "", route }) {
           type="info"
         />
       )}
-    </div>
+    </LayoutPage>
   );
 }

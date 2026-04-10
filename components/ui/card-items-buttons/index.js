@@ -7,7 +7,7 @@ export default function CardItemsButtons({
 }) {
   return (
     <div className="flex flex-col w-full py-1">
-      <div className="w-full  h-[.1vh] shadow-sm shadow-stone-200 bg-blue-300/50 mb-2 rounded-full" />
+      <div className="w-full h-[.1vh] shadow-sm shadow-stone-200 bg-blue-300/50 mb-2 rounded-full" />
 
       <div className="w-full max-h-16 flex flex-row gap-1">
         <ButtonFlow

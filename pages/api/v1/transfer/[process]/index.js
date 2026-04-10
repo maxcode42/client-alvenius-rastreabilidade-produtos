@@ -3,7 +3,7 @@ import { createRouter } from "next-connect";
 import { STATUS_CODE } from "/types/status-code";
 
 import controller from "infra/controller";
-import boilermaking from "models/boilermaking";
+import transfer from "models/transfer";
 import session from "models/session";
 
 const router = createRouter();
@@ -14,18 +14,12 @@ router.post(postHandler);
 export default router.handler(controller.errorHandlers);
 
 async function getHandler(req, res) {
+  const params = req?.query?.process;
   const token = req.cookies[process.env.COOKIE_NAME];
 
   const sessionObject = await session.findOneValidByToken(token);
 
-  //const renewedSessionObject = await session.renew(sessionObject.id);
-
-  const results = await boilermaking.findAll(sessionObject.token_protheus);
-
-  // console.log("======================================");
-  // console.log(">>CONTROLLER boilermaking");
-  // console.log(results);
-  // console.log("======================================");
+  const results = await transfer.findAll(sessionObject.token_protheus, params);
 
   if (results === true) {
     await controller.clearSessionCookie(res);
@@ -44,16 +38,18 @@ async function getHandler(req, res) {
 }
 
 async function postHandler(req, res) {
-  const boilermakingInputValues = req.body;
+  const params = req?.query?.process;
+  const transferInputValues = req.body;
   const token = req.cookies[process.env.COOKIE_NAME];
 
   const sessionObject = await session.findOneValidByToken(token);
 
-  // const renewedSessionObject = await session.renew(sessionObject.id);
+  // const renewedSessionObject = await session.renew(sessionObject.id,);
 
-  const results = await boilermaking.create(
-    boilermakingInputValues,
+  const results = await transfer.create(
     sessionObject.token_protheus,
+    transferInputValues,
+    params,
   );
 
   await controller.setSessionCookie(res, sessionObject.token);
