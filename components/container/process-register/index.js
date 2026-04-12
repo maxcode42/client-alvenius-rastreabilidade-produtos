@@ -190,7 +190,9 @@ export default function ProcessRegister({ title = "", info = "", route }) {
 
       {openAlertQuestion && (
         <AlertCustom
-          action={clearData}
+          action={() => {
+            clearData(), setOpenAlertQuestion(false);
+          }}
           actionClose={() => {
             setOpenAlertQuestion(false);
           }}
