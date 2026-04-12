@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useCallback } from "react";
 import { LockKeyhole, LogInIcon, User2Icon } from "lucide-react";
 
@@ -8,6 +9,8 @@ import Button from "components/ui/button";
 
 import { STATUS_CODE } from "types/status-code";
 import { useAuth } from "../../auth/auth-context";
+
+import background from "../../assets/imagens/background_01.png";
 
 export default function Login() {
   const { signIn } = useAuth();
@@ -66,9 +69,14 @@ export default function Login() {
   return (
     <LayoutPage className="overflow-hidden">
       <div className="w-full h-full flex flex-col py-6 px-4 md:mt-16 justify-center items-center">
+        <Image
+          src={background}
+          alt="background login"
+          className="fixed top-0 z-10 opacity-10 min-h-screen w-full bg-cover bg-center bg-no-repeat"
+        />
         <form
           onSubmit={handleSendLogin}
-          className="flex flex-col flex-wrap w-full sm:w-1/2 md:w-1/2 lg:w-1/2 max-w-lg 
+          className="z-20 bg-stone-100/50 flex flex-col flex-wrap w-full sm:w-1/2 md:w-1/2 lg:w-1/2 max-w-lg 
           p-4 gap-8 justify-center border-blue-950/50 border-2 rounded-sm"
         >
           <section className="flex flex-col w-full items-center gap-4">
