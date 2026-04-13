@@ -136,9 +136,11 @@ export default function ProcessTransferFlow({ title = "", info = "", route }) {
             >
               <PlusCircleIcon className="size-6 sm:size-8" />
               <span className="flex flex-col">
-                <span className="text-xs sm:text-base">Criar</span>
                 <span className="text-xs sm:text-base">
-                  <small> Transferência</small>
+                  <small>Criar Nova</small>
+                </span>
+                <span className="text-xs sm:text-base">
+                  <small>Transferência</small>
                 </span>
               </span>
             </Link>
