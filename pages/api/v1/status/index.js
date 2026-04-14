@@ -38,7 +38,7 @@ async function getHandler(_, res) {
     dependencies: {
       database: {
         version: databaseVersionValue,
-        max_connection: databaseMaxConnectionsValue,
+        max_connections: databaseMaxConnectionsValue,
         opened_connections: databaseOpenedConnectionsValue,
       },
     },
