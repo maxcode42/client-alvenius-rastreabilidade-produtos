@@ -32,10 +32,17 @@ async function handleSend(path, method, dataObject, token) {
 
 async function handlerResponse(response, protheusStatusAPI) {
   try {
+    if (response.status !== STATUS_CODE.SUCCESS) {
+      throw new NotFoundError({
+        message: "Um error interno inesperado ocorreu na request externa.",
+        action: "Contate suporte tecnico.",
+      });
+    }
+
     if (response.status === STATUS_CODE.SUCCESS && protheusStatusAPI) {
       const responseBodyDefault = {
         status_code: Number(response?.status),
-        message: "sucesso: status comunicação realizado com api externa.",
+        message: "Status comunicação realizado com api externa.",
       };
 
       return responseBodyDefault;

@@ -14,9 +14,7 @@ describe("GET'/api/v1/status'", () => {
       const response = await fetch(`${process.env.API_BASE_URL}/api/v1/status`);
 
       expect(response.status).toBe(STATUS_CODE.SUCCESS);
-
       const responseBody = await response.json();
-
       expect(responseBody.updated_at).toBeDefined();
 
       const parsedUpdatedAt = new Date(responseBody.updated_at).toISOString();
@@ -41,7 +39,7 @@ describe("GET'/api/v1/status'", () => {
 
       expect(
         responseBody.dependencies.integration.api_external.erp.message,
-      ).toBe("sucesso: status comunicação realizado com api externa.");
+      ).toBe("Status comunicação realizado com api externa.");
     });
   });
 });
