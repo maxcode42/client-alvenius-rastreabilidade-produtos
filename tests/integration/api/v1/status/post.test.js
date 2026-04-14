@@ -1,7 +1,9 @@
+import orchestrator from "tests/orchestrator";
+
 import { STATUS_CODE } from "types/status-code";
 
 beforeAll(async () => {
-  console.log(">> BEFOREALL");
+  await orchestrator.waitForAllServices();
 });
 
 describe("POST'/api/v1/status'", () => {

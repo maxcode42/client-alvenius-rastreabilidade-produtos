@@ -1,3 +1,5 @@
+import orchestrator from "tests/orchestrator";
+
 import { STATUS_CODE } from "types/status-code";
 
 const MAX_OPENED_CONNECTIONS_IN_TEST = 1;
@@ -5,7 +7,7 @@ const POSTGRES_DB_MAX_CONNECTIONS = 100;
 const POSTGRES_DB_VERSION = "16.0";
 
 beforeAll(async () => {
-  console.log(">> BEFOREALL");
+  await orchestrator.waitForAllServices();
 });
 
 describe("GET'/api/v1/status'", () => {
