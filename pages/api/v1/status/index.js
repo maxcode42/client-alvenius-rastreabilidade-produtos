@@ -4,6 +4,7 @@ import database from "/infra/database";
 import controller from "infra/controller";
 
 import { STATUS_CODE } from "types/status-code";
+import apiProtheus from "infra/provider/api-protheus";
 
 const router = createRouter();
 
@@ -33,6 +34,8 @@ async function getHandler(_, res) {
   const databaseOpenedConnectionsValue =
     databaseOpenedConnectionsResults.rows[0].count;
 
+  const statusAPIProtheus = await apiProtheus.execute.status.get();
+
   const results = {
     updated_at: updatedAt,
     dependencies: {
@@ -40,6 +43,11 @@ async function getHandler(_, res) {
         version: databaseVersionValue,
         max_connections: databaseMaxConnectionsValue,
         opened_connections: databaseOpenedConnectionsValue,
+      },
+      integration: {
+        api_external: {
+          erp: statusAPIProtheus,
+        },
       },
     },
   };

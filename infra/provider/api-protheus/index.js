@@ -9,6 +9,13 @@ import { STATUS_CODE } from "types/status-code";
 const baseURL = process.env.API_PROTHEUS_BASE_URL;
 
 async function handleSend(path, method, dataObject, token) {
+  let protheusStatusAPI = false;
+
+  if (path === "status") {
+    protheusStatusAPI = true;
+    path = "";
+  }
+
   const response = await fetch(`${baseURL}/${path}`, {
     method,
     headers: {
@@ -18,13 +25,22 @@ async function handleSend(path, method, dataObject, token) {
     body: dataObject ? JSON.stringify(dataObject) : null,
   });
 
-  const result = await handlerResponse(response);
+  const result = await handlerResponse(response, protheusStatusAPI);
 
   return result;
 }
 
-async function handlerResponse(response) {
+async function handlerResponse(response, protheusStatusAPI) {
   try {
+    if (response.status === STATUS_CODE.SUCCESS && protheusStatusAPI) {
+      const responseBodyDefault = {
+        status_code: Number(response?.status),
+        message: "sucesso: status comunicação realizado com api externa.",
+      };
+
+      return responseBodyDefault;
+    }
+
     const responseBody = await response?.json();
 
     if (Number(responseBody?.status_code) === STATUS_CODE.UNAUTHORIZED) {
@@ -102,6 +118,11 @@ async function handlerResponse(response) {
 }
 
 const execute = {
+  status: {
+    get: async () => {
+      return await handleSend("status", "GET", null, null);
+    },
+  },
   session: {
     create: async ({ data }) => {
       const params = new URLSearchParams(data);

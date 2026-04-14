@@ -8,7 +8,7 @@ beforeAll(async () => {
   console.log(">> BEFOREALL");
 });
 
-describe("GET '/api/v1/status'", () => {
+describe("GET'/api/v1/status'", () => {
   describe("Anonymous user", () => {
     test("Retrieving current system status", async () => {
       const response = await fetch(`${process.env.API_BASE_URL}/api/v1/status`);
@@ -34,6 +34,14 @@ describe("GET '/api/v1/status'", () => {
       expect(responseBody.dependencies.database.opened_connections).toBe(
         MAX_OPENED_CONNECTIONS_IN_TEST,
       );
+
+      expect(
+        responseBody.dependencies.integration.api_external.erp.status_code,
+      ).toBe(STATUS_CODE.SUCCESS);
+
+      expect(
+        responseBody.dependencies.integration.api_external.erp.message,
+      ).toBe("sucesso: status comunicação realizado com api externa.");
     });
   });
 });
