@@ -1,6 +1,9 @@
 import retry from "async-retry";
 import database from "infra/database";
+import migrator from "models/migrator";
 import { STATUS_CODE } from "types/status-code";
+
+const API_BASE_URL = process.env.API_BASE_URL;
 
 async function waitForAllServices() {
   await waitForWebServer();
@@ -13,7 +16,7 @@ async function waitForAllServices() {
     });
 
     async function fetchStatusPage() {
-      const response = await fetch(`${process.env.API_BASE_URL}/api/v1/status`);
+      const response = await fetch(`${API_BASE_URL}/api/v1/status`);
 
       if (response.status !== STATUS_CODE.SUCCESS) {
         throw Error();
@@ -22,12 +25,28 @@ async function waitForAllServices() {
   }
 }
 
+async function runPendingMigrations() {
+  await migrator.runPendingMigrations();
+}
+
+async function fetchToExecute({ path, method, object }) {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(object),
+  });
+
+  return response;
+}
+
 async function clearDatabase() {
   await database.query("drop schema public cascade; create schema public;");
 }
 
 const orchestrator = {
+  runPendingMigrations,
   waitForAllServices,
+  fetchToExecute,
   clearDatabase,
 };
 
