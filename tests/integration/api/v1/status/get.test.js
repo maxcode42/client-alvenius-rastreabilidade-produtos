@@ -6,6 +6,8 @@ const MAX_OPENED_CONNECTIONS_IN_TEST = 1;
 const POSTGRES_DB_MAX_CONNECTIONS = 100;
 const POSTGRES_DB_VERSION = "16.0";
 
+const PATH_URL = "/api/v1/status";
+
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
 });
@@ -13,7 +15,10 @@ beforeAll(async () => {
 describe("GET '/api/v1/status'", () => {
   describe("Anonymous user", () => {
     test("Retrieving current system status", async () => {
-      const response = await fetch(`${process.env.API_BASE_URL}/api/v1/status`);
+      const response = await await orchestrator.fetchToExecute({
+        path: PATH_URL,
+        method: "GET",
+      });
 
       expect(response.status).toBe(STATUS_CODE.SUCCESS);
       const responseBody = await response.json();

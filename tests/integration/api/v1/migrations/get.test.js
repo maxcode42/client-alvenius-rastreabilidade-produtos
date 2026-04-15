@@ -1,6 +1,8 @@
 import orchestrator from "tests/orchestrator";
 import { STATUS_CODE } from "types/status-code";
 
+const PATH_URL = "/api/v1/migrations";
+
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
   await orchestrator.clearDatabase();
@@ -10,9 +12,10 @@ describe("GET `/api/v1/migrations`", () => {
   describe("Anonymous user", () => {
     describe("Retrieving pending migrations", () => {
       test("Be greater than zero", async () => {
-        const response = await fetch(
-          `${process.env.API_BASE_URL}/api/v1/migrations`,
-        );
+        const response = await orchestrator.fetchToExecute({
+          path: PATH_URL,
+          method: "GET",
+        });
 
         expect(response.status).toBe(STATUS_CODE.SUCCESS);
 

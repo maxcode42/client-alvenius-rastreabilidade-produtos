@@ -33,7 +33,7 @@ async function fetchToExecute({ path, method, object }) {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method,
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(object),
+    body: !object ? null : JSON.stringify(object),
   });
 
   return response;

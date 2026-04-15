@@ -2,6 +2,8 @@ import orchestrator from "tests/orchestrator";
 
 import { STATUS_CODE } from "types/status-code";
 
+const PATH_URL = "/api/v1/status";
+
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
 });
@@ -9,12 +11,10 @@ beforeAll(async () => {
 describe("POST '/api/v1/status'", () => {
   describe("Anonymous user", () => {
     test("Retrieving current system status", async () => {
-      const response = await fetch(
-        `${process.env.API_BASE_URL}/api/v1/status`,
-        {
-          method: "POST",
-        },
-      );
+      const response = await await orchestrator.fetchToExecute({
+        path: PATH_URL,
+        method: "POST",
+      });
 
       expect(response.status).toBe(STATUS_CODE.NOT_ALLOWED);
 
