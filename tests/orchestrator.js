@@ -1,6 +1,7 @@
 import retry from "async-retry";
 import database from "infra/database";
 import migrator from "models/migrator";
+import user from "models/user";
 import { STATUS_CODE } from "types/status-code";
 
 const API_BASE_URL = process.env.API_BASE_URL;
@@ -43,11 +44,18 @@ async function clearDatabase() {
   await database.query("drop schema public cascade; create schema public;");
 }
 
+async function createUser(objectUser) {
+  const result = await user.create(objectUser);
+
+  return result;
+}
+
 const orchestrator = {
   runPendingMigrations,
   waitForAllServices,
   fetchToExecute,
   clearDatabase,
+  createUser,
 };
 
 export default orchestrator;
