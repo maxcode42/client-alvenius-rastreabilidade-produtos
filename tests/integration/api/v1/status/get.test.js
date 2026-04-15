@@ -10,7 +10,7 @@ beforeAll(async () => {
   await orchestrator.waitForAllServices();
 });
 
-describe("GET'/api/v1/status'", () => {
+describe("GET '/api/v1/status'", () => {
   describe("Anonymous user", () => {
     test("Retrieving current system status", async () => {
       const response = await fetch(`${process.env.API_BASE_URL}/api/v1/status`);
