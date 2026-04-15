@@ -13,7 +13,8 @@ export default router.handler(controller.errorHandlers);
 
 async function getHandler(req, res) {
   const token = req.cookies[process.env.COOKIE_NAME];
-
+  console.log(">> USER CONTROLLER");
+  console.log(token);
   const sessionObject = await session.findOneValidByToken(token);
 
   //await session.findOneValidByTokenProtheus(sessionObject.token_protheus);

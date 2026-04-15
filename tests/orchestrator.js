@@ -1,10 +1,16 @@
 import retry from "async-retry";
+import crypto from "node:crypto";
+
 import database from "infra/database";
 import migrator from "models/migrator";
+
+import session from "models/session";
 import user from "models/user";
+
 import { STATUS_CODE } from "types/status-code";
 
 const API_BASE_URL = process.env.API_BASE_URL;
+const COOKIE_NAME = process.env.COOKIE_NAME;
 
 async function waitForAllServices() {
   await waitForWebServer();
@@ -30,10 +36,13 @@ async function runPendingMigrations() {
   await migrator.runPendingMigrations();
 }
 
-async function fetchToExecute({ path, method, object }) {
+async function fetchToExecute({ path, method, object, token }) {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method,
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: !token ? null : `${COOKIE_NAME}=${token}`,
+    },
     body: !object ? null : JSON.stringify(object),
   });
 
@@ -42,6 +51,14 @@ async function fetchToExecute({ path, method, object }) {
 
 async function clearDatabase() {
   await database.query("drop schema public cascade; create schema public;");
+}
+
+async function createSession(userId) {
+  const tokenProtheus = crypto.randomBytes(48).toString("hex");
+
+  const result = await session.create(userId, tokenProtheus);
+
+  return result;
 }
 
 async function createUser(objectUser) {
@@ -54,6 +71,7 @@ const orchestrator = {
   runPendingMigrations,
   waitForAllServices,
   fetchToExecute,
+  createSession,
   clearDatabase,
   createUser,
 };
