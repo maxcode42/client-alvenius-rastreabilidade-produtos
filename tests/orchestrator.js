@@ -62,7 +62,12 @@ async function createSession(userId) {
 }
 
 async function createUser(objectUser) {
-  const result = await user.create(objectUser);
+  const fakerObjectUser = {
+    username: objectUser?.username || "default_valid_username",
+    password: objectUser?.password || "default_valid_password",
+  };
+
+  const result = await user.create(fakerObjectUser);
 
   return result;
 }
