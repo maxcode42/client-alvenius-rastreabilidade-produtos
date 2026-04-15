@@ -1,3 +1,4 @@
+import retry from "async-retry";
 import {
   InternalServerError,
   NotFoundError,
@@ -9,30 +10,46 @@ import { STATUS_CODE } from "types/status-code";
 const baseURL = process.env.API_PROTHEUS_BASE_URL;
 
 async function handleSend(path, method, dataObject, token) {
-  let protheusStatusAPI = false;
+  return await waitForWebServer();
 
-  if (path === "status") {
-    protheusStatusAPI = true;
-    path = "";
+  function waitForWebServer() {
+    return retry(fetchExternalAPI, {
+      retries: 100,
+      minTimeout: 60,
+      maxTimeout: 1_000,
+    });
+
+    async function fetchExternalAPI() {
+      let protheusStatusAPI = false;
+
+      if (path === "status") {
+        protheusStatusAPI = true;
+        path = "";
+      }
+
+      const response = await fetch(`${baseURL}/${path}`, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+        body: dataObject ? JSON.stringify(dataObject) : null,
+      });
+
+      const result = await handlerResponse(response, protheusStatusAPI);
+
+      return result;
+    }
   }
-
-  const response = await fetch(`${baseURL}/${path}`, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : "",
-    },
-    body: dataObject ? JSON.stringify(dataObject) : null,
-  });
-
-  const result = await handlerResponse(response, protheusStatusAPI);
-
-  return result;
 }
 
 async function handlerResponse(response, protheusStatusAPI) {
   try {
-    if (response.status !== STATUS_CODE.SUCCESS) {
+    if (
+      response.status !== STATUS_CODE.UNAUTHORIZED &&
+      response.status !== STATUS_CODE.SUCCESS &&
+      response.status !== STATUS_CODE.CREATE
+    ) {
       throw new NotFoundError({
         message: "Um error interno inesperado ocorreu na request externa.",
         action: "Contate suporte tecnico.",
