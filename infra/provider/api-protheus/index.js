@@ -7,16 +7,25 @@ import {
 import { PROCESS_FLOW } from "types/process-flow";
 import { STATUS_CODE } from "types/status-code";
 
-const baseURL = process.env.API_PROTHEUS_BASE_URL;
+import { getProtheusBaseURL } from "infra/config/env";
+
+function getBaseURL() {
+  const url = getProtheusBaseURL();
+  console.log(">>PROCESS");
+  console.log(url);
+
+  return url;
+}
 
 async function handleSend(path, method, dataObject, token) {
   return await waitForWebServer();
 
   function waitForWebServer() {
+    const isTest = process.env.NODE_ENV === "development";
     return retry(fetchExternalAPI, {
-      retries: 100,
-      minTimeout: 60,
+      retries: isTest ? 1 : 100,
       maxTimeout: 1_000,
+      minTimeout: 60,
     });
 
     async function fetchExternalAPI() {
@@ -26,8 +35,9 @@ async function handleSend(path, method, dataObject, token) {
         protheusStatusAPI = true;
         path = "";
       }
-
-      const response = await fetch(`${baseURL}/${path}`, {
+      console.log(">>API PROTHEUS REAL");
+      console.log("BASE URL PROTHEUS:", getBaseURL());
+      const response = await fetch(`${getBaseURL()}/${path}`, {
         method,
         headers: {
           "Content-Type": "application/json",
@@ -144,11 +154,15 @@ async function handlerResponse(response, protheusStatusAPI) {
 const execute = {
   status: {
     get: async () => {
-      return await handleSend("status", "GET", null, null);
+      const result = await handleSend("status", "GET", null, null);
+      console.log(">>STATUS");
+      console.log(result);
+      return result; //await handleSend("status", "GET", null, null);
     },
   },
   session: {
     create: async ({ data }) => {
+      console.log(">>API REAL PROTHEUS");
       const params = new URLSearchParams(data);
       return await handleSend(
         `api/oauth2/v1/token?${params}`,

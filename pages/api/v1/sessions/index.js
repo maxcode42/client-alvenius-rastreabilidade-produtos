@@ -15,7 +15,6 @@ export default router.handler(controller.errorHandlers);
 
 async function postHandler(req, res) {
   const userInputValues = req.body;
-
   const authenticatedUser = await authentication.getAuthenticateUser(
     userInputValues.username,
     userInputValues.password,
@@ -27,6 +26,8 @@ async function postHandler(req, res) {
   );
 
   await controller.setSessionCookie(res, result.token);
+  console.log(">>CONTROLLER");
+  console.log(result);
 
   res.status(STATUS_CODE.CREATE).json(result);
 }

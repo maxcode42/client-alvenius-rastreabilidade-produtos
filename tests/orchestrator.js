@@ -9,8 +9,13 @@ import user from "models/user";
 
 import { STATUS_CODE } from "types/status-code";
 
-const API_BASE_URL = process.env.API_BASE_URL;
+// const API_BASE_URL = process.env.API_BASE_URL;
 const COOKIE_NAME = process.env.COOKIE_NAME;
+
+function getBaseURL() {
+  process.env.NODE_ENV = "test";
+  return process.env.API_BASE_URL;
+}
 
 async function waitForAllServices() {
   await waitForWebServer();
@@ -23,7 +28,7 @@ async function waitForAllServices() {
     });
 
     async function fetchStatusPage() {
-      const response = await fetch(`${API_BASE_URL}/api/v1/status`);
+      const response = await fetch(`${getBaseURL()}/api/v1/status`);
 
       if (response.status !== STATUS_CODE.SUCCESS) {
         throw Error();
@@ -37,7 +42,7 @@ async function runPendingMigrations() {
 }
 
 async function fetchToExecute({ path, method, object, token }) {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await fetch(`${getBaseURL()}${path}`, {
     method,
     headers: {
       "Content-Type": "application/json",

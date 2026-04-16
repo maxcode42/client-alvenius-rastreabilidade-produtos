@@ -23,7 +23,7 @@ describe("POST '/api/v1/sessions", () => {
         password: "senhaTest123Incorrect",
       };
 
-      await orchestrator.createUser(objectUser);
+      // await orchestrator.createUser(objectUser);
 
       const response = await orchestrator.fetchToExecute({
         path: PATH_URL,
@@ -101,17 +101,11 @@ describe("POST '/api/v1/sessions", () => {
         status_code: STATUS_CODE.UNAUTHORIZED,
       });
     });
-    test("With correct `username` and correct `password`", async () => {
-      // const objectUser = {
-      //   username: "user and password correct",
-      //   password: "senhaTest123Correct",
-      // };
+    test.only("With correct `username` and correct `password`", async () => {
       const objectUser = {
         username: process.env.USERNAME_TEST,
         password: process.env.PASSWORD_TEST,
       };
-
-      const createUser = await orchestrator.createUser(objectUser);
 
       const response = await orchestrator.fetchToExecute({
         path: PATH_URL,
@@ -121,10 +115,10 @@ describe("POST '/api/v1/sessions", () => {
           password: objectUser.password,
         },
       });
-
       expect(response.status).toBe(STATUS_CODE.CREATE);
 
       const responseBody = await response.json();
+      console.log(responseBody);
 
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
@@ -137,7 +131,7 @@ describe("POST '/api/v1/sessions", () => {
         id: responseBody.id,
         token: responseBody.token,
         token_protheus: responseBody.token_protheus,
-        user_id: createUser.id,
+        user_id: responseBody.user_id,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
         expires_at: responseBody.expires_at,
