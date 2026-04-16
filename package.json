@@ -13,7 +13,7 @@
     "test": "npm run services:up && npm run services:wait:database && concurrently -n next,jest --hide next --kill-others --success command-jest \"sleep 0; npm run dev:test\" \"jest --runInBand --verbose --passWithNoTests\"",
     "posttest": "npm run services:stop",
     "test:watch": "jest --watchAll --runInBand --verbose",
-    "test:infra:mock": "node tests/mocks/start-mock.js",
+    "test:infra:mock": "node --watch tests/mocks/start-mock.js",
     "services:up": "docker compose -f infra/compose.yaml up -d",
     "services:stop": "docker compose -f infra/compose.yaml stop",
     "services:down": "docker compose -f infra/compose.yaml down",

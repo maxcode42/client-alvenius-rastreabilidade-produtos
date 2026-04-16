@@ -1,20 +1,11 @@
-// on("POST", "/api/oauth2/v1/token", async (req, res) => {
-//   res.writeHead(201, { "Content-Type": "application/json" });
-//   res.end(
-//     JSON.stringify({
-//       access_token:
-//         "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBKd3RQdWJsaWNLZXlGb3IyNTYifQ",
-//       refresh_token:
-//         "52nIj3y9ZI2jgWi-oaFZ1eji.y1CSxlaAY86xllej3-ZZtPXwUyEuYWbara4pBL5Biqqh",
-//       scope: "default",
-//       token_type: "Bearer",
-//       expires_in: 3600,
-//       hasMFA: false,
-//     }),
-//   );
-// });
+crypto = require("node:crypto");
+
 const http = require("node:http");
 const { parse } = require("node:url");
+
+require("dotenv").config({
+  path: ".env.development",
+});
 
 function createProtheusMockServer({ port = 4001 } = {}) {
   let server;
@@ -107,14 +98,34 @@ function createProtheusMockServer({ port = 4001 } = {}) {
       );
     });
 
-    on("POST", "/api/oauth2/v1/token", async (req, res) => {
+    on("POST", "/api/oauth2/v1/token", async (req, res, { query }) => {
+      const { username, password } = query;
+
+      if (
+        username !== process.env.USERNAME_TEST ||
+        password !== process.env.PASSWORD_TEST
+      ) {
+        res.writeHead(401, { "Content-Type": "application/json" });
+
+        return res.end(
+          JSON.stringify({
+            code: 401,
+            message:
+              "invalid_grant Falha de autenticação para o usuário incorrect username.",
+            detailedMessage:
+              "invalid_grant Falha de autenticação para o usuário incorrect username.",
+          }),
+        );
+      }
+
+      const token = crypto.randomBytes(48).toString("hex");
+
       res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(
+
+      return res.end(
         JSON.stringify({
-          access_token:
-            "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBKd3RQdWJsaWNLZXlGb3IyNTYifQ",
-          refresh_token:
-            "52nIj3y9ZI2jgWi-oaFZ1eji.y1CSxlaAY86xllej3-ZZtPXwUyEuYWbara4pBL5Biqqh",
+          access_token: token,
+          refresh_token: `${token}-${Date.now()}`,
           scope: "default",
           token_type: "Bearer",
           expires_in: 3600,

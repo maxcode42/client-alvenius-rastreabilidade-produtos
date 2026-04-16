@@ -29,8 +29,8 @@ describe("POST '/api/v1/sessions", () => {
         path: PATH_URL,
         method: "POST",
         object: {
-          username: "incorrect username",
-          password: "incorrect password",
+          username: objectUser.username,
+          password: objectUser.password,
         },
       });
 
@@ -50,8 +50,6 @@ describe("POST '/api/v1/sessions", () => {
         username: "new user incorrect",
         password: "senhaTest123",
       };
-
-      await orchestrator.createUser(objectUser);
 
       const response = await orchestrator.fetchToExecute({
         path: PATH_URL,
@@ -79,8 +77,6 @@ describe("POST '/api/v1/sessions", () => {
         password: "senhaTest123Incorrect",
       };
 
-      await orchestrator.createUser(objectUser);
-
       const response = await orchestrator.fetchToExecute({
         path: PATH_URL,
         method: "POST",
@@ -101,7 +97,7 @@ describe("POST '/api/v1/sessions", () => {
         status_code: STATUS_CODE.UNAUTHORIZED,
       });
     });
-    test.only("With correct `username` and correct `password`", async () => {
+    test("With correct `username` and correct `password`", async () => {
       const objectUser = {
         username: process.env.USERNAME_TEST,
         password: process.env.PASSWORD_TEST,
@@ -118,7 +114,6 @@ describe("POST '/api/v1/sessions", () => {
       expect(response.status).toBe(STATUS_CODE.CREATE);
 
       const responseBody = await response.json();
-      console.log(responseBody);
 
       expect(Date.parse(responseBody.created_at)).not.toBeNaN();
       expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
