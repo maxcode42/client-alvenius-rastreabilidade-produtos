@@ -7,7 +7,7 @@ import {
 import { PROCESS_FLOW } from "types/process-flow";
 import { STATUS_CODE } from "types/status-code";
 
-import { getProtheusBaseURL } from "infra/config/env";
+import { getProtheusBaseURL, isTestEnvironment } from "infra/config/env";
 
 function getBaseURL() {
   const url = getProtheusBaseURL();
@@ -21,7 +21,11 @@ async function handleSend(path, method, dataObject, token) {
   return await waitForWebServer();
 
   function waitForWebServer() {
-    const isTest = process.env.NODE_ENV === "development";
+    const isTest = isTestEnvironment();
+    //const isTest = !!process.env.JEST_WORKER_ID; //process.env.NODE_ENV === "development";
+    console.log(">> IN TEST");
+    console.log(isTest);
+
     return retry(fetchExternalAPI, {
       retries: isTest ? 1 : 100,
       maxTimeout: 1_000,
@@ -29,14 +33,13 @@ async function handleSend(path, method, dataObject, token) {
     });
 
     async function fetchExternalAPI() {
-      let protheusStatusAPI = false;
+      const protheusStatusAPI = path === "status";
 
-      if (path === "status") {
-        protheusStatusAPI = true;
-        path = "";
-      }
+      const normalizedPath = protheusStatusAPI ? "" : path;
+      console.log(">> STATUS EXTERNO DEPOIS DO IF");
+      console.log(`${getBaseURL()}/${normalizedPath}`);
 
-      const response = await fetch(`${getBaseURL()}/${path}`, {
+      const response = await fetch(`${getBaseURL()}/${normalizedPath}`, {
         method,
         headers: {
           "Content-Type": "application/json",
@@ -153,6 +156,13 @@ async function handlerResponse(response, protheusStatusAPI) {
 const execute = {
   status: {
     get: async () => {
+      console.log("EXCUTE STATUS");
+      // return {
+      //   response: {
+      //     status_code: Number(response?.status),
+      //     message: "Status comunicação realizado com api externa.",
+      //   },
+      // };
       return await handleSend("status", "GET", null, null);
     },
   },
@@ -219,16 +229,6 @@ const execute = {
   },
   painting: {
     read: async ({ tokenProtheus }) => {
-      const result = await handleSend(
-        `wsrastreio/process?${PROCESS_FLOW.route.painting.acronym}`,
-        "GET",
-        null,
-        tokenProtheus,
-      );
-      console.log(">>API REAL PROTHEUS coating");
-      const filter = result.objects.filter((_, i) => i < 5);
-      console.log(filter);
-      return result;
       return await handleSend(
         `wsrastreio/process?${PROCESS_FLOW.route.painting.acronym}`,
         "GET",
@@ -266,7 +266,7 @@ const execute = {
         null,
         tokenProtheus,
       );
-
+      console.log(results);
       return results;
     },
     create: async ({ data, tokenProtheus }) => {

@@ -46,6 +46,10 @@ async function getHandler(_, res) {
       },
       integration: {
         api_external: {
+          // erp: {
+          //   status_code: 200,
+          //   message: "Status comunicação realizado com api externa.",
+          // },
           erp: statusAPIProtheus,
         },
       },

@@ -85,7 +85,12 @@ const execute = {
     console.log(">>API PROTHEUS TRANSFER PARSE OBJECTS");
 
     console.log(data);
-
+    if (!data || !data?.objects || data?.objects.length === 0) {
+      return {
+        status_list: [],
+        results: [],
+      };
+    }
     // const statusActive = ["SC", "AP", "AN", "NT"];
 
     // function getRandomProgressive() {

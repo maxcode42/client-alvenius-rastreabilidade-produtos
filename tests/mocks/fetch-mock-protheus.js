@@ -1,4 +1,4 @@
-crypto = require("node:crypto");
+const crypto = require("node:crypto");
 
 const http = require("node:http");
 const { parse } = require("node:url");
@@ -92,6 +92,7 @@ function createProtheusMockServer({ port = 4001 } = {}) {
   // DEFAULTS (rotas principais da API externa)
   function setupDefaults() {
     on("GET", "/", async (req, res) => {
+      console.log(">>MOCK STATUS");
       res.writeHead(STATUS_CODE.SUCCESS, {
         "Content-Type": "application/json",
       });
@@ -174,14 +175,14 @@ function createProtheusMockServer({ port = 4001 } = {}) {
     });
 
     /* MOCK: PROCESS FLOW */
-    on("GET", "/wsrastreio/process", async (req, res, ctx) => {
+    on("GET", "/wsrastreio/process", async (req, res) => {
       console.log("[MOCK] STATUS coating");
       const parsedUrl = new URL(req.url, "http://localhost");
 
       const query = Object.fromEntries(parsedUrl.searchParams);
 
       const rawQuery = parsedUrl.search.replace("?", "");
-      const { process } = query;
+
       console.log(">>PROCESS");
       console.log({ query, rawQuery });
       if (rawQuery === PROCESS_FLOW.route.boilermaking.acronym) {
@@ -370,6 +371,133 @@ function createProtheusMockServer({ port = 4001 } = {}) {
                 PINTURA: "S",
               },
             ],
+          }),
+        );
+      }
+    });
+
+    /* MOCK: TRANSFER */
+    on("GET", "/wsrastreio/listrom", async (req, res, { query }) => {
+      const { process } = query;
+      const STATUS_LIST = [
+        {
+          SIGLA: "SC",
+          ORDEM: 1,
+          STATUS: "Aguardando SC",
+        },
+        {
+          SIGLA: "PV",
+          ORDEM: 2,
+          STATUS: "Aguardando PV",
+        },
+        {
+          SIGLA: "RO",
+          ORDEM: 3,
+          STATUS: "Aguardando ROM",
+        },
+        {
+          SIGLA: "NF",
+          ORDEM: 4,
+          STATUS: "Aguardando NF",
+        },
+        {
+          SIGLA: "EM",
+          ORDEM: 5,
+          STATUS: "Nota Emitida",
+        },
+      ];
+
+      if (process === PROCESS_FLOW.route.boilermaking.acronym) {
+        res.writeHead(STATUS_CODE.SUCCESS, {
+          "Content-Type": "application/json",
+        });
+
+        res.end(
+          JSON.stringify({
+            STATUS_LIST,
+            objects: [
+              {
+                STATUS: [
+                  {
+                    SIGLA: "SC",
+                    STATUS: "Aguardando SC",
+                  },
+                ],
+                SPOOLS: ["SP041500345003 ", "SP041500345004 "],
+                CODIGO: "000001",
+                COD_FORNEC: "005436",
+                LOJA_FORNEC: "01",
+                NOME_FORNEC: "GRUPO – FLANJACO    ",
+                NUM_SC: "      ",
+                PEDIDO: "      ",
+                ROMANEIO: "      ",
+                REVISAO: "  ",
+                AET: "S",
+                PROCESSO: "CA",
+              },
+              {
+                STATUS: [
+                  {
+                    SIGLA: "SC",
+                    STATUS: "Aguardando SC",
+                  },
+                ],
+                SPOOLS: ["SP041500302009 ", "SP041500426020 "],
+                CODIGO: "000002",
+                COD_FORNEC: "005436",
+                LOJA_FORNEC: "01",
+                NOME_FORNEC: "GRUPO – FLANJACO    ",
+                NUM_SC: "      ",
+                PEDIDO: "      ",
+                ROMANEIO: "      ",
+                REVISAO: "  ",
+                AET: "S",
+                PROCESSO: "CA",
+              },
+              {
+                STATUS: [
+                  {
+                    SIGLA: "SC",
+                    STATUS: "Aguardando SC",
+                  },
+                ],
+                SPOOLS: ["SP041500230006 ", "SP041500232006 "],
+                CODIGO: "000003",
+                COD_FORNEC: "005436",
+                LOJA_FORNEC: "01",
+                NOME_FORNEC: "GRUPO – FLANJACO    ",
+                NUM_SC: "      ",
+                PEDIDO: "      ",
+                ROMANEIO: "      ",
+                REVISAO: "  ",
+                AET: "S",
+                PROCESSO: "CA",
+              },
+            ],
+          }),
+        );
+      }
+      if (process === PROCESS_FLOW.route.coating.acronym) {
+        res.writeHead(STATUS_CODE.SUCCESS, {
+          "Content-Type": "application/json",
+        });
+
+        res.end(
+          JSON.stringify({
+            STATUS_LIST,
+            objects: [],
+          }),
+        );
+      }
+      if (process === PROCESS_FLOW.route.painting.acronym) {
+        res.writeHead(STATUS_CODE.SUCCESS, {
+          "Content-Type": "application/json",
+        });
+
+        res.end(
+          JSON.stringify({
+            STATUS_LIST,
+            objects: [],
           }),
         );
       }
