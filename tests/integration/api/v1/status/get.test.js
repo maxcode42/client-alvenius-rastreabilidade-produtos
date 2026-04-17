@@ -15,14 +15,6 @@ beforeAll(async () => {
 describe("GET '/api/v1/status'", () => {
   describe("Anonymous user", () => {
     test("Retrieving current system status", async () => {
-      console.log("===========================================");
-      console.log(">> TEST STATUS");
-      console.log("NODE_ENV", process.env.NODE_ENV);
-      console.log("JEST_WORKER_ID", process.env.JEST_WORKER_ID);
-      console.log("TEST_URL", process.env.API_TEST_PROTHEUS_BASE_URL);
-      console.log("PROD_URL", process.env.API_PROTHEUS_BASE_URL);
-      console.log("===========================================");
-
       const response = await await orchestrator.fetchToExecute({
         path: PATH_URL,
         method: "GET",

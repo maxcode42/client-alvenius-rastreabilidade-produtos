@@ -34,7 +34,7 @@ async function getHandler(_, res) {
   const databaseOpenedConnectionsValue =
     databaseOpenedConnectionsResults.rows[0].count;
 
-  const statusAPIProtheus = await apiProtheus.execute.status.get();
+  const statusAPIProtheus = await callAPIProtheus();
 
   const results = {
     updated_at: updatedAt,
@@ -46,15 +46,23 @@ async function getHandler(_, res) {
       },
       integration: {
         api_external: {
-          // erp: {
-          //   status_code: 200,
-          //   message: "Status comunicação realizado com api externa.",
-          // },
           erp: statusAPIProtheus,
         },
       },
     },
   };
+
+  async function callAPIProtheus() {
+    try {
+      const response = await apiProtheus.execute.status.get();
+
+      return await response;
+    } catch (error) {
+      console.error("[PROTHEUS FAIL]:", error.message);
+
+      return error;
+    }
+  }
 
   res.status(STATUS_CODE.SUCCESS).json(results);
 }

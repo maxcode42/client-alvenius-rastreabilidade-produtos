@@ -2,6 +2,7 @@ import retry from "async-retry";
 import {
   InternalServerError,
   NotFoundError,
+  ServiceError,
   UnauthorizedError,
 } from "infra/errors";
 import { PROCESS_FLOW } from "types/process-flow";
@@ -11,46 +12,60 @@ import { getProtheusBaseURL, isTestEnvironment } from "infra/config/env";
 
 function getBaseURL() {
   const url = getProtheusBaseURL();
-  console.log(">>PROCESS");
+  console.log(">> PROCESS API PROTHEUS REAL");
   console.log(url);
 
   return url;
 }
 
+function fetchWithTimeout(url, options = {}, timeout = 3000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+
+  return fetch(url, {
+    ...options,
+    signal: controller.signal,
+  }).finally(() => clearTimeout(id));
+}
+
 async function handleSend(path, method, dataObject, token) {
-  return await waitForWebServer();
-
-  function waitForWebServer() {
-    const isTest = isTestEnvironment();
-    //const isTest = !!process.env.JEST_WORKER_ID; //process.env.NODE_ENV === "development";
-    console.log(">> IN TEST");
-    console.log(isTest);
-
-    return retry(fetchExternalAPI, {
-      retries: isTest ? 1 : 100,
-      maxTimeout: 1_000,
-      minTimeout: 60,
+  try {
+    return await retry(fetchExternalAPI, {
+      retries: isTestEnvironment() ? 1 : 10,
+      minTimeout: 100,
+      maxTimeout: 1000,
     });
+  } catch (error) {
+    console.error("[PROTHEUS FINAL ERROR]", error.message);
 
-    async function fetchExternalAPI() {
-      const protheusStatusAPI = path === "status";
+    throw new ServiceError({
+      cause: error,
+      message: "Falha na comunicação com API externa.",
+    });
+  }
 
-      const normalizedPath = protheusStatusAPI ? "" : path;
-      console.log(">> STATUS EXTERNO DEPOIS DO IF");
-      console.log(`${getBaseURL()}/${normalizedPath}`);
+  async function fetchExternalAPI(attempt) {
+    const protheusStatusAPI = path === "status";
+    const normalizedPath = protheusStatusAPI ? "" : path;
 
-      const response = await fetch(`${getBaseURL()}/${normalizedPath}`, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token ? `Bearer ${token}` : "",
+    try {
+      const response = await fetchWithTimeout(
+        `${getBaseURL()}/${normalizedPath}`,
+        {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+          body: dataObject ? JSON.stringify(dataObject) : null,
         },
-        body: dataObject ? JSON.stringify(dataObject) : null,
-      });
+        3000,
+      );
 
-      const result = await handlerResponse(response, protheusStatusAPI);
-
-      return result;
+      return await handlerResponse(response, protheusStatusAPI);
+    } catch (error) {
+      console.log(`[RETRY] tentativa ${attempt} falhou`);
+      throw error;
     }
   }
 }
@@ -156,13 +171,6 @@ async function handlerResponse(response, protheusStatusAPI) {
 const execute = {
   status: {
     get: async () => {
-      console.log("EXCUTE STATUS");
-      // return {
-      //   response: {
-      //     status_code: Number(response?.status),
-      //     message: "Status comunicação realizado com api externa.",
-      //   },
-      // };
       return await handleSend("status", "GET", null, null);
     },
   },
@@ -288,33 +296,3 @@ const apiProtheus = {
 };
 
 export default apiProtheus;
-
-/*
- "CODIGO": "000001",
-          "SPOOL": "SP041500345003 ",
-          "FORNECEDOR": "005436",
-          "LOJA": "01",
-          "NUM_SC": "      ", // STATUS EM TRANSITO  e PROCESSO Aguardando SC  EM BRANCO | PRECHIDO STATUS EM TRANSITO  e PROCESSO Aguardando pedido
-          "PEDIDO": "      ", // PRECHIDO PEDIDO STATUS EM TRANSITO  e PROCESSO Aguardando romaneio
-          "ROMANEIO": "      ", // PRECHIDO ROMANEIO STATUS EM TRANSITO  e PROCESSO Aguardando nota
-          "REVISAO": "  ",
-          "AET": "S",
-          "PROCESSO": "CA"
-
-    JSON:  {
-      "CODIGO": "000001",
-      "SPOOL": ["SP041500345003 ", "SP041500345003 "],
-      "FORNECEDOR": "005436",
-      "LOJA": "01",
-      "NUM_SC": "      ",
-      "PEDIDO": "      ",
-      "ROMANEIO": "      ",
-      "REVISAO": "  ",
-      "NOTA": "",
-      "SERIE": "",
-      "AET": "S",
-      "PROCESSO": "CA",
-      "STATUS": ["SC", "PD", "RO"],
-      "STATUS_MESSAGE": ["Aguardando SC", "Aguardando Pedido", "Aguardando Romaneio"
-    },
-*/
