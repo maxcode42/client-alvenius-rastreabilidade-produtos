@@ -2,6 +2,8 @@ crypto = require("node:crypto");
 
 const http = require("node:http");
 const { parse } = require("node:url");
+const { STATUS_CODE } = require("../../types/status-code");
+const { PROCESS_FLOW } = require("../../types/process-flow");
 
 require("dotenv").config({
   path: ".env.development",
@@ -20,7 +22,9 @@ function createProtheusMockServer({ port = 4001 } = {}) {
   function defaultHandler(req, res) {
     console.log(`[MOCK][UNHANDLED] ${req.method} ${req.url}`);
 
-    res.writeHead(500, { "Content-Type": "application/json" });
+    res.writeHead(STATUS_CODE.SERVER_ERROR, {
+      "Content-Type": "application/json",
+    });
     res.end(
       JSON.stringify({
         error: "Mock route not implemented",
@@ -49,7 +53,9 @@ function createProtheusMockServer({ port = 4001 } = {}) {
         } catch (error) {
           console.error("[MOCK][ERROR]", error);
 
-          res.writeHead(500, { "Content-Type": "application/json" });
+          res.writeHead(STATUS_CODE.SERVER_ERROR, {
+            "Content-Type": "application/json",
+          });
           res.end(
             JSON.stringify({
               error: "Internal mock error",
@@ -86,11 +92,13 @@ function createProtheusMockServer({ port = 4001 } = {}) {
   // DEFAULTS (rotas principais da API externa)
   function setupDefaults() {
     on("GET", "/", async (req, res) => {
-      res.writeHead(200, { "Content-Type": "application/json" });
+      res.writeHead(STATUS_CODE.SUCCESS, {
+        "Content-Type": "application/json",
+      });
 
       res.end(
         JSON.stringify({
-          status_code: 200,
+          status_code: STATUS_CODE.SUCCESS,
           message: "Status comunicação realizado com api externa.",
         }),
       );
@@ -104,11 +112,13 @@ function createProtheusMockServer({ port = 4001 } = {}) {
         username !== process.env.USERNAME_TEST ||
         password !== process.env.PASSWORD_TEST
       ) {
-        res.writeHead(401, { "Content-Type": "application/json" });
+        res.writeHead(STATUS_CODE.UNAUTHORIZED, {
+          "Content-Type": "application/json",
+        });
 
         return res.end(
           JSON.stringify({
-            code: 401,
+            code: STATUS_CODE.UNAUTHORIZED,
             message:
               "invalid_grant Falha de autenticação para o usuário incorrect username.",
             detailedMessage:
@@ -119,7 +129,9 @@ function createProtheusMockServer({ port = 4001 } = {}) {
 
       const token = crypto.randomBytes(48).toString("hex");
 
-      res.writeHead(200, { "Content-Type": "application/json" });
+      res.writeHead(STATUS_CODE.SUCCESS, {
+        "Content-Type": "application/json",
+      });
 
       return res.end(
         JSON.stringify({
@@ -128,7 +140,7 @@ function createProtheusMockServer({ port = 4001 } = {}) {
           scope: "default",
           token_type: "Bearer",
           expires_in: 3600,
-          status_code: 200,
+          status_code: STATUS_CODE.SUCCESS,
           hasMFA: false,
         }),
       );
@@ -136,7 +148,9 @@ function createProtheusMockServer({ port = 4001 } = {}) {
 
     /* MOCK: STATUS*/
     on("GET", "/wsrastreio", async (req, res) => {
-      res.writeHead(200, { "Content-Type": "application/json" });
+      res.writeHead(STATUS_CODE.SUCCESS, {
+        "Content-Type": "application/json",
+      });
       res.end(
         JSON.stringify([
           {
@@ -148,10 +162,12 @@ function createProtheusMockServer({ port = 4001 } = {}) {
 
     /* MOCK: CREATE REGISTER */
     on("POST", "/wsrastreio", async (req, res) => {
-      res.writeHead(201, { "Content-Type": "application/json" });
+      res.writeHead(STATUS_CODE.CREATE, {
+        "Content-Type": "application/json",
+      });
       res.end(
         JSON.stringify({
-          status_code: 201,
+          status_code: STATUS_CODE.CREATE,
           message: "Registro criado (mock)",
         }),
       );
@@ -168,8 +184,10 @@ function createProtheusMockServer({ port = 4001 } = {}) {
       const { process } = query;
       console.log(">>PROCESS");
       console.log({ query, rawQuery });
-      if (rawQuery === "CA") {
-        res.writeHead(200, { "Content-Type": "application/json" });
+      if (rawQuery === PROCESS_FLOW.route.boilermaking.acronym) {
+        res.writeHead(STATUS_CODE.SUCCESS, {
+          "Content-Type": "application/json",
+        });
 
         res.end(
           JSON.stringify({
@@ -191,8 +209,10 @@ function createProtheusMockServer({ port = 4001 } = {}) {
           }),
         );
       }
-      if (rawQuery == "RR") {
-        res.writeHead(200, { "Content-Type": "application/json" });
+      if (rawQuery === PROCESS_FLOW.route.coating.acronym) {
+        res.writeHead(STATUS_CODE.SUCCESS, {
+          "Content-Type": "application/json",
+        });
 
         res.end(
           JSON.stringify({
@@ -207,6 +227,31 @@ function createProtheusMockServer({ port = 4001 } = {}) {
                 HRSAID: "     ",
                 USER: "lucas.penha                   ",
                 PROCES: "RR",
+                STATUS: "EX",
+                DESCRI: "Carretel FS+FF 14pol x 6,35 x 3000mm 150 PSI",
+              },
+            ],
+          }),
+        );
+      }
+      if (rawQuery === PROCESS_FLOW.route.painting.acronym) {
+        res.writeHead(STATUS_CODE.SUCCESS, {
+          "Content-Type": "application/json",
+        });
+
+        res.end(
+          JSON.stringify({
+            objects: [
+              {
+                COD: "SP041400049028 ",
+                SEQ: "    ",
+                DTENTR: "20260416",
+                DTINIC: "20260416",
+                HRINIC: "16:09",
+                DTSAID: "        ",
+                HRSAID: "     ",
+                USER: "lucas.penha                   ",
+                PROCES: "PI",
                 STATUS: "EX",
                 DESCRI: "Carretel FS+FF 14pol x 6,35 x 3000mm 150 PSI",
               },
