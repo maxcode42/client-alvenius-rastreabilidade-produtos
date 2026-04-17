@@ -83,11 +83,9 @@ function createProtheusMockServer({ port = 4001 } = {}) {
     routes.clear();
   }
 
-  // 🔹 DEFAULTS (rotas principais da API externa)
+  // DEFAULTS (rotas principais da API externa)
   function setupDefaults() {
     on("GET", "/", async (req, res) => {
-      console.log("[MOCK] STATUS HIT");
-
       res.writeHead(200, { "Content-Type": "application/json" });
 
       res.end(
@@ -98,6 +96,7 @@ function createProtheusMockServer({ port = 4001 } = {}) {
       );
     });
 
+    /* MOCK: SESSION / TOKEN*/
     on("POST", "/api/oauth2/v1/token", async (req, res, { query }) => {
       const { username, password } = query;
 
@@ -135,9 +134,7 @@ function createProtheusMockServer({ port = 4001 } = {}) {
       );
     });
 
-    /**
-     * 🔹 MOCK: STATUS
-     */
+    /* MOCK: STATUS*/
     on("GET", "/wsrastreio", async (req, res) => {
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(
@@ -149,15 +146,40 @@ function createProtheusMockServer({ port = 4001 } = {}) {
       );
     });
 
-    /**
-     * 🔹 MOCK: CREATE REGISTER
-     */
+    /* MOCK: CREATE REGISTER */
     on("POST", "/wsrastreio", async (req, res) => {
       res.writeHead(201, { "Content-Type": "application/json" });
       res.end(
         JSON.stringify({
           status_code: 201,
           message: "Registro criado (mock)",
+        }),
+      );
+    });
+
+    /* MOCK: CREATE REGISTER */
+    on("GET", "/wsrastreio/process", async (req, res, { query }) => {
+      console.log("[MOCK] STATUS boilermaking");
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+
+      res.end(
+        JSON.stringify({
+          objects: [
+            {
+              COD: "SP041400049028 ",
+              SEQ: "    ",
+              DTENTR: "20260416",
+              DTINIC: "20260416",
+              HRINIC: "16:09",
+              DTSAID: "        ",
+              HRSAID: "     ",
+              USER: "lucas.penha                   ",
+              PROCES: "CA",
+              STATUS: "EX",
+              DESCRI: "Carretel FS+FF 14pol x 6,35 x 3000mm 150 PSI",
+            },
+          ],
         }),
       );
     });

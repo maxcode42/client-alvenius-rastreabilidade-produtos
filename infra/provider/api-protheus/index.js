@@ -35,8 +35,7 @@ async function handleSend(path, method, dataObject, token) {
         protheusStatusAPI = true;
         path = "";
       }
-      console.log(">>API PROTHEUS REAL");
-      console.log("BASE URL PROTHEUS:", getBaseURL());
+
       const response = await fetch(`${getBaseURL()}/${path}`, {
         method,
         headers: {
@@ -154,15 +153,11 @@ async function handlerResponse(response, protheusStatusAPI) {
 const execute = {
   status: {
     get: async () => {
-      const result = await handleSend("status", "GET", null, null);
-      console.log(">>STATUS");
-      console.log(result);
-      return result; //await handleSend("status", "GET", null, null);
+      return await handleSend("status", "GET", null, null);
     },
   },
   session: {
     create: async ({ data }) => {
-      console.log(">>API REAL PROTHEUS");
       const params = new URLSearchParams(data);
       return await handleSend(
         `api/oauth2/v1/token?${params}`,
