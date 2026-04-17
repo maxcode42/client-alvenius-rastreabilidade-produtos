@@ -71,7 +71,7 @@ const execute = {
           name: item.NOME,
           boolikings: item.CALDERARIA,
           coating: item.REVESTIMENTO,
-          pincture: item.PINCTURE,
+          painting: item.PINTURA,
         };
         return formattedItem;
       }) || [];

@@ -260,6 +260,120 @@ function createProtheusMockServer({ port = 4001 } = {}) {
         );
       }
     });
+
+    /* MOCK: SUPPLIER */
+    on("GET", "/wsrastreio/list_fornec", async (req, res, { query }) => {
+      const { process } = query;
+
+      if (process === PROCESS_FLOW.route.boilermaking.acronym) {
+        res.writeHead(STATUS_CODE.SUCCESS, {
+          "Content-Type": "application/json",
+        });
+
+        res.end(
+          JSON.stringify({
+            objects: [
+              {
+                CODIGO: "003385",
+                LOJA: "01",
+                NOME: "PETROPASY TECNOLOGIA",
+                CALDERARIA: "S",
+                REVESTIMENTO: "S",
+                PINTURA: " ",
+              },
+              {
+                CODIGO: "003671",
+                LOJA: "01",
+                NOME: "BENAZZI             ",
+                CALDERARIA: "S",
+                REVESTIMENTO: "N",
+                PINTURA: " ",
+              },
+              {
+                CODIGO: "004449",
+                LOJA: "01",
+                NOME: "CORFAL              ",
+                CALDERARIA: "S",
+                REVESTIMENTO: "S",
+                PINTURA: "S",
+              },
+            ],
+          }),
+        );
+      }
+      if (process === PROCESS_FLOW.route.coating.acronym) {
+        res.writeHead(STATUS_CODE.SUCCESS, {
+          "Content-Type": "application/json",
+        });
+
+        res.end(
+          JSON.stringify({
+            objects: [
+              {
+                CODIGO: "003295",
+                LOJA: "01",
+                NOME: "SO JATO             ",
+                CALDERARIA: "N",
+                REVESTIMENTO: "N",
+                PINTURA: "S",
+              },
+              {
+                CODIGO: "004449",
+                LOJA: "01",
+                NOME: "CORFAL              ",
+                CALDERARIA: "S",
+                REVESTIMENTO: "S",
+                PINTURA: "S",
+              },
+              {
+                CODIGO: "005455",
+                LOJA: "01",
+                NOME: "PROJATO JATEAMENTO E",
+                CALDERARIA: "N",
+                REVESTIMENTO: "N",
+                PINTURA: "S",
+              },
+            ],
+          }),
+        );
+      }
+      if (process === PROCESS_FLOW.route.painting.acronym) {
+        res.writeHead(STATUS_CODE.SUCCESS, {
+          "Content-Type": "application/json",
+        });
+
+        res.end(
+          JSON.stringify({
+            objects: [
+              {
+                CODIGO: "003385",
+                LOJA: "01",
+                NOME: "PETROPASY TECNOLOGIA",
+                CALDERARIA: "S",
+                REVESTIMENTO: "S",
+                PINTURA: " ",
+              },
+              {
+                CODIGO: "003671",
+                LOJA: "01",
+                NOME: "BENAZZI             ",
+                CALDERARIA: "S",
+                REVESTIMENTO: "N",
+                PINTURA: " ",
+              },
+              {
+                CODIGO: "004449",
+                LOJA: "01",
+                NOME: "CORFAL              ",
+                CALDERARIA: "S",
+                REVESTIMENTO: "S",
+                PINTURA: "S",
+              },
+            ],
+          }),
+        );
+      }
+    });
   }
 
   return {
