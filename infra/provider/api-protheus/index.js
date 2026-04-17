@@ -219,6 +219,16 @@ const execute = {
   },
   painting: {
     read: async ({ tokenProtheus }) => {
+      const result = await handleSend(
+        `wsrastreio/process?${PROCESS_FLOW.route.painting.acronym}`,
+        "GET",
+        null,
+        tokenProtheus,
+      );
+      console.log(">>API REAL PROTHEUS coating");
+      const filter = result.objects.filter((_, i) => i < 5);
+      console.log(filter);
+      return result;
       return await handleSend(
         `wsrastreio/process?${PROCESS_FLOW.route.painting.acronym}`,
         "GET",

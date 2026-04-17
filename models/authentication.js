@@ -49,7 +49,6 @@ async function findUserByUsername(
 }
 
 async function sendUserByUsernameProtheus(providedUsername, providedPassword) {
-  console.log(">>SEND PROTHEUS");
   const response = await apiProtheus.execute.session.create({
     data: {
       grant_type: "password",
@@ -82,7 +81,6 @@ async function sendUserByUsernameProtheus(providedUsername, providedPassword) {
 }
 
 async function getAuthenticateUser(providedUsername, providedPassword) {
-  console.log(">>AUTH");
   try {
     const results = await sendUserByUsernameProtheus(
       providedUsername,

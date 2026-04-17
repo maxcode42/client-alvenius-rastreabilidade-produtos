@@ -26,8 +26,6 @@ async function postHandler(req, res) {
   );
 
   await controller.setSessionCookie(res, result.token);
-  console.log(">>CONTROLLER");
-  console.log(result);
 
   res.status(STATUS_CODE.CREATE).json(result);
 }
