@@ -157,31 +157,63 @@ function createProtheusMockServer({ port = 4001 } = {}) {
       );
     });
 
-    /* MOCK: CREATE REGISTER */
-    on("GET", "/wsrastreio/process", async (req, res, { query }) => {
-      console.log("[MOCK] STATUS boilermaking");
+    /* MOCK: PROCESS FLOW */
+    on("GET", "/wsrastreio/process", async (req, res, ctx) => {
+      console.log("[MOCK] STATUS coating");
+      const parsedUrl = new URL(req.url, "http://localhost");
 
-      res.writeHead(200, { "Content-Type": "application/json" });
+      const query = Object.fromEntries(parsedUrl.searchParams);
 
-      res.end(
-        JSON.stringify({
-          objects: [
-            {
-              COD: "SP041400049028 ",
-              SEQ: "    ",
-              DTENTR: "20260416",
-              DTINIC: "20260416",
-              HRINIC: "16:09",
-              DTSAID: "        ",
-              HRSAID: "     ",
-              USER: "lucas.penha                   ",
-              PROCES: "CA",
-              STATUS: "EX",
-              DESCRI: "Carretel FS+FF 14pol x 6,35 x 3000mm 150 PSI",
-            },
-          ],
-        }),
-      );
+      const rawQuery = parsedUrl.search.replace("?", "");
+      const { process } = query;
+      console.log(">>PROCESS");
+      console.log({ query, rawQuery });
+      if (rawQuery === "CA") {
+        res.writeHead(200, { "Content-Type": "application/json" });
+
+        res.end(
+          JSON.stringify({
+            objects: [
+              {
+                COD: "SP041400049028 ",
+                SEQ: "    ",
+                DTENTR: "20260416",
+                DTINIC: "20260416",
+                HRINIC: "16:09",
+                DTSAID: "        ",
+                HRSAID: "     ",
+                USER: "lucas.penha                   ",
+                PROCES: "CA",
+                STATUS: "EX",
+                DESCRI: "Carretel FS+FF 14pol x 6,35 x 3000mm 150 PSI",
+              },
+            ],
+          }),
+        );
+      }
+      if (rawQuery == "RR") {
+        res.writeHead(200, { "Content-Type": "application/json" });
+
+        res.end(
+          JSON.stringify({
+            objects: [
+              {
+                COD: "SP041400049028 ",
+                SEQ: "    ",
+                DTENTR: "20260416",
+                DTINIC: "20260416",
+                HRINIC: "16:09",
+                DTSAID: "        ",
+                HRSAID: "     ",
+                USER: "lucas.penha                   ",
+                PROCES: "RR",
+                STATUS: "EX",
+                DESCRI: "Carretel FS+FF 14pol x 6,35 x 3000mm 150 PSI",
+              },
+            ],
+          }),
+        );
+      }
     });
   }
 
