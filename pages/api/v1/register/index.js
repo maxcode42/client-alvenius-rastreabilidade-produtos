@@ -18,8 +18,6 @@ async function postHandler(req, res) {
 
   const sessionObject = await session.findOneValidByToken(token);
 
-  //const renewedSessionObject = await session.renew(sessionObject.id);
-
   const results = await register.create(
     registerInputValues,
     sessionObject.token_protheus,

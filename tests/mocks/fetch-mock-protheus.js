@@ -179,7 +179,7 @@ function createProtheusMockServer({ port = 4001 } = {}) {
       console.log("[MOCK] STATUS coating");
       const parsedUrl = new URL(req.url, "http://localhost");
 
-      const query = Object.fromEntries(parsedUrl.searchParams);
+      // const query = Object.fromEntries(parsedUrl.searchParams);
 
       const rawQuery = parsedUrl.search.replace("?", "");
 
