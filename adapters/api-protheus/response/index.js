@@ -82,9 +82,9 @@ const execute = {
     return results;
   },
   parseTransfer: async (data) => {
-    console.log(">>API PROTHEUS TRANSFER PARSE OBJECTS");
+    // console.log(">>API PROTHEUS TRANSFER PARSE OBJECTS");
 
-    console.log(data);
+    // console.log(data);
     if (!data || !data?.objects || data?.objects.length === 0) {
       return {
         status_list: [],

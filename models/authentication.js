@@ -56,8 +56,7 @@ async function sendUserByUsernameProtheus(providedUsername, providedPassword) {
       password: providedPassword,
     },
   });
-  console.log({ providedUsername, providedPassword });
-  console.log(response);
+
   if (!response?.access_token) {
     throw new UnauthorizedError({
       message: "Senha não confere.",

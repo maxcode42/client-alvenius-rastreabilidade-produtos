@@ -15,7 +15,7 @@ beforeAll(async () => {
   await orchestrator.runPendingMigrations();
 });
 
-describe("DELETE '/api/v1/sessions", () => {
+describe("DELETE '/api/v1/sessions'", () => {
   describe("Default user", () => {
     test("With nonexistent session", async () => {
       const nonexistent =

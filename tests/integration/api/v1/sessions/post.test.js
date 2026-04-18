@@ -15,7 +15,7 @@ beforeAll(async () => {
   await orchestrator.runPendingMigrations();
 });
 
-describe("POST '/api/v1/sessions", () => {
+describe("POST '/api/v1/sessions'", () => {
   describe("Anonymous user", () => {
     test("With incorrect `username` and incorrect `password`", async () => {
       const objectUser = {

@@ -12,11 +12,9 @@ beforeAll(async () => {
   await orchestrator.runPendingMigrations();
 });
 
-describe("GET '/api/v1/transfer", () => {
+describe("GET '/api/v1/transfer'", () => {
   describe("Default user", () => {
     test("With valid session and return list boilermaking", async () => {
-      console.log("TESTS");
-      console.log(process.env.NODE_ENV);
       let PATH_URL = "/api/v1/sessions";
 
       const objectUser = {

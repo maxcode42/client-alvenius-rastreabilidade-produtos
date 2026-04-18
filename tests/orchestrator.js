@@ -9,11 +9,9 @@ import user from "models/user";
 
 import { STATUS_CODE } from "types/status-code";
 
-// const API_BASE_URL = process.env.API_BASE_URL;
 const COOKIE_NAME = process.env.COOKIE_NAME;
 
 function getBaseURL() {
-  process.env.NODE_ENV = "test";
   return process.env.API_BASE_URL;
 }
 
@@ -28,7 +26,8 @@ async function waitForAllServices() {
     });
 
     async function fetchStatusPage() {
-      const response = await fetch(`${getBaseURL()}/api/v1/status`);
+      const baseURL = getBaseURL();
+      const response = await fetch(`${baseURL}/api/v1/status`);
 
       if (response.status !== STATUS_CODE.SUCCESS) {
         throw Error();
@@ -42,7 +41,8 @@ async function runPendingMigrations() {
 }
 
 async function fetchToExecute({ path, method, object, token }) {
-  const response = await fetch(`${getBaseURL()}${path}`, {
+  const baseURL = getBaseURL();
+  const response = await fetch(`${baseURL}${path}`, {
     method,
     headers: {
       "Content-Type": "application/json",
@@ -66,6 +66,20 @@ async function createSession(userId) {
   return result;
 }
 
+async function createAuth(username, password) {
+  const response = await fetchToExecute({
+    path: "/api/v1/sessions",
+    method: "POST",
+    object: {
+      username: !username ? process.env.USERNAME_TEST : username,
+      password: !password ? process.env.PASSWORD_TEST : password,
+    },
+  });
+  const responseBody = await response.json();
+
+  return responseBody;
+}
+
 async function createUser(objectUser) {
   const fakerObjectUser = {
     username: objectUser?.username || "default_valid_username",
@@ -84,6 +98,7 @@ const orchestrator = {
   createSession,
   clearDatabase,
   createUser,
+  createAuth,
 };
 
 export default orchestrator;

@@ -12,7 +12,7 @@ beforeAll(async () => {
   await orchestrator.runPendingMigrations();
 });
 
-describe("GET '/api/v1/users/[username]", () => {
+describe("GET '/api/v1/users/[username]'", () => {
   describe("Anonymous user", () => {
     test("With case mismatch", async () => {
       const objectUser = {

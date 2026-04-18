@@ -14,7 +14,7 @@ beforeAll(async () => {
   await orchestrator.runPendingMigrations();
 });
 
-describe("GET '/api/v1/user", () => {
+describe("GET '/api/v1/user'", () => {
   describe("Default user", () => {
     test("With valid session", async () => {
       const objectUser = {

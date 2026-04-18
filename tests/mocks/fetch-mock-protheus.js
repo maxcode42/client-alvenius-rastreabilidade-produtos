@@ -45,7 +45,7 @@ function createProtheusMockServer({ port = 4001 } = {}) {
         const handler = routes.get(key) || defaultHandler;
 
         try {
-          console.log(`[MOCK HIT] ${req.method} ${req.url}`);
+          // console.log(`[MOCK HIT] ${req.method} ${req.url}`);
 
           await handler(req, res, {
             query: parsedUrl.query,
@@ -92,7 +92,6 @@ function createProtheusMockServer({ port = 4001 } = {}) {
   // DEFAULTS (rotas principais da API externa)
   function setupDefaults() {
     on("GET", "/", async (req, res) => {
-      console.log(">>MOCK STATUS");
       res.writeHead(STATUS_CODE.SUCCESS, {
         "Content-Type": "application/json",
       });
@@ -105,7 +104,7 @@ function createProtheusMockServer({ port = 4001 } = {}) {
       );
     });
 
-    /* MOCK: SESSION / TOKEN*/
+    /* MOCK: SESSION / TOKEN */
     on("POST", "/api/oauth2/v1/token", async (req, res, { query }) => {
       const { username, password } = query;
 
@@ -147,7 +146,7 @@ function createProtheusMockServer({ port = 4001 } = {}) {
       );
     });
 
-    /* MOCK: STATUS*/
+    /* MOCK: STATUS */
     on("GET", "/wsrastreio", async (req, res) => {
       res.writeHead(STATUS_CODE.SUCCESS, {
         "Content-Type": "application/json",
@@ -168,8 +167,9 @@ function createProtheusMockServer({ port = 4001 } = {}) {
       });
       res.end(
         JSON.stringify({
+          status: "Created",
           status_code: STATUS_CODE.CREATE,
-          message: "Registro criado (mock)",
+          message: "Registro importado com sucesso",
         }),
       );
     });
@@ -183,8 +183,6 @@ function createProtheusMockServer({ port = 4001 } = {}) {
 
       const rawQuery = parsedUrl.search.replace("?", "");
 
-      console.log(">>PROCESS");
-      console.log({ query, rawQuery });
       if (rawQuery === PROCESS_FLOW.route.boilermaking.acronym) {
         res.writeHead(STATUS_CODE.SUCCESS, {
           "Content-Type": "application/json",

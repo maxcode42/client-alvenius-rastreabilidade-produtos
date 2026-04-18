@@ -8,7 +8,7 @@ beforeAll(async () => {
   await orchestrator.clearDatabase();
 });
 
-describe("GET `/api/v1/migrations`", () => {
+describe("GET '/api/v1/migrations'", () => {
   describe("Anonymous user", () => {
     describe("Retrieving pending migrations", () => {
       test("Be greater than zero", async () => {

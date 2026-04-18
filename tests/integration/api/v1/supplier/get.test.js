@@ -12,7 +12,7 @@ beforeAll(async () => {
   await orchestrator.runPendingMigrations();
 });
 
-describe("GET '/api/v1/supplier", () => {
+describe("GET '/api/v1/supplier'", () => {
   describe("Default user", () => {
     test("With valid session and return list boilermaking", async () => {
       let PATH_URL = "/api/v1/sessions";

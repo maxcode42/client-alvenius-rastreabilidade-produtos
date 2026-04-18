@@ -11,7 +11,7 @@ beforeAll(async () => {
   await orchestrator.runPendingMigrations();
 });
 
-describe("GET '/api/v1/coating", () => {
+describe("GET '/api/v1/coating'", () => {
   describe("Default user", () => {
     test("With valid session and return list", async () => {
       let PATH_URL = "/api/v1/sessions";
@@ -43,7 +43,7 @@ describe("GET '/api/v1/coating", () => {
       const responseBody = await response.json();
 
       expect(response.status).toBe(STATUS_CODE.SUCCESS);
-      console.log(responseBody);
+
       expect(responseBody.total).toBeDefined();
       expect(typeof responseBody).toBe("object");
       expect(Array.isArray(responseBody.data)).toBe(true);

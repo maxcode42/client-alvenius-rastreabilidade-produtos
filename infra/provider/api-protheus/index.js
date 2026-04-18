@@ -10,14 +10,6 @@ import { STATUS_CODE } from "types/status-code";
 
 import { getProtheusBaseURL, isTestEnvironment } from "infra/config/env";
 
-function getBaseURL() {
-  const url = getProtheusBaseURL();
-  console.log(">> PROCESS API PROTHEUS REAL");
-  console.log(url);
-
-  return url;
-}
-
 function fetchWithTimeout(url, options = {}, timeout = 3000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
@@ -45,12 +37,12 @@ async function handleSend(path, method, dataObject, token) {
   }
 
   async function fetchExternalAPI(attempt) {
+    const getBaseURL = getProtheusBaseURL();
     const protheusStatusAPI = path === "status";
     const normalizedPath = protheusStatusAPI ? "" : path;
-
     try {
       const response = await fetchWithTimeout(
-        `${getBaseURL()}/${normalizedPath}`,
+        `${getBaseURL}/${normalizedPath}`,
         {
           method,
           headers: {
@@ -268,26 +260,16 @@ const execute = {
   },
   transfer: {
     read: async ({ tokenProtheus, params }) => {
-      const results = await handleSend(
+      return await handleSend(
         `wsrastreio/listrom?process=${params}`,
         "GET",
         null,
         tokenProtheus,
       );
-      console.log(results);
-      return results;
     },
     create: async ({ data, tokenProtheus }) => {
       return await handleSend("wsrastreio/list", "POST", data, tokenProtheus);
     },
-    // find: async ({ params, tokenProtheus }) => {
-    //   return await handleSend(
-    //     `wsrastreio/id?${params}`,
-    //     "GET",
-    //     null,
-    //     tokenProtheus,
-    //   );
-    // },
   },
 };
 
