@@ -18,8 +18,6 @@ async function getHandler(req, res) {
 
   const sessionObject = await session.findOneValidByToken(token);
 
-  //const renewedSessionObject = await session.renew(sessionObject.id);
-
   const results = await painting.findAll(sessionObject.token_protheus);
 
   if (results === true) {

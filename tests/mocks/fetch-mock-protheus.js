@@ -1,7 +1,7 @@
 const crypto = require("node:crypto");
-
 const http = require("node:http");
 const { parse } = require("node:url");
+
 const { STATUS_CODE } = require("../../types/status-code");
 const { PROCESS_FLOW } = require("../../types/process-flow");
 
@@ -9,10 +9,46 @@ require("dotenv").config({
   path: ".env.development",
 });
 
+/* Helper para parsear o body (JSON / form / raw) */
+function parseRequestBody(req) {
+  return new Promise((resolve, reject) => {
+    let body = "";
+
+    req.on("data", (chunk) => {
+      body += chunk;
+    });
+
+    req.on("end", () => {
+      if (!body) return resolve(null);
+
+      const contentType = req.headers["content-type"] || "";
+
+      try {
+        // JSON
+        if (contentType.includes("application/json")) {
+          return resolve(JSON.parse(body));
+        }
+
+        // x-www-form-urlencoded
+        if (contentType.includes("application/x-www-form-urlencoded")) {
+          const params = new URLSearchParams(body);
+          return resolve(Object.fromEntries(params.entries()));
+        }
+
+        // fallback (texto puro)
+        return resolve(body);
+      } catch (error) {
+        reject(error);
+      }
+    });
+
+    req.on("error", reject);
+  });
+}
+
 function createProtheusMockServer({ port = 4001 } = {}) {
   let server;
 
-  // Registry dinâmico de rotas
   const routes = new Map();
 
   function buildKey(method, path) {
@@ -41,14 +77,18 @@ function createProtheusMockServer({ port = 4001 } = {}) {
         const path = parsedUrl.pathname;
 
         const key = buildKey(req.method, path);
-
         const handler = routes.get(key) || defaultHandler;
 
         try {
-          // console.log(`[MOCK HIT] ${req.method} ${req.url}`);
+          /* Parse do body antes de chamar handler */
+          const body = await parseRequestBody(req);
+
+          // injeta estilo Express
+          req.body = body;
 
           await handler(req, res, {
             query: parsedUrl.query,
+            body,
           });
         } catch (error) {
           console.error("[MOCK][ERROR]", error);
@@ -66,10 +106,7 @@ function createProtheusMockServer({ port = 4001 } = {}) {
 
       server.listen(port, "127.0.0.1", () => {
         console.log(`[MOCK] Protheus rodando em http://127.0.0.1:${port}`);
-
-        // DEBUG: rotas registradas
         console.log("ROTAS ATIVAS:", Array.from(routes.keys()));
-
         resolve();
       });
     });
@@ -91,6 +128,7 @@ function createProtheusMockServer({ port = 4001 } = {}) {
 
   // DEFAULTS (rotas principais da API externa)
   function setupDefaults() {
+    /* MOCK: STATUS */
     on("GET", "/", async (req, res) => {
       res.writeHead(STATUS_CODE.SUCCESS, {
         "Content-Type": "application/json",
@@ -105,7 +143,8 @@ function createProtheusMockServer({ port = 4001 } = {}) {
     });
 
     /* MOCK: SESSION / TOKEN */
-    on("POST", "/api/oauth2/v1/token", async (req, res, { query }) => {
+    on("POST", "/api/oauth2/v1/token", async (req, res, { query, body }) => {
+      // const { username, password } = body || {};
       const { username, password } = query;
 
       if (
@@ -119,10 +158,8 @@ function createProtheusMockServer({ port = 4001 } = {}) {
         return res.end(
           JSON.stringify({
             code: STATUS_CODE.UNAUTHORIZED,
-            message:
-              "invalid_grant Falha de autenticação para o usuário incorrect username.",
-            detailedMessage:
-              "invalid_grant Falha de autenticação para o usuário incorrect username.",
+            message: "invalid_grant",
+            detailedMessage: "invalid_grant",
           }),
         );
       }
@@ -146,20 +183,6 @@ function createProtheusMockServer({ port = 4001 } = {}) {
       );
     });
 
-    /* MOCK: STATUS */
-    on("GET", "/wsrastreio", async (req, res) => {
-      res.writeHead(STATUS_CODE.SUCCESS, {
-        "Content-Type": "application/json",
-      });
-      res.end(
-        JSON.stringify([
-          {
-            Status: true,
-          },
-        ]),
-      );
-    });
-
     /* MOCK: CREATE REGISTER */
     on("POST", "/wsrastreio", async (req, res) => {
       res.writeHead(STATUS_CODE.CREATE, {
@@ -174,12 +197,9 @@ function createProtheusMockServer({ port = 4001 } = {}) {
       );
     });
 
-    /* MOCK: PROCESS FLOW */
+    /* MOCK PROCESS FLOW */
     on("GET", "/wsrastreio/process", async (req, res) => {
-      console.log("[MOCK] STATUS coating");
       const parsedUrl = new URL(req.url, "http://localhost");
-
-      // const query = Object.fromEntries(parsedUrl.searchParams);
 
       const rawQuery = parsedUrl.search.replace("?", "");
 
@@ -257,6 +277,53 @@ function createProtheusMockServer({ port = 4001 } = {}) {
             ],
           }),
         );
+      }
+    });
+
+    on("POST", "/wsrastreio/new", async (req, res) => {
+      console.log(">> BODY RECEBIDO:");
+      console.log(req.body);
+
+      const data = req.body;
+
+      // res.writeHead(STATUS_CODE.CREATE, {
+      //   "Content-Type": "application/json",
+      // });
+
+      // res.end(
+      //   JSON.stringify({
+      //     status_code: STATUS_CODE.CREATE,
+      //     message: "SUCESSO",
+      //   }),
+      // );
+
+      const responseCreate = {
+        status: "Created",
+        status_code: STATUS_CODE.CREATE,
+        message: "Registro atualizado com sucesso",
+      };
+
+      if (data.processo === PROCESS_FLOW.route.boilermaking.acronym) {
+        res.writeHead(STATUS_CODE.CREATE, {
+          "Content-Type": "application/json",
+        });
+
+        res.end(JSON.stringify(responseCreate));
+      }
+
+      if (data.processo === PROCESS_FLOW.route.coating.acronym) {
+        res.writeHead(STATUS_CODE.CREATE, {
+          "Content-Type": "application/json",
+        });
+
+        res.end(JSON.stringify(responseCreate));
+      }
+      if (data.processo === PROCESS_FLOW.route.painting.acronym) {
+        res.writeHead(STATUS_CODE.CREATE, {
+          "Content-Type": "application/json",
+        });
+
+        res.end(JSON.stringify(responseCreate));
       }
     });
 

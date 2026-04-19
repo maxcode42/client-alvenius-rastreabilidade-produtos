@@ -35,7 +35,6 @@ async function handleSend(path, method, dataObject, token) {
       message: "Falha na comunicação com API externa.",
     });
   }
-
   async function fetchExternalAPI(attempt) {
     const getBaseURL = getProtheusBaseURL();
     const protheusStatusAPI = path === "status";

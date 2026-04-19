@@ -26,8 +26,7 @@ async function waitForAllServices() {
     });
 
     async function fetchStatusPage() {
-      const baseURL = getBaseURL();
-      const response = await fetch(`${baseURL}/api/v1/status`);
+      const response = await fetchToExecute({ path: "/api/v1/status" });
 
       if (response.status !== STATUS_CODE.SUCCESS) {
         throw Error();
@@ -40,10 +39,17 @@ async function runPendingMigrations() {
   await migrator.runPendingMigrations();
 }
 
-async function fetchToExecute({ path, method, object, token }) {
+async function fetchToExecute({
+  path = "",
+  params = "",
+  method = "GET",
+  object,
+  token,
+}) {
   const baseURL = getBaseURL();
-  const response = await fetch(`${baseURL}${path}`, {
-    method,
+
+  const response = await fetch(`${baseURL}${path}${params}`, {
+    method: method,
     headers: {
       "Content-Type": "application/json",
       Cookie: !token ? null : `${COOKIE_NAME}=${token}`,
@@ -52,6 +58,64 @@ async function fetchToExecute({ path, method, object, token }) {
   });
 
   return response;
+}
+
+async function createRegisterObject() {
+  const objectDefaultRegister = {
+    spool: {
+      codigo: "SP041500345003",
+      descricao: "CARRETEL FS+FF 20POL X 6,35 X 2961MM 150 PSI",
+    },
+    itens: [
+      {
+        codigo: "TJPLPL50K000311",
+        fornecedor: "005436",
+        fluxo: "teste tubo",
+        descricao:
+          "TUBO ASTM A134 PL 508MM X 6,30MM ASTM A 283 GRC DIMENSOES CONF.ASME B 36.10",
+        quantidade: 1.32,
+      },
+      {
+        codigo: "FLW21224113Z211",
+        fornecedor: "005436",
+        fluxo: "teste FS",
+        descricao:
+          "Flange solto, 20pol, face plana, dimensões conforme AWWA C 207 TAB.2 CLASSE D",
+        quantidade: 1,
+      },
+    ],
+  };
+
+  return objectDefaultRegister;
+}
+
+async function createRegister({ token, data }) {
+  const response = await fetchToExecute({
+    path: "/api/v1/register",
+    method: "POST",
+    object: data,
+    token,
+  });
+
+  const responseBody = await response.json();
+
+  return responseBody;
+}
+
+async function findRegister({ route, token, params }) {
+  // console.log(">>FIND REGISTER");
+  // console.log({ path: `/${route}/${params}`, params, token });
+
+  const response = await fetchToExecute({
+    params: `/[${params}]`,
+    path: `/api/v1/${route}`,
+    method: "GET",
+    token,
+  });
+
+  const responseBody = await response.json();
+
+  return responseBody.data[0];
 }
 
 async function clearDatabase() {
@@ -92,11 +156,14 @@ async function createUser(objectUser) {
 }
 
 const orchestrator = {
+  createRegisterObject,
   runPendingMigrations,
   waitForAllServices,
   fetchToExecute,
+  createRegister,
   createSession,
   clearDatabase,
+  findRegister,
   createUser,
   createAuth,
 };
