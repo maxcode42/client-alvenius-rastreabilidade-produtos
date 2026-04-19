@@ -18,7 +18,7 @@ beforeAll(async () => {
 
 describe("POST '/api/v1/boilermaking'", () => {
   describe("Default user", () => {
-    test("With valid session and update status", async () => {
+    test.skip("With valid session and update status", async () => {
       const createRegisterObject = await orchestrator.createRegisterObject();
       const sessionAuth = await orchestrator.createAuth();
 

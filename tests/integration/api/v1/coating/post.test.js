@@ -6,6 +6,7 @@ import { STATUS_CODE } from "types/status-code";
 
 import session from "models/session";
 import { PROCESS_FLOW } from "types/process-flow";
+import { PROCESS_STATUS } from "types/process-status";
 
 const PATH_URL = "/api/v1/coating";
 
@@ -42,16 +43,29 @@ const objectDefaultRegister = {
 
 describe("POST '/api/v1/coating'", () => {
   describe("Default user", () => {
-    test("With valid session and coating from 'reserverd' status to 'running'", async () => {
+    test("With valid session and update status", async () => {
+      const createRegisterObject = await orchestrator.createRegisterObject();
+      const sessionAuth = await orchestrator.createAuth();
+
+      await orchestrator.createRegister({
+        token: sessionAuth.token,
+        data: createRegisterObject,
+      });
+
+      const findRegister = await orchestrator.findRegister({
+        route: PROCESS_FLOW.route.coating.name,
+        token: sessionAuth.token,
+        params: createRegisterObject.spool.codigo,
+      });
+
       const objectRegister = {
-        codigo: objectDefaultRegister.spool.codigo,
-        status: PROCESS_FLOW.acronym.execute,
+        codigo: findRegister.codigo,
+        status: PROCESS_STATUS.acronym.executando,
         processo: PROCESS_FLOW.route.coating.acronym,
         conformidade: "N",
         reversivel: "N",
         disposicao_qualidade: "",
       };
-      const sessionAuth = await orchestrator.createAuth();
 
       const response = await orchestrator.fetchToExecute({
         method: "POST",
@@ -90,31 +104,3 @@ describe("POST '/api/v1/coating'", () => {
     });
   });
 });
-
-/*
-=====================================
-{
-  "QrCode": {
-    "SPOOL":  "SP041500345003",
-    "DESC": "CARRETEL FS+FF 20POL X 6,35 X 2961MM 150 PSI" ,
-    "Componentes": [
-        {
-        "COD_PRODUTO": "TJPLPL50K000311",
-        "COD_FORNEC": "005436",
-        "CORRIDA": "teste tubo",
-        "DESC":
-            "TUBO ASTM A134 PL 508MM X 6,30MM ASTM A 283 GRC DIMENSOES CONF.ASME B 36.10",
-        "QUANT": 1.32
-        },
-        {
-        "COD_PRODUTO": "FLW21224113Z211",
-        "COD_FORNEC": "005436",
-        "CORRIDA": "teste FS",
-        "DESC":
-            "Flange solto, 20pol, face plana, dimensões conforme AWWA C 207 TAB.2 CLASSE D",
-        "QUANT": 1.0
-        }
-    ]
-  }
-}
-*/

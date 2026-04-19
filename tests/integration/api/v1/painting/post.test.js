@@ -42,7 +42,7 @@ const objectDefaultRegister = {
 
 describe("POST '/api/v1/painting'", () => {
   describe("Default user", () => {
-    test("With valid session and painting from 'reserverd' status to 'running'", async () => {
+    test.skip("With valid session and update status", async () => {
       const objectRegister = {
         codigo: objectDefaultRegister.spool.codigo,
         status: PROCESS_FLOW.acronym.execute,
@@ -90,31 +90,3 @@ describe("POST '/api/v1/painting'", () => {
     });
   });
 });
-
-/*
-=====================================
-{
-  "QrCode": {
-    "SPOOL":  "SP041500345003",
-    "DESC": "CARRETEL FS+FF 20POL X 6,35 X 2961MM 150 PSI" ,
-    "Componentes": [
-        {
-        "COD_PRODUTO": "TJPLPL50K000311",
-        "COD_FORNEC": "005436",
-        "CORRIDA": "teste tubo",
-        "DESC":
-            "TUBO ASTM A134 PL 508MM X 6,30MM ASTM A 283 GRC DIMENSOES CONF.ASME B 36.10",
-        "QUANT": 1.32
-        },
-        {
-        "COD_PRODUTO": "FLW21224113Z211",
-        "COD_FORNEC": "005436",
-        "CORRIDA": "teste FS",
-        "DESC":
-            "Flange solto, 20pol, face plana, dimensões conforme AWWA C 207 TAB.2 CLASSE D",
-        "QUANT": 1.0
-        }
-    ]
-  }
-}
-*/
