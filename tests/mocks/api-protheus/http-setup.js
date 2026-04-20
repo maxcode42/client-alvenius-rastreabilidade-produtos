@@ -205,7 +205,7 @@ function httpSetup({ on }) {
     const responseCreate = {
       status: "Created",
       status_code: STATUS_CODE.CREATE,
-      message: "Registro atualizado com sucesso",
+      message: "Registro importado com sucesso",
     };
 
     const result = {
@@ -466,6 +466,35 @@ function httpSetup({ on }) {
     };
 
     const response = result[process] || result["default"];
+
+    addHead(req, res, response.status);
+
+    res.end(JSON.stringify(response.data));
+  });
+
+  on("POST", "/wsrastreio/list", async (req, res) => {
+    const { processo } = req.body;
+
+    const responseCreate = {
+      status: "Created",
+      status_code: STATUS_CODE.CREATE,
+      message: "Registro importado com sucesso",
+    };
+    const result = {
+      CA: { data: responseCreate, status: STATUS_CODE.CREATE },
+      RR: { data: responseCreate, status: STATUS_CODE.CREATE },
+      PI: { data: responseCreate, status: STATUS_CODE.CREATE },
+      default: {
+        data: {
+          status: "NotFound",
+          status_code: STATUS_CODE.NOT_FOUND,
+          message: "ERROR ao criar registro",
+        },
+        status: STATUS_CODE.NOT_FOUND,
+      },
+    };
+
+    const response = result[processo] || result["default"];
 
     addHead(req, res, response.status);
 

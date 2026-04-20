@@ -65,7 +65,7 @@ describe("POST '/api/v1/painting'", () => {
 
       expect(responseBody).toEqual({
         status_code: STATUS_CODE.CREATE,
-        message: "Registro atualizado com sucesso",
+        message: "Registro importado com sucesso",
       });
 
       // VALIDA CACHE NAVEGADOR ESTÁ DESATIVADO
