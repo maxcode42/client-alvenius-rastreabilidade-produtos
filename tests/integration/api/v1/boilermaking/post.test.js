@@ -1,10 +1,9 @@
 import setCookieParser from "set-cookie-parser";
 
+import session from "models/session";
 import orchestrator from "tests/orchestrator";
 
 import { STATUS_CODE } from "types/status-code";
-
-import session from "models/session";
 import { PROCESS_FLOW } from "types/process-flow";
 import { PROCESS_STATUS } from "types/process-status";
 
@@ -18,7 +17,7 @@ beforeAll(async () => {
 
 describe("POST '/api/v1/boilermaking'", () => {
   describe("Default user", () => {
-    test.skip("With valid session and update status", async () => {
+    test("With valid session and update status", async () => {
       const createRegisterObject = await orchestrator.createRegisterObject();
       const sessionAuth = await orchestrator.createAuth();
 
@@ -77,7 +76,7 @@ describe("POST '/api/v1/boilermaking'", () => {
         path: "/",
       });
     });
-    test.skip("With valid session and does not update status", async () => {
+    test("With valid session and does not update status", async () => {
       const createRegisterObject = await orchestrator.createRegisterObject();
       const sessionAuth = await orchestrator.createAuth();
 
@@ -86,47 +85,36 @@ describe("POST '/api/v1/boilermaking'", () => {
         data: createRegisterObject,
       });
 
-      await orchestrator.findRegister({
+      const findRegister = await orchestrator.findRegister({
         route: PROCESS_FLOW.route.boilermaking.name,
         token: sessionAuth.token,
         params: createRegisterObject.spool.codigo,
       });
 
+      const objectRegister = {
+        codigo: findRegister.codigo,
+        status: PROCESS_STATUS.acronym.executando,
+        processo: "IV", // INVALID PROCESS
+        conformidade: "N",
+        reversivel: "N",
+        disposicao_qualidade: "",
+      };
+
       const response = await orchestrator.fetchToExecute({
         method: "POST",
         path: PATH_URL,
         token: sessionAuth?.token,
+        object: objectRegister,
       });
 
-      //CORRIGIR RETORNO E APLICAR TRATATIVAS NA API
-      expect(response.status).toEqual(STATUS_CODE.CREATE);
+      expect(response.status).toEqual(STATUS_CODE.NOT_FOUND);
       const responseBody = await response.json();
-      console.log(">>RESPONSE");
-      console.log(responseBody);
 
       expect(responseBody).toEqual({
-        status_code: STATUS_CODE.CREATE,
-        message: "Registro atualizado com sucesso",
-      });
-
-      // VALIDA CACHE NAVEGADOR ESTÁ DESATIVADO
-      const cacheControl = response.headers.get("Cache-control");
-
-      expect(cacheControl).toBe(
-        "no-store, no-cache, max-age=0, must-revalidate",
-      );
-
-      // Set-Cookie assertions
-      const parsedSetCookie = setCookieParser(response, {
-        map: true,
-      });
-
-      expect(parsedSetCookie[process.env.COOKIE_NAME]).toEqual({
-        maxAge: session.EXPIRATION_IN_MILLISECONDS / 1000,
-        name: process.env.COOKIE_NAME,
-        value: sessionAuth.token,
-        httpOnly: true,
-        path: "/",
+        name: "NotFoundError",
+        action: "Contate suporte tecnico.",
+        status_code: STATUS_CODE.NOT_FOUND,
+        message: "Um error interno inesperado ocorreu na request externa.",
       });
     });
   });

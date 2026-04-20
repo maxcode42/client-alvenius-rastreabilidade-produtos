@@ -1,9 +1,37 @@
-const createProtheusMockServer = require("./fetch-mock-protheus.js");
+const createProtheusMockServer = require("./api-protheus");
 
-const mock = createProtheusMockServer({ port: 4001 });
+const path = require("node:path");
 
-mock.setupDefaults();
+const envPath = path.resolve(process.cwd(), ".env.development");
 
-mock.start();
+const result = require("dotenv").config({
+  path: envPath,
+});
 
-console.log("Mock rodando...");
+if (result.error) {
+  console.error("[ENV ERROR]:", result.error);
+}
+// else {
+//   console.log("[ENV LOADED]:", Object.keys(result.parsed));
+// }
+
+async function start() {
+  const server = createProtheusMockServer({
+    port: 4001,
+  });
+
+  // carrega mocks padrão
+  server.httpSetup();
+
+  // inicia servidor
+  await server.start();
+
+  // opcional: graceful shutdown
+  process.on("SIGINT", async () => {
+    console.log("\n[MOCK] Encerrando...");
+    await server.stop();
+    process.exit(0);
+  });
+}
+
+start();

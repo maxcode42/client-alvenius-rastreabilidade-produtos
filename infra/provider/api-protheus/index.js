@@ -2,7 +2,6 @@ import retry from "async-retry";
 import {
   InternalServerError,
   NotFoundError,
-  ServiceError,
   UnauthorizedError,
 } from "infra/errors";
 import { PROCESS_FLOW } from "types/process-flow";
@@ -21,6 +20,8 @@ function fetchWithTimeout(url, options = {}, timeout = 3000) {
 }
 
 async function handleSend(path, method, dataObject, token) {
+  const getBaseURL = getProtheusBaseURL();
+  const protheusStatusAPI = path === "status";
   try {
     return await retry(fetchExternalAPI, {
       retries: isTestEnvironment() ? 1 : 10,
@@ -30,15 +31,17 @@ async function handleSend(path, method, dataObject, token) {
   } catch (error) {
     console.error("[PROTHEUS FINAL ERROR]", error.message);
 
-    throw new ServiceError({
-      cause: error,
-      message: "Falha na comunicação com API externa.",
-    });
+    await handlerResponse(error, protheusStatusAPI);
+    // throw new ServiceError({
+    //   cause: error,
+    //   message: "Falha na comunicação com API externa.",
+    // });
   }
-  async function fetchExternalAPI(attempt) {
-    const getBaseURL = getProtheusBaseURL();
-    const protheusStatusAPI = path === "status";
+
+  // async function fetchExternalAPI(attempt) {
+  async function fetchExternalAPI() {
     const normalizedPath = protheusStatusAPI ? "" : path;
+
     try {
       const response = await fetchWithTimeout(
         `${getBaseURL}/${normalizedPath}`,
@@ -55,7 +58,8 @@ async function handleSend(path, method, dataObject, token) {
 
       return await handlerResponse(response, protheusStatusAPI);
     } catch (error) {
-      console.log(`[RETRY] tentativa ${attempt} falhou`);
+      // console.log(`[RETRY] tentativa ${attempt} falhou`);
+      console.log(`[RETRY] tentativa falhou`);
       throw error;
     }
   }
@@ -73,7 +77,6 @@ async function handlerResponse(response, protheusStatusAPI) {
         action: "Contate suporte tecnico.",
       });
     }
-
     if (response.status === STATUS_CODE.SUCCESS && protheusStatusAPI) {
       const responseBodyDefault = {
         status_code: Number(response?.status),

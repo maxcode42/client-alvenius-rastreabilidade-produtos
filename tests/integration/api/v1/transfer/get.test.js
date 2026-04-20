@@ -6,34 +6,19 @@ import session from "models/session";
 import { STATUS_CODE } from "types/status-code";
 import { PROCESS_FLOW } from "types/process-flow";
 
+let responseSessionBody;
+let PATH_URL;
+
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
   await orchestrator.clearDatabase();
   await orchestrator.runPendingMigrations();
+  responseSessionBody = await orchestrator.createAuth();
 });
 
 describe("GET '/api/v1/transfer'", () => {
   describe("Default user", () => {
     test("With valid session and return list boilermaking", async () => {
-      let PATH_URL = "/api/v1/sessions";
-
-      const objectUser = {
-        username: process.env.USERNAME_TEST,
-        password: process.env.PASSWORD_TEST,
-      };
-
-      const responseSession = await orchestrator.fetchToExecute({
-        path: PATH_URL,
-        method: "POST",
-        object: {
-          username: objectUser.username,
-          password: objectUser.password,
-        },
-      });
-      expect(responseSession.status).toBe(STATUS_CODE.CREATE);
-
-      const responseSessionBody = await responseSession.json();
-
       PATH_URL = `/api/v1/transfer/${PROCESS_FLOW.route.boilermaking.acronym}`;
 
       const response = await orchestrator.fetchToExecute({
@@ -77,25 +62,6 @@ describe("GET '/api/v1/transfer'", () => {
       });
     });
     test("With valid session and return list coating", async () => {
-      let PATH_URL = "/api/v1/sessions";
-
-      const objectUser = {
-        username: process.env.USERNAME_TEST,
-        password: process.env.PASSWORD_TEST,
-      };
-
-      const responseSession = await orchestrator.fetchToExecute({
-        path: PATH_URL,
-        method: "POST",
-        object: {
-          username: objectUser.username,
-          password: objectUser.password,
-        },
-      });
-      expect(responseSession.status).toBe(STATUS_CODE.CREATE);
-
-      const responseSessionBody = await responseSession.json();
-
       PATH_URL = `/api/v1/transfer/${PROCESS_FLOW.route.coating.acronym}`;
 
       const response = await orchestrator.fetchToExecute({
@@ -139,25 +105,6 @@ describe("GET '/api/v1/transfer'", () => {
       });
     });
     test("With valid session and return list painting", async () => {
-      let PATH_URL = "/api/v1/sessions";
-
-      const objectUser = {
-        username: process.env.USERNAME_TEST,
-        password: process.env.PASSWORD_TEST,
-      };
-
-      const responseSession = await orchestrator.fetchToExecute({
-        path: PATH_URL,
-        method: "POST",
-        object: {
-          username: objectUser.username,
-          password: objectUser.password,
-        },
-      });
-      expect(responseSession.status).toBe(STATUS_CODE.CREATE);
-
-      const responseSessionBody = await responseSession.json();
-
       PATH_URL = `/api/v1/transfer/${PROCESS_FLOW.route.painting.acronym}`;
 
       const response = await orchestrator.fetchToExecute({

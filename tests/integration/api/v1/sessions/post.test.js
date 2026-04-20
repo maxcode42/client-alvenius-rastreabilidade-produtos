@@ -1,8 +1,8 @@
 import { version as uuidVersion } from "uuid";
 import setCookieParser from "set-cookie-parser";
 
-import orchestrator from "tests/orchestrator";
 import session from "models/session";
+import orchestrator from "tests/orchestrator";
 
 import { STATUS_CODE } from "types/status-code";
 

@@ -1,5 +1,5 @@
 function isTestEnvironment() {
-  return !!process.env.JEST_WORKER_ID || process.env.NODE_ENV === "test";
+  return !process.env.JEST_WORKER_ID || process.env.NODE_ENV === "test";
 }
 
 function getProtheusBaseURL() {
