@@ -1,6 +1,6 @@
 import { createRouter } from "next-connect";
 
-import { STATUS_CODE } from "/types/status-code";
+import { STATUS_CODE } from "types/status-code";
 
 import controller from "infra/controller";
 import transfer from "models/transfer";

@@ -10,7 +10,7 @@ import { STATUS_CODE } from "types/status-code";
 
 import { createHttpMock } from "tests/mocks/api-web/helpers/http/create-http-mock";
 import { createRequest } from "tests/mocks/api-web/helpers/http/create-request";
-import { NotFoundError, UnauthorizedError } from "infra/errors";
+import { UnauthorizedError } from "infra/errors";
 
 jest.mock("models/user");
 jest.mock("models/session");

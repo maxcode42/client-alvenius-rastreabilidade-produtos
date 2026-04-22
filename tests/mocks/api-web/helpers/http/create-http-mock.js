@@ -1,8 +1,52 @@
+const { STATUS_CODE } = require("types/status-code");
+
 function createHttpMock() {
   let statusCode;
   let responseBody;
   const headers = {};
   const cookies = []; // suporte a múltiplos cookies
+
+  // normalização centralizada de erro (delegando ao padrão do infra/errors)
+  function normalizeError(error) {
+    if (error instanceof Error && typeof error.toJSON === "function") {
+      return error.toJSON();
+    }
+
+    if (error instanceof Error) {
+      return {
+        name: error.name || "InternalServerError",
+        message: error.message || "Internal server error",
+        action: "Contate suporte tecnico.",
+        status_code: error.statusCode || STATUS_CODE.SERVER_ERROR,
+      };
+    }
+
+    return {
+      name: "InternalServerError",
+      message: "Internal server error",
+      action: "Contate suporte tecnico.",
+      status_code: STATUS_CODE.SERVER_ERROR,
+    };
+  }
+
+  // serialização recursiva segura
+  function serialize(data) {
+    if (data instanceof Error) {
+      return normalizeError(data);
+    }
+
+    if (Array.isArray(data)) {
+      return data.map(serialize);
+    }
+
+    if (data && typeof data === "object") {
+      return Object.fromEntries(
+        Object.entries(data).map(([key, value]) => [key, serialize(value)]),
+      );
+    }
+
+    return data;
+  }
 
   const res = {
     status: jest.fn((code) => {
@@ -12,12 +56,7 @@ function createHttpMock() {
 
     json: jest.fn((data) => {
       // TRATATIVA CENTRALIZADA
-      if (data instanceof Error && typeof data.toJSON === "function") {
-        responseBody = data.toJSON();
-      } else {
-        responseBody = data;
-      }
-
+      responseBody = serialize(data);
       return res;
     }),
 
@@ -42,7 +81,14 @@ function createHttpMock() {
   };
 
   async function execute(handler, req) {
-    await handler(req, res);
+    try {
+      await handler(req, res);
+    } catch (error) {
+      const normalized = normalizeError(error);
+
+      statusCode = normalized.status_code || STATUS_CODE.SERVER_ERROR;
+      responseBody = normalized;
+    }
   }
 
   return {

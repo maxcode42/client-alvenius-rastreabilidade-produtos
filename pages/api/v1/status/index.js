@@ -1,6 +1,6 @@
 import { createRouter } from "next-connect";
 
-import database from "/infra/database";
+import database from "infra/database";
 import controller from "infra/controller";
 
 import { STATUS_CODE } from "types/status-code";
@@ -58,7 +58,9 @@ async function getHandler(_, res) {
 
       return await response;
     } catch (error) {
-      console.error("[PROTHEUS FAIL]:", error.message);
+      if (error instanceof Error && typeof error.toJSON === "function") {
+        return error.toJSON();
+      }
 
       return error;
     }
