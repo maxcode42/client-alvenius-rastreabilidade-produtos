@@ -1,6 +1,6 @@
 import { createRouter } from "next-connect";
 
-import { STATUS_CODE } from "/types/status-code";
+import { STATUS_CODE } from "types/status-code";
 
 import controller from "infra/controller";
 import register from "models/register";
@@ -17,8 +17,6 @@ async function postHandler(req, res) {
   const token = req.cookies[process.env.COOKIE_NAME];
 
   const sessionObject = await session.findOneValidByToken(token);
-
-  //const renewedSessionObject = await session.renew(sessionObject.id);
 
   const results = await register.create(
     registerInputValues,

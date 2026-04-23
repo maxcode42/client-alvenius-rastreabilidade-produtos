@@ -42,7 +42,7 @@ async function runUpdateQuery(userWithNewValues) {
   return results.rows[0];
 }
 
-async function runSelectQueryUsername(username) {
+async function runSelectQueryUsername(username, isAuthentication) {
   const results = await database.query({
     text: `
          SELECT
@@ -57,12 +57,12 @@ async function runSelectQueryUsername(username) {
     values: [username],
   });
 
-  // if (results.rowCount === 0) {
-  //   throw new NotFoundError({
-  //     message: "Username informado sem cadastrado no sistema.",
-  //     action: "Utilize outro username para realizar o consulta no sistema.",
-  //   });
-  // }
+  if (results.rowCount === 0 && !isAuthentication) {
+    throw new NotFoundError({
+      message: "Username informado sem cadastrado no sistema.",
+      action: "Utilize outro username para realizar o consulta no sistema.",
+    });
+  }
 
   return results.rows[0];
 }
@@ -120,8 +120,8 @@ async function hashPasswordInObject(userInputValues) {
   userInputValues.password = hashedPassword;
 }
 
-async function findOnByUsername(username) {
-  const result = await runSelectQueryUsername(username);
+async function findOnByUsername(username, isAuthentication = null) {
+  const result = await runSelectQueryUsername(username, isAuthentication);
 
   return result;
 }

@@ -2,7 +2,7 @@ import { createRouter } from "next-connect";
 
 import migrator from "models/migrator";
 import controller from "infra/controller";
-import { STATUS_CODE } from "/types/status-code";
+import { STATUS_CODE } from "types/status-code";
 
 const router = createRouter();
 

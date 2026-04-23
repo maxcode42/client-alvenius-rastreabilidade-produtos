@@ -1,6 +1,6 @@
 import { createRouter } from "next-connect";
 
-import { STATUS_CODE } from "/types/status-code";
+import { STATUS_CODE } from "types/status-code";
 
 import controller from "infra/controller";
 import transfer from "models/transfer";
@@ -44,14 +44,11 @@ async function postHandler(req, res) {
 
   const sessionObject = await session.findOneValidByToken(token);
 
-  // const renewedSessionObject = await session.renew(sessionObject.id,);
-
   const results = await transfer.create(
     sessionObject.token_protheus,
     transferInputValues,
     params,
   );
-
   await controller.setSessionCookie(res, sessionObject.token);
 
   res.setHeader(
