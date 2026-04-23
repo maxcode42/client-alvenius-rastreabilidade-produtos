@@ -183,9 +183,9 @@ const execute = {
     create: async ({ data, tokenProtheus }) => {
       return await handleSend("wsrastreio", "POST", data, tokenProtheus);
     },
-    status: async ({ tokenProtheus }) => {
-      return await handleSend("wsrastreio", "GET", null, tokenProtheus);
-    },
+    // status: async ({ tokenProtheus }) => {
+    //   return await handleSend("wsrastreio", "GET", null, tokenProtheus);
+    // },
   },
   boilermaking: {
     read: async ({ tokenProtheus }) => {
@@ -262,12 +262,21 @@ const execute = {
   },
   transfer: {
     read: async ({ tokenProtheus, params }) => {
-      return await handleSend(
+      const result = await handleSend(
         `wsrastreio/listrom?process=${params}`,
         "GET",
         null,
         tokenProtheus,
       );
+      console.log(">> API PROTHEUS");
+      console.log(result);
+      return result;
+      // return await handleSend(
+      //   `wsrastreio/listrom?process=${params}`,
+      //   "GET",
+      //   null,
+      //   tokenProtheus,
+      // );
     },
     create: async ({ data, tokenProtheus }) => {
       return await handleSend("wsrastreio/list", "POST", data, tokenProtheus);

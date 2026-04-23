@@ -1,6 +1,7 @@
 import controller from "infra/controller";
+import session from "models/session";
 
-export function setupControllerSpy(session) {
+export function setupControllerSpy() {
   return jest
     .spyOn(controller, "setSessionCookie")
     .mockImplementation((res, token) => {

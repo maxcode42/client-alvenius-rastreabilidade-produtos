@@ -15,11 +15,11 @@ export default router.handler(controller.errorHandlers);
 
 async function postHandler(req, res) {
   const userInputValues = req.body;
+
   const authenticatedUser = await authentication.getAuthenticateUser(
     userInputValues.username,
     userInputValues.password,
   );
-
   const result = await session.create(
     authenticatedUser.id,
     authenticatedUser.token_protheus,

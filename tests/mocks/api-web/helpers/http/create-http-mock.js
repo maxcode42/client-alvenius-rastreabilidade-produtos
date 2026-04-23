@@ -79,7 +79,7 @@ function createHttpMock() {
 
       await handler(req, res);
 
-      // 🔥 fallback realista Next.js
+      // fallback realista Next.js
       if (!statusCode) {
         statusCode = STATUS_CODE.SUCCESS;
       }
@@ -106,10 +106,17 @@ function createHttpMock() {
       return headers[key.toLowerCase()];
     },
 
-    headers: {
-      get(key) {
-        return headers[key.toLowerCase()];
-      },
+    getHeaders() {
+      return headers;
+    },
+
+    get headers() {
+      return {
+        ...headers,
+        get(key) {
+          return headers[key.toLowerCase()];
+        },
+      };
     },
   };
 }

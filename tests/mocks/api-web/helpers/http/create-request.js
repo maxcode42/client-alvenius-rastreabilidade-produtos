@@ -13,12 +13,15 @@ function parseCookies(cookieHeader = "") {
 function createRequest({
   method = "GET",
   url = "/",
+  path,
   body = {},
   headers = {},
   query,
   routePattern,
 }) {
-  const parsedUrl = new URL(url, "http://localhost");
+  const resolvedUrl = path || url;
+
+  const parsedUrl = new URL(resolvedUrl, "http://localhost");
 
   const parsedQuery =
     query || Object.fromEntries(parsedUrl.searchParams.entries());
