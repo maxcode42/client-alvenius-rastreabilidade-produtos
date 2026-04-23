@@ -20,11 +20,9 @@ function createRequest({
 }) {
   const parsedUrl = new URL(url, "http://localhost");
 
-  // QUERY
   const parsedQuery =
     query || Object.fromEntries(parsedUrl.searchParams.entries());
 
-  // PARAMS (se você já implementou antes)
   let params = {};
   if (routePattern) {
     const urlSegments = parsedUrl.pathname.split("/").filter(Boolean);
@@ -39,7 +37,6 @@ function createRequest({
     }, {});
   }
 
-  // COOKIE PARSE
   const rawCookie = headers.Cookie || headers.cookie || "";
 
   const cookies = parseCookies(rawCookie);
@@ -47,10 +44,19 @@ function createRequest({
   return {
     method,
     url,
-    headers,
+
     body,
+
+    // 🔥 mantém compatibilidade Next.js real
     query: { ...parsedQuery, ...params },
+
     cookies,
+
+    // 🔥 IMPORTANTE: alguns middlewares usam req.headers.cookie lowercase
+    headers: {
+      ...headers,
+      cookie: rawCookie,
+    },
   };
 }
 

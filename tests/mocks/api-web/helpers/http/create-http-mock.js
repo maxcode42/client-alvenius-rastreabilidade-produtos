@@ -3,10 +3,10 @@ const { STATUS_CODE } = require("types/status-code");
 function createHttpMock() {
   let statusCode;
   let responseBody;
-  const headers = {};
-  const cookies = []; // suporte a múltiplos cookies
 
-  // normalização centralizada de erro (delegando ao padrão do infra/errors)
+  const headers = {};
+  const cookies = [];
+
   function normalizeError(error) {
     if (error instanceof Error && typeof error.toJSON === "function") {
       return error.toJSON();
@@ -29,19 +29,14 @@ function createHttpMock() {
     };
   }
 
-  // serialização recursiva segura
   function serialize(data) {
-    if (data instanceof Error) {
-      return normalizeError(data);
-    }
+    if (data instanceof Error) return normalizeError(data);
 
-    if (Array.isArray(data)) {
-      return data.map(serialize);
-    }
+    if (Array.isArray(data)) return data.map(serialize);
 
     if (data && typeof data === "object") {
       return Object.fromEntries(
-        Object.entries(data).map(([key, value]) => [key, serialize(value)]),
+        Object.entries(data).map(([k, v]) => [k, serialize(v)]),
       );
     }
 
@@ -55,34 +50,39 @@ function createHttpMock() {
     }),
 
     json: jest.fn((data) => {
-      // TRATATIVA CENTRALIZADA
       responseBody = serialize(data);
       return res;
     }),
 
     setHeader: jest.fn((key, value) => {
-      const normalizedKey = key.toLowerCase();
+      const k = key.toLowerCase();
 
-      // tratamento específico para Set-Cookie
-      if (normalizedKey === "set-cookie") {
-        if (Array.isArray(value)) {
-          cookies.push(...value);
-        } else {
-          cookies.push(value);
-        }
-        headers[normalizedKey] = cookies;
+      if (k === "set-cookie") {
+        const values = Array.isArray(value) ? value : [value];
+        cookies.push(...values);
+        headers[k] = cookies;
         return;
       }
 
-      headers[normalizedKey] = value; // evita problema de case
+      headers[k] = value;
     }),
+
+    getHeader: jest.fn((key) => headers[key.toLowerCase()]),
 
     end: jest.fn(),
   };
 
   async function execute(handler, req) {
     try {
+      res.__req = req;
+      req.cookies = req.cookies || {};
+
       await handler(req, res);
+
+      // 🔥 fallback realista Next.js
+      if (!statusCode) {
+        statusCode = STATUS_CODE.SUCCESS;
+      }
     } catch (error) {
       const normalized = normalizeError(error);
 
@@ -97,14 +97,15 @@ function createHttpMock() {
     get status() {
       return statusCode;
     },
+
     async json() {
       return responseBody;
     },
+
     getHeader(key) {
       return headers[key.toLowerCase()];
     },
 
-    // compatibilidade com libs que usam response.headers.get()
     headers: {
       get(key) {
         return headers[key.toLowerCase()];
