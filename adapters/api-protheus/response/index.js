@@ -195,7 +195,7 @@ const execute = {
                   : "--------",
               name:
                 item?.NOME_FORNEC?.trim().length > 0
-                  ? item?.NOME_FORNEC?.trim().concat(" TESTE NOME MUITO GRANDE")
+                  ? item?.NOME_FORNEC?.trim() //.concat(" TESTE NOME MUITO GRANDE")
                   : "----------",
               store:
                 item?.LOJA_FORNEC?.trim().length > 0

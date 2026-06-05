@@ -10,7 +10,9 @@ export default function AlertBody({ message, children }) {
               animation-fill-mode:forwards
             `}
     >
-      <p className={`${message?.length === 0 ?? "hidden"} text-lg`}>
+      <p
+        className={`${message?.length === 0 ?? "hidden"} text-lg whitespace-pre-line truncate`}
+      >
         {message}
       </p>
       {children}

@@ -12,7 +12,7 @@ import { getProtheusBaseURL, isTestEnvironment } from "infra/config/env";
 function fetchWithTimeout(url, options = {}, timeout = 3000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
-
+  console.log(url);
   return fetch(url, {
     ...options,
     signal: controller.signal,
@@ -202,6 +202,16 @@ const execute = {
     find: async ({ params, tokenProtheus }) => {
       return await handleSend(
         `wsrastreio/id?${params}`,
+        "GET",
+        null,
+        tokenProtheus,
+      );
+    },
+  },
+  component: {
+    find: async ({ params, tokenProtheus }) => {
+      return await handleSend(
+        `wsrastreio/product?ccodpro=${params}`,
         "GET",
         null,
         tokenProtheus,

@@ -20,6 +20,9 @@ export default function AlertCustom({
   const { setScannerLocked, setOpenAlert, openAlert, message } = useQRCode();
 
   const alertButtonTypes = {
+    success: <ButtonAlertClose actionClose={handlerActionAlertClose} />,
+    alert: <ButtonAlertClose actionClose={handlerActionAlertClose} />,
+    error: <ButtonAlertClose actionClose={handlerActionAlertClose} />,
     info: <ButtonAlertClose actionClose={handlerActionAlertClose} />,
     form: (
       <ButtonAlertForm
@@ -47,6 +50,18 @@ export default function AlertCustom({
     confirm: {
       class_name: `text-red-600/50`,
       icon: "CircleQuestionMarkIcon",
+    },
+    success: {
+      class_name: `text-green-600/50`,
+      icon: "CircleCheckIcon",
+    },
+    alert: {
+      class_name: `text-yellow-600/50`,
+      icon: "TriangleAlertIcon",
+    },
+    error: {
+      class_name: `text-red-600/50`,
+      icon: "CircleXIcon",
     },
   };
 

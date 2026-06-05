@@ -1,15 +1,18 @@
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 import setCookieParser from "set-cookie-parser";
 
-import { InternalServerError, UnauthorizedError } from "infra/errors";
+// import { InternalServerError, UnauthorizedError } from "infra/errors";
 import { STATUS_CODE } from "types/status-code";
 
 import { setupTest } from "tests/mocks/jest/setup-test";
-import { createRequest } from "tests/mocks/api-web/helpers/http/create-request";
-import { createHttpMock } from "tests/mocks/api-web/helpers/http/create-http-mock";
+// import { createRequest } from "tests/mocks/api-web/helpers/http/create-request";
+// import { createHttpMock } from "tests/mocks/api-web/helpers/http/create-http-mock";
+import orchestrator from "tests/orchestrator";
+import { PROCESS_FLOW } from "types/process-flow";
+import { PROCESS_STATUS } from "types/process-status";
 
 const PATH_URL = "/api/v1/boilermaking";
-const COOKIE_NAME = process.env.COOKIE_NAME;
+// const COOKIE_NAME = process.env.COOKIE_NAME;
 
 jest.spyOn(console, "error").mockImplementation(() => {});
 
@@ -17,7 +20,7 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-const { session, boilermaking } = setupTest({
+const { session } = setupTest({
   models: {
     "models/boilermaking": ["findAll"],
     "models/session": ["findOneValidByToken"],
@@ -26,11 +29,11 @@ const { session, boilermaking } = setupTest({
 });
 
 describe("POST '/api/v1/boilermaking' (controller unit)", () => {
-  let handler;
+  // let handler;
 
-  beforeAll(() => {
-    handler = require("pages/api/v1/boilermaking").default;
-  });
+  // beforeAll(() => {
+  //   handler = require("pages/api/v1/boilermaking").default;
+  // });
 
   describe("Default user", () => {
     test.skip("With valid session and update status", async () => {

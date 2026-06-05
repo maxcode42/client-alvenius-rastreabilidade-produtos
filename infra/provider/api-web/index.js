@@ -69,6 +69,11 @@ const execute = {
       );
     },
   },
+  component: {
+    find: async ({ params }) => {
+      return await handleSend(`${"component"}/${params}`, "GET", null);
+    },
+  },
   coating: {
     read: async () => {
       return await handleSend(PROCESS_FLOW.route.coating.name, "GET", null);

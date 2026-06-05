@@ -49,6 +49,16 @@ const ITENS_MENU = [
     classCss: "justify-center",
     item: [
       {
+        type: "link",
+        name: "Validar QRCode",
+        href: "/validates-qrcode",
+        target: "",
+        key: "valid",
+        text: "Ler QRCode e validar / campos spool e componentes",
+        icon: "QrCodeIcon",
+        // icon: "BoxesIcon",
+      },
+      {
         type: "button",
         name: "Transferência",
         href: "/transfer",
