@@ -174,7 +174,7 @@ export default function QRCodeCamera() {
 
   return (
     <div className="bg-white rounded-md p-2 py-4 mt-4 w-full max-w-md aspect-square relative">
-      <div id={qrRegionId} className="w-full h-full" />
+      <div data-testid={qrRegionId} id={qrRegionId} className="w-full h-full" />
 
       {/* Cantos */}
       <div className="absolute rounded-tl-md top-28 left-24 w-8 h-8 border-t-4 border-l-4 border-blue-500"></div>
