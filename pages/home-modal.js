@@ -173,22 +173,24 @@ function HomeModal() {
         </div>
         <Separator />
 
-        {itens?.map((list, index) => (
-          <div
-            key={index}
-            className={`w-full h-1/2 flex flex-col lg:flex-row gap-2 ${list.classCss}`}
-          >
-            {list.item.map((i) => (
-              <div
-                // key={item?.key.concat(index)}
-                key={i?.key}
-                className="w-full lg:w-1/2 h-32 bg-red"
-              >
-                {buttonType(i)}
-              </div>
-            ))}
-          </div>
-        ))}
+        <ul className="flex flex-col w-full min-w-full">
+          {itens?.map((list, index) => (
+            <li
+              key={index}
+              className={`w-full h-1/2 flex flex-col lg:flex-row gap-2 ${list.classCss}`}
+            >
+              {list.item.map((i) => (
+                <div
+                  // key={item?.key.concat(index)}
+                  key={i?.key}
+                  className="w-full lg:w-1/2 h-32 bg-red"
+                >
+                  {buttonType(i)}
+                </div>
+              ))}
+            </li>
+          ))}
+        </ul>
       </PanelDefault>
       {openModalMenuSelect && (
         <MenuSelect

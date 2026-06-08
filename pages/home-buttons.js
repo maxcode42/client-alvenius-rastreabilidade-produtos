@@ -30,15 +30,16 @@ function HomeButtons() {
         <Separator />
 
         {itens?.map((list, index) => (
-          <div
+          <ul
             key={index}
+            aria-label="list menu"
             className={`w-full h-1/2 flex flex-col sm:flex-row gap-4 ${list.classCss}`}
           >
             {list.item.map((i) => {
               const Icon = Icons[i?.icon];
 
               return (
-                <div
+                <li
                   key={i?.key.concat(index)}
                   className={`w-full sm:w-1/2 ${i?.submenu ? "h-56 min-h-56 mb-2" : "min-h-28 h-28 md:h-56 md:min-h-56 md:flex md:flex-col md:justify-center md:item-center"}`}
                 >
@@ -134,10 +135,10 @@ function HomeButtons() {
                       </div>
                     </ButtonSubMenuPanel>
                   )}
-                </div>
+                </li>
               );
             })}
-          </div>
+          </ul>
         ))}
       </PanelDefault>
     </LayoutPage>
