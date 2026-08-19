@@ -79,12 +79,24 @@ export default function CardItems({ items, children }) {
               item={item}
               action={(e) => openModalQRCode(e, item)}
             >
-              <CardItem item={item} index={index} />
+              <CardItem item={item} index={index}>
+                <p className="w-full px-2 py-2 text-xs sm:text-sm md:text-base text-left">
+                  <small>
+                    <strong>Descrição:</strong> {item?.descricao}
+                  </small>
+                </p>
+              </CardItem>
             </CardItemsButton>
           )}
 
           {displayButtonsOnCard && (
             <CardItem item={item} index={index}>
+              <p className="w-full px-2 py-2 text-xs sm:text-sm md:text-base text-left">
+                <small>
+                  <strong>Descrição:</strong> {item?.descricao}
+                </small>
+              </p>
+
               <CardItemsButtons
                 item={item}
                 action={(e) => openModalQRCode(e, item)}
