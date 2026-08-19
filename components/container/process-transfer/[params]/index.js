@@ -44,8 +44,6 @@ export default function ProcessTransferFlow({ title = "", info = "", route }) {
 
   const fetchData = useCallback(async () => {
     const response = await api.execute[route].read(routeAcronym);
-    console.log(">> TRANSFER");
-    console.log(response);
 
     setItens(response?.results);
     setStatus(response?.status_list);

@@ -345,7 +345,7 @@ function httpSetup({ on }) {
   });
 
   /* MOCK: TRANSFER */
-  on("GET", "/wsrastreio/listrom", async (req, res, { query }) => {
+  on("GET", "/wsrastreio/transfer", async (req, res, { query }) => {
     const { process } = query;
     const STATUS_LIST = [
       {
@@ -472,7 +472,7 @@ function httpSetup({ on }) {
     res.end(JSON.stringify(response.data));
   });
 
-  on("POST", "/wsrastreio/list", async (req, res) => {
+  on("POST", "/wsrastreio/transfer", async (req, res) => {
     const { processo } = req.body;
 
     const responseCreate = {
@@ -499,6 +499,24 @@ function httpSetup({ on }) {
     addHead(req, res, response.status);
 
     res.end(JSON.stringify(response.data));
+  });
+
+  /* MOCK: COMPONENT */
+  on("GET", "/wsrastreio/product", async (req, res, { query }) => {
+    const { ccodpro } = query;
+
+    const objectResponse = {
+      codigo: "FLW21224117Z211",
+      descricao:
+        "FL 711MM SOLTO PR AWWAC207 CLD DES:AMR-1006916-06-ALV-CP0096-0410-PI-SD-00002",
+      message: "Produto cadastrado",
+    };
+
+    if (String(ccodpro).trim() === String(objectResponse.codigo).trim()) {
+      addHead(req, res, STATUS_CODE.SUCCESS);
+
+      res.end(JSON.stringify(objectResponse));
+    }
   });
 }
 

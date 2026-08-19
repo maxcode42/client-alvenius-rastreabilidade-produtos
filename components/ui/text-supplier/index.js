@@ -1,7 +1,7 @@
-export default function TextSupplier({ supplier }) {
+export default function TextSupplier({ title, supplier }) {
   return (
-    <section className="w-full flex flex-col gap-1">
-      <p className="text-md sm:text-lg break-all font-bold">FORNECEDOR</p>
+    <section className="w-full flex flex-col gap-1 px-8">
+      <p className="text-md break-all font-bold">{title}</p>
       <div className="w-full flex flex-row gap-2 justify-between ">
         <p className="w-1/2 flex flex-row gap-1 text-xs max-w-xs break-words line-clamp-2">
           <span className="w-fit min-w-14 flex flex-row justify-between">

@@ -89,8 +89,9 @@ export default function Login() {
           <section className="flex flex-col w-full gap-4">
             <div className="flex flex-col">
               <Input
-                id="code"
+                id="username"
                 type="text"
+                name="username"
                 value={username}
                 label="Usuário"
                 placeholder="Digite seu nome de usuário"
@@ -110,6 +111,7 @@ export default function Login() {
               <Input
                 id="password"
                 type="password"
+                name="password"
                 value={password}
                 label="Senha"
                 placeholder="Digite sua senha"
@@ -129,6 +131,7 @@ export default function Login() {
           <section className="w-full">
             <Button
               type="submit"
+              name="entrar"
               disabled={isSubmitting}
               className={`${isSubmitting ? "disabled:bg-blue-800/50 hover:shadow-blue-600/50" : ""}`}
             >

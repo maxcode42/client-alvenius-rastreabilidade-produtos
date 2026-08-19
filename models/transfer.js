@@ -21,10 +21,22 @@ async function findAll(tokenProtheus, params) {
 async function create(tokenProtheus, transferInputValues, params) {
   const dataObject = {
     spools: transferInputValues.spools,
-    fornecedor: String(transferInputValues?.supplier),
+    fornecedor: {
+      origem: String(transferInputValues?.supplier_origin),
+      destino: String(transferInputValues?.supplier_destination),
+    },
     processo: String(transferInputValues?.process),
     aet: String(transferInputValues?.third),
   };
+  /*
+  "spools": ["SP0414FL005001", "SP0313FL005002"],
+  "processo":"AC",
+  "fornecedor": {
+    "origem": "003385",
+    "destino": "004449"
+  },
+  "aet": "S" | "N"
+  */
 
   const response = await runInsertAPIProtheus({
     data: dataObject,

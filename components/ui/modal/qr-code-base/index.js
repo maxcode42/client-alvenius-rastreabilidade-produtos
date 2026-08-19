@@ -53,7 +53,7 @@ export default function QRCodeBase({ children }) {
   const checkIfCodeExists = useCallback(
     async (code) => {
       if (!checkCodeExists && qrCodeReadingType.length > 1) return true;
-
+      code = code.slice(0, 15);
       let results = null;
 
       if (checkCodeExists && code) {

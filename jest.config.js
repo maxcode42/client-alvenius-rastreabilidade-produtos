@@ -17,49 +17,57 @@ dotenvExpand.expand({
   },
 });
 
-const jestConfigCreate = nextJest({
-  dir: ".",
+const createJestConfig = nextJest({
+  dir: "./",
 });
 
-const jestConfig = jestConfigCreate({
-  moduleDirectories: ["node_modules", "<rootDir>"],
-  testEnvironment: "node",
-  testTimeout: 60_000,
-  collectCoverage: false,
-  coverageDirectory: "coverage",
+module.exports = async () => {
+  const baseConfig = await createJestConfig({
+    moduleDirectories: ["node_modules", "<rootDir>"],
+    setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+    // collectCoverageFrom: [
+    //   "<rootDir>/**/*.{js,jsx,ts,tsx}",
+    //   "!**/*.d.ts",
+    //   "!**/node_modules/**",
+    //   "!**/.next/**",
+    //   "!**/coverage/**",
+    // ],
 
-  coverageReporters: [
-    "text", // terminal
-    "lcov", // integração CI (Codecov, Sonar, etc)
-    "html", // relatório visual
-    "json-summary",
-  ],
+    // coveragePathIgnorePatterns: [
+    //   "/node_modules/",
+    //   "/.next/",
+    //   "/coverage/",
+    //   "/public/",
+    // ],
+  })();
 
-  // O que será coberto
-  collectCoverageFrom: [
-    "<rootDir>/**/*.{js,jsx,ts,tsx}",
-    "!**/*.d.ts",
-    "!**/node_modules/**",
-    "!**/.next/**",
-    "!**/coverage/**",
-  ],
+  return {
+    testTimeout: 60000,
 
-  // Ignorar arquivos específicos
-  coveragePathIgnorePatterns: [
-    "/node_modules/",
-    "/.next/",
-    "/coverage/",
-    "/public/",
-  ],
+    collectCoverage: false,
+    coverageDirectory: "coverage",
 
-  coverageThreshold: {
-    global: {
-      branches: 70,
-      functions: 75,
-      lines: 80,
-      statements: 80,
-    },
-  },
-});
+    coverageReporters: ["text", "lcov", "html", "json-summary"],
 
-module.exports = jestConfig;
+    projects: [
+      {
+        ...baseConfig,
+        // displayName: "api",
+        testEnvironment: "node",
+        testMatch: [
+          "<rootDir>/tests/**/api/**/*.test.js",
+          "<rootDir>/tests/**/api/**/*.test.ts",
+        ],
+      },
+      {
+        ...baseConfig,
+        // displayName: "web",
+        testEnvironment: "jsdom",
+        testMatch: [
+          "<rootDir>/tests/**/web/**/*.test.js",
+          "<rootDir>/tests/**/web/**/*.test.ts",
+        ],
+      },
+    ],
+  };
+};

@@ -103,23 +103,7 @@ const execute = {
     //   return results;
     // }
 
-    // function formatStatus(item) {
-    //   // const status = item?.map((i) => {
-    //   //   return {
-    //   //     acronym: i?.SIGLA,
-    //   //     status_text: i?.STATUS,
-    //   //   };
-    //   // });
-
-    //   // return status;
-    //   const status = item?.map((i) => {
-    //     return i?.SIGLA;
-    //   });
-
-    //   return status;
-    // }
-
-    function formatStatusRandom(item) {
+    function formatStatus(item, item_list) {
       // const status = item?.map((i) => {
       //   return {
       //     acronym: i?.SIGLA,
@@ -128,10 +112,35 @@ const execute = {
       // });
 
       // return status;
-      const results = item?.map((i) => i?.acronym);
+      // const status = item?.map((i) => {
+      //   return i?.SIGLA;
+      // });
+      const status = [];
 
-      return results;
+      for (const i of item_list) {
+        status.push(i.acronym);
+
+        if (i.acronym === item) {
+          break;
+        }
+      }
+
+      return status;
     }
+
+    // function formatStatusRandom(item) {
+    //   // const status = item?.map((i) => {
+    //   //   return {
+    //   //     acronym: i?.SIGLA,
+    //   //     status_text: i?.STATUS,
+    //   //   };
+    //   // });
+
+    //   // return status;
+    //   const results = item?.map((i) => i?.acronym);
+
+    //   return results;
+    // }
 
     function formatObjectStatusList(item) {
       // const status = [
@@ -168,17 +177,17 @@ const execute = {
       return results;
     }
 
-    function getRandomProgressive(statusActive) {
-      // console.log(statusActive);
+    // function getRandomProgressive(statusActive) {
+    //   // console.log(statusActive);
 
-      if (!statusActive?.length) return [];
+    //   if (!statusActive?.length) return [];
 
-      const index = Math.floor(Math.random() * statusActive.length);
+    //   const index = Math.floor(Math.random() * statusActive.length);
 
-      const results = statusActive.slice(0, index + 1);
+    //   const results = statusActive.slice(0, index + 1);
 
-      return results;
-    }
+    //   return results;
+    // }
 
     const status_list = formatObjectStatusList(data?.STATUS_LIST);
 
@@ -190,30 +199,30 @@ const execute = {
           supplier: {
             origin: {
               code:
-                item?.COD_FORNEC?.trim().length > 0
-                  ? item?.COD_FORNEC?.trim()
+                item?.COD_FORNEC1?.trim().length > 0
+                  ? item?.COD_FORNEC1?.trim()
                   : "--------",
               name:
-                item?.NOME_FORNEC?.trim().length > 0
-                  ? item?.NOME_FORNEC?.trim().concat(" TESTE NOME MUITO GRANDE")
+                item?.NOME_FORNEC1?.trim().length > 0
+                  ? item?.NOME_FORNEC1?.trim() //.concat(" TESTE NOME MUITO GRANDE")
                   : "----------",
               store:
-                item?.LOJA_FORNEC?.trim().length > 0
-                  ? item?.LOJA_FORNEC?.trim()
+                item?.LOJA_FORNEC1?.trim().length > 0
+                  ? item?.LOJA_FORNEC1?.trim()
                   : "----",
             },
             destination: {
               code:
-                item?.COD_FORNEC?.trim().length > 0
-                  ? item?.COD_FORNEC?.trim()
+                item?.COD_FORNEC2?.trim().length > 0
+                  ? item?.COD_FORNEC2?.trim()
                   : "--------",
               name:
-                item?.NOME_FORNEC?.trim().length > 0
-                  ? item?.NOME_FORNEC?.trim()
+                item?.NOME_FORNEC2?.trim().length > 0
+                  ? item?.NOME_FORNEC2?.trim()
                   : "----------",
               store:
-                item?.LOJA_FORNEC?.trim().length > 0
-                  ? item?.LOJA_FORNEC?.trim()
+                item?.LOJA_FORNEC2?.trim().length > 0
+                  ? item?.LOJA_FORNEC2?.trim()
                   : "----",
             },
           },
@@ -223,7 +232,13 @@ const execute = {
           revision: item.REVISAO,
           aet: item.AET,
           process: item.PROCESSO,
-          status: getRandomProgressive(formatStatusRandom(status_list)), //formatStatus(item.STATUS), //getRandomProgressive(), //"Aguardando SC",
+          dateStart: item?.DTINI?.trim() ?? "",
+          timeStart: item?.HRINI?.trim() ?? "",
+          dateEnd: item?.DTFIM?.trim() ?? "",
+          timeEnd: item?.HRFIM?.trim() ?? "",
+          status: formatStatus(item.SIGLA, status_list),
+          //status: getRandomProgressive(formatStatusRandom(status_list)), //formatStatus
+          //status: formatStatusRandom(item.STATUS), //formatStatus(item.STATUS), //getRandomProgressive(), //"Aguardando SC",
         };
         return formattedItem;
       }) || [];

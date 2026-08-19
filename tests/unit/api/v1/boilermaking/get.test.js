@@ -31,6 +31,7 @@ describe("GET '/api/v1/boilermaking' (controller unit)", () => {
   beforeAll(() => {
     handler = require("pages/api/v1/boilermaking").default;
   });
+
   describe("Default user", () => {
     test("With valid session and return list", async () => {
       const expiresAtMock = new Date(
