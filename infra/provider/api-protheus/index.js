@@ -200,6 +200,8 @@ const execute = {
       return await handleSend("wsrastreio/new", "POST", data, tokenProtheus);
     },
     find: async ({ params, tokenProtheus }) => {
+      console.log("FIND");
+      console.log(params);
       return await handleSend(
         `wsrastreio/id?${params}`,
         "GET",
@@ -273,13 +275,13 @@ const execute = {
   transfer: {
     read: async ({ tokenProtheus, params }) => {
       const result = await handleSend(
-        `wsrastreio/listrom?process=${params}`,
+        `wsrastreio/transfer?process=${params}`,
         "GET",
         null,
         tokenProtheus,
       );
-      console.log(">> API PROTHEUS");
-      console.log(result);
+      // console.log(">> API PROTHEUS");
+      // console.log(result);
       return result;
       // return await handleSend(
       //   `wsrastreio/listrom?process=${params}`,
@@ -289,7 +291,21 @@ const execute = {
       // );
     },
     create: async ({ data, tokenProtheus }) => {
-      return await handleSend("wsrastreio/list", "POST", data, tokenProtheus);
+      console.log(">> CREATE TRANSFER - API PROTHEUS");
+      console.log(data);
+
+      const results = await handleSend(
+        `wsrastreio/transfer`,
+        "POST",
+        data,
+        tokenProtheus,
+      );
+
+      console.log(">> CREATE TRANSFER - API PROTHEUS RETURN");
+      console.log(results);
+
+      return results;
+      //return await handleSend("wsrastreio/list", "POST", data, tokenProtheus);
     },
   },
 };

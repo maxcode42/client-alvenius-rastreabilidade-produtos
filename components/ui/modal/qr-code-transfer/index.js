@@ -20,7 +20,6 @@ export default function QRCodeTransfer({ data, setData, suppliers }) {
   }
 
   useEffect(() => {
-    console.log(spool);
     if (!spool) return;
 
     setData((prev) => ({
@@ -35,7 +34,7 @@ export default function QRCodeTransfer({ data, setData, suppliers }) {
 
   // CONFIMAR A NECESSIDADE DO USEEFFECT
   useEffect(() => {
-    console.log(data);
+    // console.log(data);
   }, [data]);
 
   return (
@@ -69,9 +68,9 @@ export default function QRCodeTransfer({ data, setData, suppliers }) {
               type="radio"
               id="third-false"
               name="third"
-              value={false}
-              checked={!data?.third}
-              onChange={() => setData({ ...data, third: false })}
+              value={true}
+              checked={data?.third}
+              onChange={() => setData({ ...data, third: true })}
               className={`px-0 py-0 border-none`}
             />
             <Input
@@ -79,10 +78,10 @@ export default function QRCodeTransfer({ data, setData, suppliers }) {
               type="radio"
               id="third-true"
               name="third"
-              value={true}
-              checked={data?.third}
+              value={false}
+              checked={!data?.third}
               // disabled={!data?.third}
-              onChange={() => setData({ ...data, third: true })}
+              onChange={() => setData({ ...data, third: false })}
               className={`px-0 py-0 border-none`}
             />
           </div>
@@ -95,7 +94,7 @@ export default function QRCodeTransfer({ data, setData, suppliers }) {
            
             `}
         >
-          <label className={`${!data.third ? "disabled text-stone-400" : ""}`}>
+          <label className={`${data.third ? "disabled text-stone-400" : ""}`}>
             Origem Terceiro:
           </label>
           <select
@@ -105,7 +104,7 @@ export default function QRCodeTransfer({ data, setData, suppliers }) {
             border-2 border-stone-300/50 placeholder:text-gray-400 
             focus:border-blue-600/50 focus:ring-0 focus:ring-blue-200 
             focus:shadow-md focus:shadow-blue-300/50 w-full
-             ${!data.third ? "disabled text-stone-400" : ""}
+             ${data.third ? "disabled text-stone-400" : ""}
             `}
             onChange={(e) =>
               setData({
@@ -115,7 +114,7 @@ export default function QRCodeTransfer({ data, setData, suppliers }) {
                 ),
               })
             }
-            disabled={!data?.third}
+            disabled={data?.third}
           >
             <option className="">Selecione...</option>
             {suppliers?.origin?.map((item) => (

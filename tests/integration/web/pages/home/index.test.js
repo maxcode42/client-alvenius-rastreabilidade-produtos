@@ -49,6 +49,7 @@ describe("Home (Page)", () => {
       expect(menuItens).toBeVisible();
       expect(items).toHaveLength(itens.length);
 
+      /* eslint-disable jest/no-conditional-expect */
       itens.forEach((group) => {
         group.item.forEach(async (item) => {
           pushMock.mockClear();

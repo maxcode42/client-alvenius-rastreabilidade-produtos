@@ -345,7 +345,7 @@ function httpSetup({ on }) {
   });
 
   /* MOCK: TRANSFER */
-  on("GET", "/wsrastreio/listrom", async (req, res, { query }) => {
+  on("GET", "/wsrastreio/transfer", async (req, res, { query }) => {
     const { process } = query;
     const STATUS_LIST = [
       {
@@ -472,7 +472,7 @@ function httpSetup({ on }) {
     res.end(JSON.stringify(response.data));
   });
 
-  on("POST", "/wsrastreio/list", async (req, res) => {
+  on("POST", "/wsrastreio/transfer", async (req, res) => {
     const { processo } = req.body;
 
     const responseCreate = {

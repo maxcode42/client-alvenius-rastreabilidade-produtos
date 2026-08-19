@@ -36,6 +36,7 @@ describe("POST '/api/v1/boilermaking' (controller unit)", () => {
   // });
 
   describe("Default user", () => {
+    // eslint-disable-next-line jest/no-disabled-tests
     test.skip("With valid session and update status", async () => {
       const createRegisterObject = await orchestrator.createRegisterObject();
       const sessionAuth = await orchestrator.createAuth();
@@ -95,6 +96,7 @@ describe("POST '/api/v1/boilermaking' (controller unit)", () => {
         path: "/",
       });
     });
+    // eslint-disable-next-line jest/no-disabled-tests
     test.skip("With valid session and does not update status", async () => {
       const createRegisterObject = await orchestrator.createRegisterObject();
       const sessionAuth = await orchestrator.createAuth();

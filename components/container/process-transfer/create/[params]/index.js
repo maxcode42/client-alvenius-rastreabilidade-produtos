@@ -64,7 +64,7 @@ export default function ProcessTransferCreate({
     supplier_origin: null,
     spools: null,
     process: null,
-    third: true,
+    third: false,
   });
 
   function openModalQRCode(e) {
@@ -206,7 +206,12 @@ export default function ProcessTransferCreate({
         <Separator />
 
         <HeaderPageText>
-          <TextSupplier supplier={data?.supplier} />
+          <h2 className="text-md sm:text-lg break-all font-bold pb-2">
+            FORNECEDOR
+          </h2>
+          <TextSupplier title="Origem" supplier={data?.supplier_origin} />
+          <br />
+          <TextSupplier title="Destino" supplier={data?.supplier_destination} />
         </HeaderPageText>
 
         <div className={`flex flex-col justify-center gap-1 py-4`}>
@@ -217,7 +222,7 @@ export default function ProcessTransferCreate({
             />
             Serviço realizado por terceiro?
           </label>
-          <p className="px-8">{data?.third ? "SIM" : "NÃO"}</p>
+          <p className="px-8">{!data?.third ? "SIM" : "NÃO"}</p>
         </div>
 
         <PanelPrimary className="mt-2">

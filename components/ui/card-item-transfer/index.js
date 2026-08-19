@@ -332,7 +332,7 @@ export default function CardItemTransfer({ item, status, index, children }) {
 
               <p className="w-full text-left px-2 py-1 text-xs sm:text-sm md:text-base">
                 <strong>Fornecedor: </strong>
-                {item?.supplier}
+                {item?.supplier?.origin?.name}
               </p>
 
               <div className="flex flex-row w-full items-center justify-between px-2 py-1">
@@ -444,5 +444,5 @@ export default function CardItemTransfer({ item, status, index, children }) {
   }
 
   return typeLayoutStatus("status");
-  // return typeLayoutStatus("status_badge");
+  //return typeLayoutStatus("status_badge");
 }
