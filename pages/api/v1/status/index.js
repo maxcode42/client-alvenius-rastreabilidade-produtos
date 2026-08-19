@@ -1,9 +1,10 @@
 import { createRouter } from "next-connect";
 
-import database from "/infra/database";
+import database from "infra/database";
 import controller from "infra/controller";
 
 import { STATUS_CODE } from "types/status-code";
+import apiProtheus from "infra/provider/api-protheus";
 
 const router = createRouter();
 
@@ -33,16 +34,37 @@ async function getHandler(_, res) {
   const databaseOpenedConnectionsValue =
     databaseOpenedConnectionsResults.rows[0].count;
 
+  const statusAPIProtheus = await callAPIProtheus();
+
   const results = {
     updated_at: updatedAt,
     dependencies: {
       database: {
         version: databaseVersionValue,
-        max_connection: databaseMaxConnectionsValue,
+        max_connections: databaseMaxConnectionsValue,
         opened_connections: databaseOpenedConnectionsValue,
+      },
+      integration: {
+        api_external: {
+          erp: statusAPIProtheus,
+        },
       },
     },
   };
+
+  async function callAPIProtheus() {
+    try {
+      const response = await apiProtheus.execute.status.get();
+
+      return await response;
+    } catch (error) {
+      if (error instanceof Error && typeof error.toJSON === "function") {
+        return error.toJSON();
+      }
+
+      return error;
+    }
+  }
 
   res.status(STATUS_CODE.SUCCESS).json(results);
 }

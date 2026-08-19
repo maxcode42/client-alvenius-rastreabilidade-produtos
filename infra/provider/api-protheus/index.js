@@ -1,3 +1,4 @@
+import retry from "async-retry";
 import {
   InternalServerError,
   NotFoundError,
@@ -6,25 +7,85 @@ import {
 import { PROCESS_FLOW } from "types/process-flow";
 import { STATUS_CODE } from "types/status-code";
 
-const baseURL = process.env.API_PROTHEUS_BASE_URL;
+import { getProtheusBaseURL, isTestEnvironment } from "infra/config/env";
 
-async function handleSend(path, method, dataObject, token) {
-  const response = await fetch(`${baseURL}/${path}`, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : "",
-    },
-    body: dataObject ? JSON.stringify(dataObject) : null,
-  });
+function fetchWithTimeout(url, options = {}, timeout = 3000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
 
-  const result = await handlerResponse(response);
-
-  return result;
+  return fetch(url, {
+    ...options,
+    signal: controller.signal,
+  }).finally(() => clearTimeout(id));
 }
 
-async function handlerResponse(response) {
+async function handleSend(path, method, dataObject, token) {
+  const getBaseURL = getProtheusBaseURL();
+  const protheusStatusAPI = path === "status";
   try {
+    return await retry(fetchExternalAPI, {
+      retries: isTestEnvironment() ? 1 : 10,
+      minTimeout: 100,
+      maxTimeout: 1000,
+    });
+  } catch (error) {
+    console.error("[PROTHEUS FINAL ERROR]", error.message);
+
+    await handlerResponse(error, protheusStatusAPI);
+    // throw new ServiceError({
+    //   cause: error,
+    //   message: "Falha na comunicação com API externa.",
+    // });
+  }
+
+  // async function fetchExternalAPI(attempt) {
+  async function fetchExternalAPI() {
+    const normalizedPath = protheusStatusAPI ? "" : path;
+
+    try {
+      const response = await fetchWithTimeout(
+        `${getBaseURL}/${normalizedPath}`,
+        {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+          body: dataObject ? JSON.stringify(dataObject) : null,
+        },
+        3000,
+      );
+
+      return await handlerResponse(response, protheusStatusAPI);
+    } catch (error) {
+      // console.log(`[RETRY] tentativa ${attempt} falhou`);
+      console.log(`[RETRY] tentativa falhou`);
+      throw error;
+    }
+  }
+}
+
+async function handlerResponse(response, protheusStatusAPI) {
+  try {
+    if (
+      response.status !== STATUS_CODE.UNAUTHORIZED &&
+      response.status !== STATUS_CODE.SUCCESS &&
+      response.status !== STATUS_CODE.CREATE
+    ) {
+      throw new NotFoundError({
+        message: "Um error interno inesperado ocorreu na request externa.",
+        action: "Contate suporte tecnico.",
+      });
+    }
+    if (response.status === STATUS_CODE.SUCCESS && protheusStatusAPI) {
+      const responseBodyDefault = {
+        status_code: Number(response?.status),
+        message: "Status comunicação realizado com api externa.",
+      };
+
+      return responseBodyDefault;
+    }
+
     const responseBody = await response?.json();
 
     if (Number(responseBody?.status_code) === STATUS_CODE.UNAUTHORIZED) {
@@ -102,6 +163,11 @@ async function handlerResponse(response) {
 }
 
 const execute = {
+  status: {
+    get: async () => {
+      return await handleSend("status", "GET", null, null);
+    },
+  },
   session: {
     create: async ({ data }) => {
       const params = new URLSearchParams(data);
@@ -117,9 +183,9 @@ const execute = {
     create: async ({ data, tokenProtheus }) => {
       return await handleSend("wsrastreio", "POST", data, tokenProtheus);
     },
-    status: async ({ tokenProtheus }) => {
-      return await handleSend("wsrastreio", "GET", null, tokenProtheus);
-    },
+    // status: async ({ tokenProtheus }) => {
+    //   return await handleSend("wsrastreio", "GET", null, tokenProtheus);
+    // },
   },
   boilermaking: {
     read: async ({ tokenProtheus }) => {
@@ -196,26 +262,25 @@ const execute = {
   },
   transfer: {
     read: async ({ tokenProtheus, params }) => {
-      const results = await handleSend(
+      const result = await handleSend(
         `wsrastreio/listrom?process=${params}`,
         "GET",
         null,
         tokenProtheus,
       );
-
-      return results;
+      console.log(">> API PROTHEUS");
+      console.log(result);
+      return result;
+      // return await handleSend(
+      //   `wsrastreio/listrom?process=${params}`,
+      //   "GET",
+      //   null,
+      //   tokenProtheus,
+      // );
     },
     create: async ({ data, tokenProtheus }) => {
       return await handleSend("wsrastreio/list", "POST", data, tokenProtheus);
     },
-    // find: async ({ params, tokenProtheus }) => {
-    //   return await handleSend(
-    //     `wsrastreio/id?${params}`,
-    //     "GET",
-    //     null,
-    //     tokenProtheus,
-    //   );
-    // },
   },
 };
 
@@ -224,33 +289,3 @@ const apiProtheus = {
 };
 
 export default apiProtheus;
-
-/*
- "CODIGO": "000001",
-          "SPOOL": "SP041500345003 ",
-          "FORNECEDOR": "005436",
-          "LOJA": "01",
-          "NUM_SC": "      ", // STATUS EM TRANSITO  e PROCESSO Aguardando SC  EM BRANCO | PRECHIDO STATUS EM TRANSITO  e PROCESSO Aguardando pedido
-          "PEDIDO": "      ", // PRECHIDO PEDIDO STATUS EM TRANSITO  e PROCESSO Aguardando romaneio
-          "ROMANEIO": "      ", // PRECHIDO ROMANEIO STATUS EM TRANSITO  e PROCESSO Aguardando nota
-          "REVISAO": "  ",
-          "AET": "S",
-          "PROCESSO": "CA"
-
-    JSON:  {
-      "CODIGO": "000001",
-      "SPOOL": ["SP041500345003 ", "SP041500345003 "],
-      "FORNECEDOR": "005436",
-      "LOJA": "01",
-      "NUM_SC": "      ",
-      "PEDIDO": "      ",
-      "ROMANEIO": "      ",
-      "REVISAO": "  ",
-      "NOTA": "",
-      "SERIE": "",
-      "AET": "S",
-      "PROCESSO": "CA",
-      "STATUS": ["SC", "PD", "RO"],
-      "STATUS_MESSAGE": ["Aguardando SC", "Aguardando Pedido", "Aguardando Romaneio"
-    },
-*/

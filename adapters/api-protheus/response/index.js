@@ -71,7 +71,7 @@ const execute = {
           name: item.NOME,
           boolikings: item.CALDERARIA,
           coating: item.REVESTIMENTO,
-          pincture: item.PINCTURE,
+          painting: item.PINTURA,
         };
         return formattedItem;
       }) || [];
@@ -82,10 +82,15 @@ const execute = {
     return results;
   },
   parseTransfer: async (data) => {
-    console.log(">>API PROTHEUS TRANSFER PARSE OBJECTS");
+    // console.log(">>API PROTHEUS TRANSFER PARSE OBJECTS");
 
-    console.log(data);
-
+    // console.log(data);
+    if (!data || !data?.objects || data?.objects.length === 0) {
+      return {
+        status_list: [],
+        results: [],
+      };
+    }
     // const statusActive = ["SC", "AP", "AN", "NT"];
 
     // function getRandomProgressive() {

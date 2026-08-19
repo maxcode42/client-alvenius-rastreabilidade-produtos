@@ -33,6 +33,7 @@ export function AuthProvider({ children }) {
   const router = useRouter();
 
   const [openAlertAuth, setOpenAlertAuth] = useState(false);
+  const [openAlertError, setOpenAlertError] = useState(false);
   const [refreshInterval, setRefreshInterval] = useState(0);
   const [hasAuthenticated, setHasAuthenticated] = useState(false);
 
@@ -69,9 +70,14 @@ export function AuthProvider({ children }) {
       data: { username, password },
     });
 
-    if (result?.status_code === STATUS_CODE.SERVER_ERROR) {
+    // if (result?.status_code === STATUS_CODE.SERVER_ERROR) {
+    if (
+      result?.status_code !== STATUS_CODE.UNAUTHORIZED &&
+      result?.status_code !== STATUS_CODE.CREATE &&
+      !result?.token
+    ) {
       setMessage(`${result.action} ${result.message}`);
-      setOpenAlertAuth(true);
+      setOpenAlertError(true);
       setOpenAlert(true);
       return result;
     }
@@ -139,6 +145,17 @@ export function AuthProvider({ children }) {
           clearLogout();
           setOpenAlertAuth(false);
         }}
+        title="Informação"
+        type="info"
+      />
+    );
+  }
+
+  if (openAlertError && currentRoute === "/login") {
+    return (
+      <AlertCustom
+        action={null}
+        actionClose={() => setOpenAlertError(false)}
         title="Informação"
         type="info"
       />

@@ -20,7 +20,6 @@ async function postHandler(req, res) {
     userInputValues.username,
     userInputValues.password,
   );
-
   const result = await session.create(
     authenticatedUser.id,
     authenticatedUser.token_protheus,

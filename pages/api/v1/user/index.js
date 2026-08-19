@@ -16,9 +16,6 @@ async function getHandler(req, res) {
 
   const sessionObject = await session.findOneValidByToken(token);
 
-  //await session.findOneValidByTokenProtheus(sessionObject.token_protheus);
-  //const renewedSessionObject = await session.renew(sessionObject.id);
-
   const result = await user.findOnById(sessionObject.user_id);
 
   await controller.setSessionCookie(res, sessionObject.token);

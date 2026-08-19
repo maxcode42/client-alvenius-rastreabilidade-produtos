@@ -18,9 +18,16 @@ import apiProtheus from "infra/provider/api-protheus";
 //   }
 // }
 
-async function findUserByUsername(providedUsername, providedPassword) {
+async function findUserByUsername(
+  providedUsername,
+  providedPassword,
+  isAuthentication,
+) {
   try {
-    let result = await user.findOnByUsername(providedUsername);
+    let result = await user.findOnByUsername(
+      providedUsername,
+      isAuthentication,
+    );
 
     if (!result) {
       result = await user.create({
@@ -42,14 +49,6 @@ async function findUserByUsername(providedUsername, providedPassword) {
 }
 
 async function sendUserByUsernameProtheus(providedUsername, providedPassword) {
-  // try {
-  // const response = await apiProtheus.sendAuthenticateUser({
-  //   data: {
-  //     grant_type: "password",
-  //     username: providedUsername,
-  //     password: providedPassword,
-  //   },
-  // });
   const response = await apiProtheus.execute.session.create({
     data: {
       grant_type: "password",
@@ -64,8 +63,13 @@ async function sendUserByUsernameProtheus(providedUsername, providedPassword) {
       action: "Verifique se o dado enviado está correto.",
     });
   }
+  const isAuthentication = !!response?.access_token;
 
-  let getUser = await findUserByUsername(providedUsername, providedPassword);
+  let getUser = await findUserByUsername(
+    providedUsername,
+    providedPassword,
+    isAuthentication,
+  );
 
   const results = {
     ...getUser,
@@ -77,10 +81,6 @@ async function sendUserByUsernameProtheus(providedUsername, providedPassword) {
 
 async function getAuthenticateUser(providedUsername, providedPassword) {
   try {
-    // const result = await findUserByUsername(providedUsername);
-    // await validatePassword(providedPassword, result.password);
-
-    // return { ...result, token_protheus: result.id };
     const results = await sendUserByUsernameProtheus(
       providedUsername,
       providedPassword,
