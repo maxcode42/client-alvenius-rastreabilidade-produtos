@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArchiveXIcon, PlusCircleIcon } from "lucide-react";
 
+//import LayoutPage from "../../../../components/layout-page";
 import LayoutPage from "components/layout-page";
 import Search from "components/ui/search";
 import Loading from "components/ui/loading";
@@ -17,6 +18,7 @@ import { PROCESS_FLOW } from "types/process-flow";
 
 import { useQRCode } from "hooks/qr-code-context";
 
+// import api from "infra/provider/api-web";
 import api from "infra/provider/api-web";
 
 export default function ProcessTransferFlow({ title = "", info = "", route }) {
@@ -43,7 +45,7 @@ export default function ProcessTransferFlow({ title = "", info = "", route }) {
   const routeName = PROCESS_FLOW.name[routeAcronym];
 
   const fetchData = useCallback(async () => {
-    const response = await api.execute[route].read(routeAcronym);
+    const response = await api.execute[route].process.read(routeAcronym);
 
     setItens(response?.results);
     setStatus(response?.status_list);
@@ -125,7 +127,7 @@ export default function ProcessTransferFlow({ title = "", info = "", route }) {
           <div className="w-1/2 md:w-1/4 sm:w-full h-16 flex gap-4 flex-row">
             <Link
               alt="criar transfêrencia"
-              href={`/transfer/create?params=${params}`}
+              href={`/transfer/process/${params}/create`}
               className="w-full py-4 mt-2 rounded-sm text-lg text-center flex flex-row gap-2 
                 justify-center items-center bg-blue-700 text-blue-100  
                 hover:bg-blue-800 hover:text-blue-100 hover:shadow-blue-600/50 hover:shadow-md
@@ -180,7 +182,11 @@ export default function ProcessTransferFlow({ title = "", info = "", route }) {
           )}
 
           {!loading && (
-            <CardItemsTransfer items={itensFiltered} status={status}>
+            <CardItemsTransfer
+              items={itensFiltered}
+              status={status}
+              types="process"
+            >
               {/* <QuantitiesItens data={quantities} /> */}
             </CardItemsTransfer>
           )}

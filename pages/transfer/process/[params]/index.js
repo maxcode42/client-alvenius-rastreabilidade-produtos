@@ -1,8 +1,8 @@
-import ProcessTransfer from "components/container/process-transfer/[params]";
+import ProcessTransfer from "../../../../components/container/process-transfer/process/[params]";
 
 import { PROCESS_FLOW } from "types/process-flow";
 
-import withAuth from "../../auth/auth-with";
+import withAuth from "../../../../auth/auth-with";
 
 function Transfer() {
   return (

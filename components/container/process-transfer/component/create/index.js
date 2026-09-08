@@ -1,5 +1,4 @@
-import { useRouter } from "next/router";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useRouter, useCallback } from "react";
 import {
   SaveIcon,
   QrCodeIcon,
@@ -14,20 +13,20 @@ import Separator from "components/ui/separator";
 import PanelDefault from "components/ui/panel-default";
 import PanelPrimary from "components/ui/panel-primary";
 import HeaderPageTitle from "components/header-page-title";
-import HeaderPageText from "components/header-page-text";
-import TextSupplier from "components/ui/text-supplier";
-import TableTransfer from "components/ui/table-transfer";
-import QRCodeTransfer from "components/ui/modal/qr-code-transfer";
+import QRCodeTransfer from "components/ui/modal/qr-code-transfer-component";
 
 import { QRCODE_TYPES } from "types/qr-code-reading";
-import { PROCESS_FLOW } from "types/process-flow";
 import { STATUS_CODE } from "types/status-code";
 
 import { useQRCode } from "hooks/qr-code-context";
 
 import api from "infra/provider/api-web";
+import HeaderPageText from "components/header-page-text";
+import TextSupplier from "components/ui/text-supplier";
+import TableTransfer from "components/ui/table-transfer";
+import { PROCESS_FLOW } from "types/process-flow";
 
-export default function ProcessTransferCreate({
+export default function ProcessTransferComponentCreate({
   title = "",
   info = "",
   route,
@@ -53,11 +52,11 @@ export default function ProcessTransferCreate({
   const [openAlertInfo, setOpenAlertInfo] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const router = useRouter();
-  const { params } = router.query;
+  // const router = useRouter();
+  const { params } = "CA"; //router.query;
 
-  const routeAcronym = PROCESS_FLOW.route[params].acronym;
-  const routeName = PROCESS_FLOW.name[routeAcronym];
+  const routeAcronym = ""; //PROCESS_FLOW.route[params].acronym;
+  const routeName = ""; //PROCESS_FLOW.name[routeAcronym];
   const [suppliers, setSuppliers] = useState(null);
   const [data, setData] = useState({
     supplier_destination: null,
@@ -82,22 +81,23 @@ export default function ProcessTransferCreate({
   }
 
   function resetDataDefault() {
-    setQrCodeReadingType([QRCODE_TYPES.spool]);
+    setQrCodeReadingType([QRCODE_TYPES.component]);
     setCheckCodeExists(false);
     setNewStatus(null);
     setResult(null);
   }
 
   function clearData() {
-    setQrCodeReadingType([QRCODE_TYPES.spool]);
+    setQrCodeReadingType([QRCODE_TYPES.component]);
     //setOpenAlertInfo(false);
     setCurrentSpool(null);
     setSpool(null);
     setData({
       supplier_destination: null,
       supplier_origin: null,
-      spools: null,
       process: null,
+      spools: null,
+      itens: null,
       third: true,
     });
   }
@@ -126,9 +126,9 @@ export default function ProcessTransferCreate({
 
       const results = await api.execute[
         PROCESS_FLOW.route.transfer.name
-      ].create({
+      ].component.create({
         data: {
-          spools: data?.spools,
+          itens: data?.itens,
           process: data?.process,
           third: data?.third ? "S" : "N",
           supplier_origin: data?.supplier_origin?.code,
@@ -156,8 +156,8 @@ export default function ProcessTransferCreate({
   const fetchData = useCallback(async () => {
     const route_supplier = PROCESS_FLOW.route.supplier.name;
     const acronym = {
-      current: PROCESS_FLOW.route[params].acronym,
-      next: PROCESS_FLOW.route[params].acronym_next,
+      current: "CA", //PROCESS_FLOW.route[params].acronym,
+      next: "RR", //PROCESS_FLOW.route[params].acronym_next,
     };
 
     const supplier_origin = await api.execute[route_supplier].read(
@@ -176,7 +176,7 @@ export default function ProcessTransferCreate({
   }, []);
 
   const assignDefaultStandards = useCallback(() => {
-    setQrCodeReadingType([QRCODE_TYPES.spool]);
+    setQrCodeReadingType([QRCODE_TYPES.component]);
     setData({ ...data, process: routeAcronym });
     fetchData();
 
@@ -226,7 +226,7 @@ export default function ProcessTransferCreate({
         </div>
 
         <PanelPrimary className="mt-2">
-          <TableTransfer items={data?.spools} />
+          <TableTransfer items={data?.itens} title="Componentes" />
         </PanelPrimary>
 
         <section className="w-full sm:w-full h-16 flex gap-2 flex-row">
@@ -237,7 +237,7 @@ export default function ProcessTransferCreate({
 
           <Button
             onClick={(e) => handleConfirmClear(e)}
-            disabled={!data?.spools && !data?.supplier}
+            disabled={!data?.itens && !data?.supplier}
             className={
               "bg-red-500 text-red-100  hover:bg-red-700 hover:text-stone-100 hover:shadow-red-600 disabled:bg-stone-300 disabled:shadow-none"
             }
@@ -247,7 +247,7 @@ export default function ProcessTransferCreate({
           </Button>
 
           <Button
-            disabled={(!data?.spools && !data?.supplier) || loading}
+            disabled={(!data?.itens && !data?.supplier) || loading}
             onClick={(e) => handlerData(e)}
             className={
               "bg-green-500 text-green-100  hover:bg-green-700 hover:text-stone-100 hover:shadow-green-600 disabled:bg-stone-300 disabled:shadow-none"
@@ -266,7 +266,12 @@ export default function ProcessTransferCreate({
       </PanelDefault>
 
       {openQRCode && (
-        <QRCodeTransfer data={data} setData={setData} suppliers={suppliers} />
+        <QRCodeTransfer
+          data={data}
+          setData={setData}
+          suppliers={suppliers}
+          types="componente"
+        />
       )}
 
       {openAlertQuestion && (

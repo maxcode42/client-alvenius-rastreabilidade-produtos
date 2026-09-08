@@ -195,7 +195,7 @@ const execute = {
       data?.objects?.map((item) => {
         const formattedItem = {
           code: item.CODIGO,
-          spools: item.SPOOLS,
+          codes: item.ITENS,
           supplier: {
             origin: {
               code:

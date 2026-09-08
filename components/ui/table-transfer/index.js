@@ -1,4 +1,4 @@
-export default function TableTransfer({ items }) {
+export default function TableTransfer({ items, title = "Spools" }) {
   // if (!items || items.length === 0) return null;
 
   return (
@@ -9,7 +9,7 @@ export default function TableTransfer({ items }) {
             colSpan={3}
             className="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-stone-600 border-b-[.1rem] border-stone-100"
           >
-            Spools
+            {title}
           </th>
         </tr>
         <tr className="bg-stone-200">

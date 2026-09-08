@@ -21,6 +21,7 @@ async function handlerResponse(response) {
     response.status === STATUS_CODE.UNAUTHORIZED ||
     response.status === STATUS_CODE.NOT_FOUND
   ) {
+    //if (response.status === STATUS_CODE.UNAUTHORIZED) {
     dispatchUnauthorized();
   }
 
@@ -115,28 +116,54 @@ const execute = {
     },
   },
   transfer: {
-    read: async (params) => {
-      // return await handleSend(`${PROCESS_FLOW.route.supplier.name}/${params}`, "GET", null);
-      return await handleSend(
-        `${PROCESS_FLOW.route.transfer.name}/${params}`,
-        "GET",
-        null,
-      );
+    process: {
+      read: async (params) => {
+        // return await handleSend(`${PROCESS_FLOW.route.supplier.name}/${params}`, "GET", null);
+        return await handleSend(
+          `${PROCESS_FLOW.route.transfer.name}/process/${params}`,
+          "GET",
+          null,
+        );
+      },
+      create: async ({ data, params }) => {
+        return await handleSend(
+          `${PROCESS_FLOW.route.transfer.name}/process/${params}`,
+          "POST",
+          data,
+        );
+      },
+      // find: async ({ params }) => {
+      //   return await handleSend(
+      //     `${PROCESS_FLOW.route.transfer.name}/${params}`,
+      //     "GET",
+      //     null,
+      //   );
+      // },
     },
-    create: async ({ data, params }) => {
-      return await handleSend(
-        `${PROCESS_FLOW.route.transfer.name}/${params}`,
-        "POST",
-        data,
-      );
+    component: {
+      read: async (params) => {
+        // return await handleSend(`${PROCESS_FLOW.route.supplier.name}/${params}`, "GET", null);
+        return await handleSend(
+          `${PROCESS_FLOW.route.transfer.name}/${PROCESS_FLOW.route.component.name}`,
+          "GET",
+          null,
+        );
+      },
+      create: async ({ data, params }) => {
+        return await handleSend(
+          `${PROCESS_FLOW.route.transfer.name}/${PROCESS_FLOW.route.component.name}`,
+          "POST",
+          data,
+        );
+      },
+      // find: async ({ params }) => {
+      //   return await handleSend(
+      //     `transfer/${PROCESS_FLOW.route.component.name}/${params}`,
+      //     "GET",
+      //     null,
+      //   );
+      // },
     },
-    // find: async ({ params }) => {
-    //   return await handleSend(
-    //     `${PROCESS_FLOW.route.supplier.name}/${params}`,
-    //     "GET",
-    //     null,
-    //   );
-    // },
   },
 };
 

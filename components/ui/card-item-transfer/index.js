@@ -9,7 +9,13 @@ import { formatSixDigits } from "util/formatters/numeric";
 import { formatCodeDefault } from "util/formatters/code";
 import { formatDateCustom } from "util/formatters/date";
 
-export default function CardItemTransfer({ item, status, index, children }) {
+export default function CardItemTransfer({
+  item,
+  index,
+  status,
+  types = "process",
+  children,
+}) {
   const [expandItemIndex, setExpandItemIndex] = useState(null);
   const statusList = useMemo(
     () => [
@@ -57,7 +63,7 @@ export default function CardItemTransfer({ item, status, index, children }) {
     [],
   );
 
-  if (!item || item?.spools?.length === 0) return null;
+  if (!item || item?.codes?.length === 0) return null;
 
   function onExpandDetails(e, index) {
     e.preventDefault();
@@ -163,9 +169,13 @@ export default function CardItemTransfer({ item, status, index, children }) {
 
               <div>
                 <div className="flex flex-row w-full gap-4 justify-start items-center">
-                  <p className="w-10 lg:w-12 px-2 text-xs sm:text-sm md:text-base text-left">
+                  <p
+                    className={`${types === "process" ? "w-10 lg:w-12" : "w-16 lg:w-24"} px-2 text-xs sm:text-sm md:text-base text-left`}
+                  >
                     <small>
-                      <strong>Spools:</strong>
+                      <strong>
+                        {types === "process" ? "Spools" : "Componentes"}:
+                      </strong>
                     </small>
                   </p>
                   <Button
@@ -212,9 +222,9 @@ export default function CardItemTransfer({ item, status, index, children }) {
                   </Button>
                 </div>
                 {expandItemIndex &&
-                  item?.spools?.map((spool, index) => (
+                  item?.codes?.map((code, index) => (
                     <div
-                      key={spool.concat(index)}
+                      key={code.concat(index)}
                       className={`grid grid-cols-[1fr_auto] items-center gap-1 w-full
                     opacity-0
                     translate-y-4
@@ -224,11 +234,12 @@ export default function CardItemTransfer({ item, status, index, children }) {
                   `}
                     >
                       <p
-                        key={String(index).concat(spool)}
+                        key={String(index).concat(code)}
                         className={`w-full flex flex-col px-4 text-xs sm:text-sm md:text-base text-left`}
                       >
                         <small>
-                          <strong>codigo:</strong> {formatCodeDefault(spool)}
+                          <strong>codigo:</strong>{" "}
+                          {types === "process" ? formatCodeDefault(code) : code}
                         </small>
                       </p>
                     </div>

@@ -3,7 +3,7 @@ import { render, screen, within } from "libs/test-utils";
 
 import { mockedUseAuth, mockQRCodeBase } from "tests/mocks/index.js";
 
-import Home from "pages";
+import Home from "pages/index";
 import { ITENS_MENU } from "types/menu-itens";
 
 const pushMock = jest.fn();
@@ -29,7 +29,20 @@ describe("Home (Page)", () => {
   });
   describe("Default user", () => {
     test("should render home with menu for valid session", async () => {
-      const itens = ITENS_MENU;
+      const itensMenuFilter = ITENS_MENU.reduce((acc, group) => {
+        const items = group.item.filter((item) => item.hidden !== true);
+
+        if (items.length > 0) {
+          acc.push({
+            ...group,
+            item: items,
+          });
+        }
+
+        return acc;
+      }, []);
+
+      const itens = itensMenuFilter;
       mockQRCodeBase({
         openQRCodeBase: false,
         openQRCode: false,

@@ -9,6 +9,8 @@ import { STATUS_CODE } from "types/status-code";
 
 import { getProtheusBaseURL, isTestEnvironment } from "infra/config/env";
 
+const getIsTestEnvironment = isTestEnvironment();
+
 function fetchWithTimeout(url, options = {}, timeout = 3000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
@@ -22,11 +24,12 @@ function fetchWithTimeout(url, options = {}, timeout = 3000) {
 async function handleSend(path, method, dataObject, token) {
   const getBaseURL = getProtheusBaseURL();
   const protheusStatusAPI = path === "status";
+
   try {
     return await retry(fetchExternalAPI, {
-      retries: isTestEnvironment() ? 1 : 10,
-      minTimeout: 100,
-      maxTimeout: 1000,
+      retries: getIsTestEnvironment ? 1 : 10,
+      minTimeout: getIsTestEnvironment ? 50 : 100,
+      maxTimeout: getIsTestEnvironment ? 100 : 1000,
     });
   } catch (error) {
     console.error("[PROTHEUS FINAL ERROR]", error.message);
@@ -41,6 +44,7 @@ async function handleSend(path, method, dataObject, token) {
   // async function fetchExternalAPI(attempt) {
   async function fetchExternalAPI() {
     const normalizedPath = protheusStatusAPI ? "" : path;
+    const requestTimeout = getIsTestEnvironment ? 1_000 : 3_000;
 
     try {
       const response = await fetchWithTimeout(
@@ -53,7 +57,7 @@ async function handleSend(path, method, dataObject, token) {
           },
           body: dataObject ? JSON.stringify(dataObject) : null,
         },
-        3000,
+        requestTimeout,
       );
 
       return await handlerResponse(response, protheusStatusAPI);
@@ -183,9 +187,6 @@ const execute = {
     create: async ({ data, tokenProtheus }) => {
       return await handleSend("wsrastreio", "POST", data, tokenProtheus);
     },
-    // status: async ({ tokenProtheus }) => {
-    //   return await handleSend("wsrastreio", "GET", null, tokenProtheus);
-    // },
   },
   boilermaking: {
     read: async ({ tokenProtheus }) => {
@@ -200,8 +201,6 @@ const execute = {
       return await handleSend("wsrastreio/new", "POST", data, tokenProtheus);
     },
     find: async ({ params, tokenProtheus }) => {
-      console.log("FIND");
-      console.log(params);
       return await handleSend(
         `wsrastreio/id?${params}`,
         "GET",
@@ -273,39 +272,41 @@ const execute = {
     },
   },
   transfer: {
-    read: async ({ tokenProtheus, params }) => {
-      const result = await handleSend(
-        `wsrastreio/transfer?process=${params}`,
-        "GET",
-        null,
-        tokenProtheus,
-      );
-      // console.log(">> API PROTHEUS");
-      // console.log(result);
-      return result;
-      // return await handleSend(
-      //   `wsrastreio/listrom?process=${params}`,
-      //   "GET",
-      //   null,
-      //   tokenProtheus,
-      // );
+    process: {
+      read: async ({ tokenProtheus, params }) => {
+        return await handleSend(
+          `wsrastreio/transfer?process=${params}`,
+          "GET",
+          null,
+          tokenProtheus,
+        );
+      },
+      create: async ({ data, tokenProtheus }) => {
+        return await handleSend(
+          `wsrastreio/transfer`,
+          "POST",
+          data,
+          tokenProtheus,
+        );
+      },
     },
-    create: async ({ data, tokenProtheus }) => {
-      console.log(">> CREATE TRANSFER - API PROTHEUS");
-      console.log(data);
-
-      const results = await handleSend(
-        `wsrastreio/transfer`,
-        "POST",
-        data,
-        tokenProtheus,
-      );
-
-      console.log(">> CREATE TRANSFER - API PROTHEUS RETURN");
-      console.log(results);
-
-      return results;
-      //return await handleSend("wsrastreio/list", "POST", data, tokenProtheus);
+    component: {
+      read: async ({ tokenProtheus }) => {
+        return await handleSend(
+          `wsrastreio/transfer/component`,
+          "GET",
+          null,
+          tokenProtheus,
+        );
+      },
+      create: async ({ data, tokenProtheus }) => {
+        return await handleSend(
+          `wsrastreio/transfer/component`,
+          "POST",
+          data,
+          tokenProtheus,
+        );
+      },
     },
   },
 };

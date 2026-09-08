@@ -1,53 +1,45 @@
 import setCookieParser from "set-cookie-parser";
 
-import session from "models/session";
 import orchestrator from "tests/orchestrator";
+import session from "models/session";
 
 import { STATUS_CODE } from "types/status-code";
+import { PROCESS_FLOW } from "types/process-flow";
+
+let responseSessionBody;
+let PATH_URL;
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
   await orchestrator.clearDatabase();
   await orchestrator.runPendingMigrations();
+  responseSessionBody = await orchestrator.createAuth();
 });
 
-describe("GET '/api/v1/component'", () => {
+describe("GET '/api/v1/transfer/component'", () => {
   describe("Default user", () => {
-    test("With valid session and return component", async () => {
-      let PATH_URL = "/api/v1/sessions";
-
-      const objectUser = {
-        username: process.env.USERNAME_TEST,
-        password: process.env.PASSWORD_TEST,
-      };
-
-      const responseSession = await orchestrator.fetchToExecute({
-        path: PATH_URL,
-        method: "POST",
-        object: {
-          username: objectUser.username,
-          password: objectUser.password,
-        },
-      });
-      expect(responseSession.status).toBe(STATUS_CODE.CREATE);
-
-      const responseSessionBody = await responseSession.json();
-      const code = "FLW21224117Z211";
-      PATH_URL = `/api/v1/component/${code}`;
+    test("With valid session and return list componets transfer", async () => {
+      PATH_URL = `/api/v1/transfer/component`;
 
       const response = await orchestrator.fetchToExecute({
         path: PATH_URL,
         method: "GET",
         token: responseSessionBody.token,
       });
-      const responseBody = await response.json();
 
       expect(response.status).toBe(STATUS_CODE.SUCCESS);
 
+      const responseBody = await response.json();
+
       expect(typeof responseBody).toBe("object");
-      expect(responseBody?.data?.[0]?.codigo).toBeDefined();
-      expect(responseBody?.data?.[0]?.descricao).toBeDefined();
-      expect(responseBody?.data?.[0]?.codigo).toBe(code);
+      expect(Array.isArray(responseBody.status_list)).toBe(true);
+      expect(Array.isArray(responseBody.results)).toBe(true);
+      expect(
+        responseBody.results.length === 0 ||
+          responseBody.results.some(
+            (i) => i.process === PROCESS_FLOW.route.boilermaking.acronym,
+          ),
+      ).toBe(true);
 
       // VALIDA CACHE NAVEGADOR ESTÁ DESATIVADO
       const cacheControl = response.headers.get("Cache-control");

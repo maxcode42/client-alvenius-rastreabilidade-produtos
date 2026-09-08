@@ -5,6 +5,11 @@ const PROCESS_FLOW = {
       acronym: "",
       acronym_next: "",
     },
+    component: {
+      name: "component",
+      acronym: "",
+      acronym_next: "",
+    },
     boilermaking: {
       name: "boilermaking",
       acronym: "CA",

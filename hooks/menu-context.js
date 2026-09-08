@@ -61,10 +61,10 @@ export function MenuProvider({ children }) {
           item = {
             ...item,
             href: {
-              pathname: `/transfer`,
-              query: {
-                params: item.key,
-              },
+              pathname: `/transfer/process/${item.key}`,
+              // query: {
+              //   params: item.key,
+              // },
             },
             next: itensMenuTransfer[item.key],
           };

@@ -91,7 +91,6 @@ function httpSetup({ on }) {
         },
       ],
     };
-
     if (
       String(rawQuery).trim() === String(objectResponse.objects[0].COD).trim()
     ) {
@@ -381,17 +380,20 @@ function httpSetup({ on }) {
           STATUS_LIST,
           objects: [
             {
-              STATUS: [
-                {
-                  SIGLA: "SC",
-                  STATUS: "Aguardando SC",
-                },
-              ],
-              SPOOLS: ["SP041500345003 ", "SP041500345004 "],
+              SIGLA: "NF",
+              STATUS: "Aguardando NF",
+              DTINI: "2026-08-21",
+              HRINI: "00:00",
+              DTFIM: "",
+              HRFIM: "",
+              ITENS: ["SP041500345003 ", "SP041500345004 "],
               CODIGO: "000001",
-              COD_FORNEC: "005436",
-              LOJA_FORNEC: "01",
-              NOME_FORNEC: "GRUPO – FLANJACO    ",
+              COD_FORNEC1: "005436",
+              LOJA_FORNEC1: "01",
+              NOME_FORNEC1: "GRUPO – FLANJACO    ",
+              COD_FORNEC2: "003295",
+              LOJA_FORNEC2: "01",
+              NOME_FORNEC2: "SO JATO",
               NUM_SC: "      ",
               PEDIDO: "      ",
               ROMANEIO: "      ",
@@ -400,17 +402,20 @@ function httpSetup({ on }) {
               PROCESSO: "CA",
             },
             {
-              STATUS: [
-                {
-                  SIGLA: "SC",
-                  STATUS: "Aguardando SC",
-                },
-              ],
-              SPOOLS: ["SP041500302009 ", "SP041500426020 "],
+              SIGLA: "PV",
+              STATUS: "Aguardando PV",
+              DTINI: "2026-09-01",
+              HRINI: "00:00",
+              DTFIM: "",
+              HRFIM: "",
+              ITENS: ["SP041500302009 ", "SP041500426020 "],
               CODIGO: "000002",
-              COD_FORNEC: "005436",
-              LOJA_FORNEC: "01",
-              NOME_FORNEC: "GRUPO – FLANJACO    ",
+              COD_FORNEC1: "005436",
+              LOJA_FORNEC1: "01",
+              NOME_FORNEC1: "GRUPO – FLANJACO    ",
+              COD_FORNEC2: "005436",
+              LOJA_FORNEC2: "01",
+              NOME_FORNEC2: "GRUPO – FLANJACO    ",
               NUM_SC: "      ",
               PEDIDO: "      ",
               ROMANEIO: "      ",
@@ -419,17 +424,20 @@ function httpSetup({ on }) {
               PROCESSO: "CA",
             },
             {
-              STATUS: [
-                {
-                  SIGLA: "SC",
-                  STATUS: "Aguardando SC",
-                },
-              ],
-              SPOOLS: ["SP041500230006 ", "SP041500232006 "],
+              SIGLA: "SC",
+              STATUS: "Aguardando SC",
+              DTINI: "2026-08-03",
+              HRINI: "00:00",
+              DTFIM: "",
+              HRFIM: "",
+              ITENS: ["SP041500230006 ", "SP041500232006 "],
               CODIGO: "000003",
-              COD_FORNEC: "005436",
-              LOJA_FORNEC: "01",
-              NOME_FORNEC: "GRUPO – FLANJACO    ",
+              COD_FORNEC1: "005436",
+              LOJA_FORNEC1: "01",
+              NOME_FORNEC1: "GRUPO – FLANJACO    ",
+              COD_FORNEC2: "005455",
+              LOJA_FORNEC2: "01",
+              NOME_FORNEC2: "PROJATO JATEAMENTO E",
               NUM_SC: "      ",
               PEDIDO: "      ",
               ROMANEIO: "      ",
@@ -474,6 +482,173 @@ function httpSetup({ on }) {
 
   on("POST", "/wsrastreio/transfer", async (req, res) => {
     const { processo } = req.body;
+
+    const responseCreate = {
+      status: "Created",
+      status_code: STATUS_CODE.CREATE,
+      message: "Registro importado com sucesso",
+    };
+    const result = {
+      CA: { data: responseCreate, status: STATUS_CODE.CREATE },
+      RR: { data: responseCreate, status: STATUS_CODE.CREATE },
+      PI: { data: responseCreate, status: STATUS_CODE.CREATE },
+      default: {
+        data: {
+          status: "NotFound",
+          status_code: STATUS_CODE.NOT_FOUND,
+          message: "ERROR ao criar registro",
+        },
+        status: STATUS_CODE.NOT_FOUND,
+      },
+    };
+
+    const response = result[processo] || result["default"];
+
+    addHead(req, res, response.status);
+
+    res.end(JSON.stringify(response.data));
+  });
+
+  /* MOCK PROCESS COMPONENT TRANSFER */
+  on("GET", "/wsrastreio/transfer/component", async (req, res, { query }) => {
+    const { process } = query;
+    const STATUS_LIST = [
+      {
+        SIGLA: "SC",
+        ORDEM: 1,
+        STATUS: "Aguardando SC",
+      },
+      {
+        SIGLA: "PV",
+        ORDEM: 2,
+        STATUS: "Aguardando PV",
+      },
+      {
+        SIGLA: "RO",
+        ORDEM: 3,
+        STATUS: "Aguardando ROM",
+      },
+      {
+        SIGLA: "NF",
+        ORDEM: 4,
+        STATUS: "Aguardando NF",
+      },
+      {
+        SIGLA: "EM",
+        ORDEM: 5,
+        STATUS: "Nota Emitida",
+      },
+    ];
+
+    const result = {
+      CA: {
+        data: {
+          STATUS_LIST,
+          objects: [
+            {
+              SIGLA: "SC",
+              STATUS: "Aguardando SC",
+              DTINI: "2026-08-15",
+              HRINI: "00:00",
+              DTFIM: "",
+              HRFIM: "",
+              ITENS: ["TJPLPL50K000311 ", "FLW21224113Z211 "],
+              CODIGO: "000001",
+              COD_FORNEC1: "005436",
+              LOJA_FORNEC1: "01",
+              NOME_FORNEC1: "GRUPO – FLANJACO    ",
+              COD_FORNEC2: "003295",
+              LOJA_FORNEC2: "01",
+              NOME_FORNEC2: "SO JATO",
+              NUM_SC: "      ",
+              PEDIDO: "      ",
+              ROMANEIO: "      ",
+              REVISAO: "  ",
+              AET: "S",
+              PROCESSO: "CA",
+            },
+            {
+              SIGLA: "PV",
+              STATUS: "Aguardando PV",
+              DTINI: "2026-08-21",
+              HRINI: "00:00",
+              DTFIM: "",
+              HRFIM: "",
+              ITENS: ["FLW21224113Z211 ", "TJPLPL50K000311 "],
+              CODIGO: "000002",
+              COD_FORNEC1: "005436",
+              LOJA_FORNEC1: "01",
+              NOME_FORNEC1: "GRUPO – FLANJACO    ",
+              COD_FORNEC2: "005436",
+              LOJA_FORNEC2: "01",
+              NOME_FORNEC2: "GRUPO – FLANJACO    ",
+              NUM_SC: "      ",
+              PEDIDO: "      ",
+              ROMANEIO: "      ",
+              REVISAO: "  ",
+              AET: "S",
+              PROCESSO: "CA",
+            },
+            {
+              SIGLA: "NF",
+              STATUS: "Aguardando NF",
+              ITENS: ["TJPLPL50K000311 ", "FLW21224113Z211 "],
+              DTINI: "2026-09-01",
+              HRINI: "00:00",
+              DTFIM: "",
+              HRFIM: "",
+              CODIGO: "000003",
+              COD_FORNEC1: "005436",
+              LOJA_FORNEC1: "01",
+              NOME_FORNEC1: "GRUPO – FLANJACO    ",
+              COD_FORNEC2: "005455",
+              LOJA_FORNEC2: "01",
+              NOME_FORNEC2: "PROJATO JATEAMENTO E",
+              NUM_SC: "      ",
+              PEDIDO: "      ",
+              ROMANEIO: "      ",
+              REVISAO: "  ",
+              AET: "S",
+              PROCESSO: "CA",
+            },
+          ],
+        },
+        status: STATUS_CODE.CREATE,
+      },
+      RR: {
+        data: {
+          STATUS_LIST,
+          objects: [],
+        },
+        status: STATUS_CODE.CREATE,
+      },
+      PI: {
+        data: {
+          STATUS_LIST,
+          objects: [],
+        },
+        status: STATUS_CODE.CREATE,
+      },
+      default: {
+        data: {
+          status: "NotFound",
+          status_code: STATUS_CODE.NOT_FOUND,
+          message: "ERROR ao criar registro",
+        },
+        status: STATUS_CODE.NOT_FOUND,
+      },
+    };
+
+    // const response = result[process] || result["default"];
+    const response = result["CA"] || result["default"];
+    addHead(req, res, response.status);
+
+    res.end(JSON.stringify(response.data));
+  });
+
+  on("POST", "/wsrastreio/transfer/component", async (req, res) => {
+    //const { processo } = req.body;
+    const processo = "CA";
 
     const responseCreate = {
       status: "Created",

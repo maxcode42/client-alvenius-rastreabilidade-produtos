@@ -8,30 +8,35 @@ import Separator from "components/ui/separator";
 
 import { useQRCode } from "hooks/qr-code-context";
 
-export default function QRCodeTransfer({ data, setData, suppliers }) {
-  const { setCurrentSpool, setSpool, spool } = useQRCode();
+export default function QRCodeTransferComponent({
+  data,
+  setData,
+  suppliers,
+  types = "spool",
+}) {
+  const { itens } = useQRCode();
 
   function removeItem(e, index) {
     e.preventDefault();
     setData((prev) => ({
       ...prev,
-      spools: prev.spools.filter((_, i) => i !== index),
+      itens: prev.itens.filter((_, i) => i !== index),
     }));
   }
 
   useEffect(() => {
-    if (!spool) return;
+    if (!itens || itens.length === 0) return;
 
     setData((prev) => ({
       ...prev,
-      spools: [...(prev?.spools || []), spool?.codigo],
+      itens: [...(prev?.itens || []), itens[itens.length - 1]?.codigo],
     }));
-    setCurrentSpool(null);
-    setSpool(null);
 
+    // setCurrentSpool(null);
+    // setSpool(null);
     // }, [spool, currentSpool]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spool]);
+  }, [itens]);
 
   // CONFIMAR A NECESSIDADE DO USEEFFECT
   useEffect(() => {
@@ -42,12 +47,13 @@ export default function QRCodeTransfer({ data, setData, suppliers }) {
     <QRCodeBase>
       <div className="flex flex-col gap-2">
         <h2 className="text-sm font-semibold text-center">
-          Ler QRCode do Spool.
+          Ler QRCode do <span className="capitalize">{types}</span>.
         </h2>
         <p className="text-sm font-semibold">1 - Selecione realizador.</p>
         <p className="text-sm font-semibold">2 - Selecione o fornecedor.</p>
         <p className="text-sm font-semibold ">
-          3 - Ler o QRCode do Spool para serviço.
+          3 - Ler o QRCode do <span className="capitalize">{types}</span> para
+          serviço.
         </p>
       </div>
 
@@ -164,7 +170,9 @@ export default function QRCodeTransfer({ data, setData, suppliers }) {
         <Separator className={"via-stone-300/50"} />
 
         <div className="flex flex-col py-4 mb-4">
-          <p className="text-md sm:text-lg break-all font-bold">Spools</p>
+          <p className="text-md sm:text-lg break-all font-bold">
+            <span className="capitalize">{types}</span>
+          </p>
           <div className="flex flex-col ">
             <table className="text-sm w-full min-w-full border border-zinc-200 bg-white rounded-lg">
               <thead>
@@ -179,9 +187,9 @@ export default function QRCodeTransfer({ data, setData, suppliers }) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200">
-                {data?.spools?.map((item, index) => (
+                {data?.itens?.map((item, index) => (
                   <tr
-                    key={item.concat(index)}
+                    key={item?.concat(index)}
                     className="hover:bg-zinc-50 transition odd:bg-white"
                   >
                     <td className="max-w-8 px-1 py-1 text-xs sm:text-sm md:text-base text-center text-zinc-800">
