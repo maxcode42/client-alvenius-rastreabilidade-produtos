@@ -5,6 +5,31 @@ import { normalizeAlphanumeric } from "../../../util/formatters/text";
 
 const execute = {
   parse: async (data) => {
+    //DEV HISTORY
+    const historyItemsFilter = [
+      "SP041500426020",
+      "SP041500343002",
+      "SP041500232006",
+    ];
+    const history = [
+      {
+        date: "20260801",
+        process: "CA",
+        status: "SU",
+      },
+      {
+        date: "20260805",
+        process: "CA",
+        status: "SU",
+      },
+      {
+        date: "20260810",
+        process: "RR",
+        status: "SU",
+      },
+    ];
+    //END HISTORY
+
     const objects = data?.objects ?? [];
 
     const results = objects.reduce(
@@ -34,7 +59,12 @@ const execute = {
           user: item?.USER?.trim() ?? "",
           process: PROCESS_FLOW.name[item?.PROCES?.trim()] ?? "",
           process_acronym: item?.PROCES?.trim() ?? "",
-          descricao: item?.DESCRI ?? "",
+          description: item?.DESCRI ?? "",
+          history: historyItemsFilter.includes(
+            normalizeAlphanumeric(item?.COD?.trim()),
+          )
+            ? history
+            : [],
         };
 
         acc.data.push(formattedItem);

@@ -3,6 +3,7 @@ import { usePathname } from "next/navigation";
 import { ArchiveXIcon } from "lucide-react";
 
 import LayoutPage from "components/layout-page";
+import Toggle from "components/ui/toggle";
 import Loading from "components/ui/loading";
 import AlertCustom from "components/ui/alert";
 import Separator from "components/ui/separator";
@@ -159,29 +160,6 @@ export default function ProcessFlow({ info = "", route }) {
 
           return itemFiltered;
         });
-        // const filtered = itens?.reduce((acc, item) => {
-        //   const status = item?.status ?? "";
-        //   const code = item?.codigo ?? "";
-        //   const codeFormat = formatCodeDefault(code) ?? "";
-        //   const dateStart = formatToPtBR(item?.dateStart) ?? "";
-        //   const dateEnd = formatToPtBR(item?.dateEnd) ?? "";
-
-        //   const match =
-        //     code.includes(searchText.toUpperCase()) ||
-        //     codeFormat.includes(searchText.toUpperCase()) ||
-        //     status.includes(searchText.toLowerCase()) ||
-        //     dateStart.includes(searchText) ||
-        //     dateEnd.includes(searchText);
-
-        //   if (match) {
-        //     acc.push({
-        //       ...item,
-        //       status_color: styleColorStatus(item?.status_acronym),
-        //     });
-        //   }
-        //   console.log(acc);
-        //   return acc;
-        // }, []);
 
         setItensFiltered(filtered);
       } catch (error) {
@@ -248,7 +226,7 @@ export default function ProcessFlow({ info = "", route }) {
   //     </div>
   //   );
   // }
-
+  const [enabled, setEnabled] = useState(false);
   return (
     <LayoutPage title={true} subTitle={routeName}>
       {/* //EXIBE A ESTRUTURA DA TELA
@@ -262,7 +240,6 @@ export default function ProcessFlow({ info = "", route }) {
         <HeaderPageButtons
           searchText={searchText}
           setSearchText={setSearchText}
-          //setCurrentSpool={setCurrentSpool}
           openModalQRCode={openModalQRCode}
         />
 
@@ -301,8 +278,16 @@ export default function ProcessFlow({ info = "", route }) {
           )}
 
           {!loading && (
-            <CardItems items={itensFiltered}>
+            <CardItems items={itensFiltered} enabled={enabled}>
               <QuantitiesItens data={quantities} />
+
+              <div className="md:w-1/2 flex flex-row items-center px-4 md:px-4 py-2 bg-stone-200/50 rounded-sm shadow-md shadow-stone-300">
+                <Toggle
+                  enabled={enabled}
+                  onChange={setEnabled}
+                  label={`Click para ${enabled ? "ocultar" : " exibir"} histórico de sucata`}
+                />
+              </div>
             </CardItems>
           )}
         </PanelPrimary>
