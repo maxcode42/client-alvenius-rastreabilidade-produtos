@@ -136,6 +136,7 @@ export default function ProcessRegister({ title = "", info = "", route }) {
   }, []);
 
   useEffect(() => {
+    clearData();
     assignDefaultStandards();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);
