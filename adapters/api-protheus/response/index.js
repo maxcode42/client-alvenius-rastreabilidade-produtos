@@ -225,7 +225,7 @@ const execute = {
       data?.objects?.map((item) => {
         const formattedItem = {
           code: item.CODIGO,
-          codes: item.ITENS,
+          //codes: item.ITENS,
           supplier: {
             origin: {
               code:
@@ -256,7 +256,7 @@ const execute = {
                   : "----",
             },
           },
-          codes: item.SPOOLS.map((item) => item.replace(/ /g, "")),
+          codes: item?.SPOOLS.map((item) => item.replace(/ /g, "")),
           number_sc: item.NUM_SC,
           order: item.PEDIDO,
           romaneio: item.ROMANEIO,

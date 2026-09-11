@@ -1,6 +1,3 @@
-import { Fragment, useState } from "react";
-
-import CardItemsButtons from "../card-items-buttons";
 import CardItemsButton from "../card-items-button";
 import CardItem from "../card-item";
 
@@ -9,7 +6,6 @@ import { useQRCode } from "hooks/qr-code-context";
 import { formatDateCustom } from "util/formatters/date";
 import { PROCESS_STATUS } from "types/process-status";
 import { PROCESS_FLOW } from "types/process-flow";
-import { Toggle } from "../toggle";
 
 export default function CardItems({ items, enabled, children }) {
   const {

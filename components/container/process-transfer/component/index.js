@@ -34,7 +34,7 @@ export default function ProcessTransferComponentFlow({
   const [itens, setItens] = useState(null);
 
   const router = useRouter();
-  const { params } = router.query;
+  //const { params } = router.query;
 
   const routeAcronym = useMemo(() => {
     if (!router.isReady) return;

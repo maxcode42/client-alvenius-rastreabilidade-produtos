@@ -510,8 +510,8 @@ function httpSetup({ on }) {
   });
 
   /* MOCK PROCESS COMPONENT TRANSFER */
-  on("GET", "/wsrastreio/transfer/component", async (req, res, { query }) => {
-    const { process } = query;
+  on("GET", "/wsrastreio/transfer/component", async (req, res) => {
+    // const { process } = query;
     const STATUS_LIST = [
       {
         SIGLA: "SC",

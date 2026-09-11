@@ -1,4 +1,4 @@
-import { useEffect, useState, useRouter, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   SaveIcon,
   QrCodeIcon,

@@ -141,7 +141,7 @@ const execute = {
       // },
     },
     component: {
-      read: async (params) => {
+      read: async () => {
         // return await handleSend(`${PROCESS_FLOW.route.supplier.name}/${params}`, "GET", null);
         return await handleSend(
           `${PROCESS_FLOW.route.transfer.name}/${PROCESS_FLOW.route.component.name}`,
@@ -149,7 +149,7 @@ const execute = {
           null,
         );
       },
-      create: async ({ data, params }) => {
+      create: async ({ data }) => {
         return await handleSend(
           `${PROCESS_FLOW.route.transfer.name}/${PROCESS_FLOW.route.component.name}`,
           "POST",
