@@ -154,7 +154,8 @@ export default function ProcessTransferComponentFlow({
         <PanelPrimary className={`border-none`}>
           {(loading || !itens) && <Loading />}
 
-          {!loading && itens?.length === 0 && (
+          {((!loading && itens?.length === 0) ||
+            itensFiltered?.length === 0) && (
             <div
               className={`w-full h-full flex flex-col min-h-72 flex-1 px-2 py-8 gap-8 border-blue-300/50 border-2 rounded-md text-center
                             opacity-0

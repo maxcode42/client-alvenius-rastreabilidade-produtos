@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArchiveXIcon, PlusCircleIcon } from "lucide-react";
 
-//import LayoutPage from "../../../../components/layout-page";
 import LayoutPage from "components/layout-page";
 import Search from "components/ui/search";
 import Loading from "components/ui/loading";
@@ -14,11 +13,10 @@ import PanelPrimary from "components/ui/panel-primary";
 import HeaderPageTitle from "components/header-page-title";
 import CardItemsTransfer from "components/ui/card-items-transfer";
 
+import { formatToPtBR } from "util/formatters/date";
 import { PROCESS_FLOW } from "types/process-flow";
-
 import { useQRCode } from "hooks/qr-code-context";
 
-// import api from "infra/provider/api-web";
 import api from "infra/provider/api-web";
 
 export default function ProcessTransferFlow({ title = "", info = "", route }) {
@@ -73,17 +71,17 @@ export default function ProcessTransferFlow({ title = "", info = "", route }) {
         }
 
         const filtered = itens?.filter((item) => {
-          //const status = item?.status;
+          const status = item?.status;
           const code = item?.code;
-          // const codeFormat = formatCodeDefault(item?.code);
-          // const dateStart = formatToPtBR(item?.dateStart);
-          // const dateEnd = formatToPtBR(item?.dateEnd);
-
-          const itemFiltered = code.includes(searchText?.toUpperCase()); //||
-          // codeFormat.includes(searchText?.toUpperCase()) ||
-          // status.includes(searchText?.toLowerCase()) ||
-          // dateStart?.includes(searchText) ||
-          // dateEnd?.includes(searchText);
+          const codeFormat = item?.codes; //formatCodeDefault(item?.code);
+          const dateStart = formatToPtBR(item?.dateStart);
+          const dateEnd = formatToPtBR(item?.dateEnd);
+          const itemFiltered =
+            code.includes(searchText?.toUpperCase()) ||
+            codeFormat.includes(searchText?.toUpperCase()) ||
+            status.includes(searchText?.toLowerCase()) ||
+            dateStart?.includes(searchText) ||
+            dateEnd?.includes(searchText);
 
           return itemFiltered;
         });
@@ -152,7 +150,8 @@ export default function ProcessTransferFlow({ title = "", info = "", route }) {
         <PanelPrimary className={`border-none`}>
           {(loading || !itens) && <Loading />}
 
-          {!loading && itens?.length === 0 && (
+          {((!loading && itens?.length === 0) ||
+            itensFiltered?.length === 0) && (
             <div
               className={`w-full h-full flex flex-col min-h-72 flex-1 px-2 py-8 gap-8 border-blue-300/50 border-2 rounded-md text-center
                             opacity-0
