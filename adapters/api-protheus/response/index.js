@@ -114,7 +114,7 @@ const execute = {
   parseTransfer: async (data) => {
     // console.log(">>API PROTHEUS TRANSFER PARSE OBJECTS");
 
-    // console.log(data);
+    //console.log(data);
     if (!data || !data?.objects || data?.objects.length === 0) {
       return {
         status_list: [],
@@ -256,6 +256,7 @@ const execute = {
                   : "----",
             },
           },
+          codes: item.SPOOLS.map((item) => item.replace(/ /g, "")),
           number_sc: item.NUM_SC,
           order: item.PEDIDO,
           romaneio: item.ROMANEIO,

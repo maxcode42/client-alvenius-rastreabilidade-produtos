@@ -17,11 +17,11 @@ async function handleSend(path, method, dataObject) {
 }
 
 async function handlerResponse(response) {
-  if (
-    response.status === STATUS_CODE.UNAUTHORIZED ||
-    response.status === STATUS_CODE.NOT_FOUND
-  ) {
-    //if (response.status === STATUS_CODE.UNAUTHORIZED) {
+  // if (
+  //   response.status === STATUS_CODE.UNAUTHORIZED ||
+  //   response.status === STATUS_CODE.NOT_FOUND
+  // ) {
+  if (response.status === STATUS_CODE.UNAUTHORIZED) {
     dispatchUnauthorized();
   }
 
