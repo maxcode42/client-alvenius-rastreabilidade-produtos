@@ -239,7 +239,9 @@ export default function CardItemTransfer({
                       >
                         <small>
                           <strong>codigo:</strong>{" "}
-                          {types === "process" ? formatCodeDefault(code) : code}
+                          {/* 2026-09: remover formatação code - Rogerio Lino */}
+                          {/* {types === "process" ? formatCodeDefault(code) : code} */}
+                          {code}
                         </small>
                       </p>
                     </div>
@@ -286,7 +288,7 @@ export default function CardItemTransfer({
                         <div className=" absolute left-0 top-0 h-full w-8 bg-stone-100 rounded-full -translate-x-1/2" />
                       )}
 
-                      <small className="capitalize relative">
+                      <small className="capitalize truncate relative">
                         {i?.text.trim()}
                       </small>
                     </div>

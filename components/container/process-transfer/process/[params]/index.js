@@ -34,7 +34,7 @@ export default function ProcessTransferFlow({ title = "", info = "", route }) {
 
   const routeAcronym = useMemo(() => {
     if (!router.isReady) return;
-
+    console.log(params);
     return PROCESS_FLOW.route[params].acronym;
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -7,7 +7,7 @@ import withAuth from "../../../../auth/auth-with";
 function Transfer() {
   return (
     <ProcessTransfer
-      title={"Transferência"}
+      title={"Transferência - SPOOL"}
       route={PROCESS_FLOW.route.transfer.name}
       textModal={"Lista os registros Spool de transferência."}
       info={"Lista e criar o registro do processo de transferência."}

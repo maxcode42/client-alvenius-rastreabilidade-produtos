@@ -19,13 +19,33 @@ async function findAll(tokenProtheus) {
 }
 
 async function create(tokenProtheus, transferInputValues, params) {
+  function validSupplierDestination(supplier) {
+    //CODIGO ALVENIUS: SOLICITADO DEIXAR FIXO - ROGERIO LINO
+    const CODE_ALVENIUS = "000052";
+
+    return !supplier ||
+      supplier === undefined ||
+      supplier === "undefined" ||
+      supplier.trim().length === 0
+      ? CODE_ALVENIUS
+      : supplier;
+  }
+
+  function validProcesso(process) {
+    return !process || process === null || String(process).trim().length === 0
+      ? "CA"
+      : process;
+  }
+
   const dataObject = {
     componentes: transferInputValues.itens,
     fornecedor: {
-      origem: String(transferInputValues?.supplier_origin),
+      origem: validSupplierDestination(
+        String(transferInputValues?.supplier_origin),
+      ),
       destino: String(transferInputValues?.supplier_destination),
     },
-    processo: String(transferInputValues?.process),
+    processo: validProcesso(transferInputValues?.process),
     aet: String(transferInputValues?.third),
   };
 

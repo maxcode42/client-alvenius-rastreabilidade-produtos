@@ -46,6 +46,7 @@ export default function ProcessTransferComponentCreate({
     setAction,
     setResult,
     setSpool,
+    setItens,
   } = useQRCode();
 
   const [openAlertQuestion, setOpenAlertQuestion] = useState(false);
@@ -63,6 +64,7 @@ export default function ProcessTransferComponentCreate({
     supplier_origin: null,
     spools: null,
     process: null,
+    itens: null,
     third: false,
   });
 
@@ -91,7 +93,9 @@ export default function ProcessTransferComponentCreate({
     setQrCodeReadingType([QRCODE_TYPES.component]);
     //setOpenAlertInfo(false);
     setCurrentSpool(null);
+    setResult(null);
     setSpool(null);
+    setItens([]);
     setData({
       supplier_destination: null,
       supplier_origin: null,
@@ -247,7 +251,7 @@ export default function ProcessTransferComponentCreate({
           </Button>
 
           <Button
-            disabled={(!data?.itens && !data?.supplier) || loading}
+            disabled={!data?.itens || !data?.supplier || loading}
             onClick={(e) => handlerData(e)}
             className={
               "bg-green-500 text-green-100  hover:bg-green-700 hover:text-stone-100 hover:shadow-green-600 disabled:bg-stone-300 disabled:shadow-none"

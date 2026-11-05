@@ -3,7 +3,7 @@ import { SearchIcon } from "lucide-react";
 export default function Search({ text, action }) {
   return (
     <div className="relative w-full h-14 mt-2">
-      <SearchIcon className="absolute left-1 top-4 flex h-6 w-8 items-center justify-center p-0 m-0 rounded-l-md rounded-r-none size-5 text-stone-300 rounded-sm hover:bg-blue-800 hover:text-blue-100" />
+      <SearchIcon className="absolute left-1 top-4 flex h-6 w-8 items-center justify-center p-0 m-0 size-5 text-stone-300" />
 
       <input
         type="text"

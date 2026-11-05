@@ -111,7 +111,6 @@ export default function ProcessTransferCreate({
   }
 
   async function findOnByCode({ code }) {
-    console.log(params);
     // const results = await api.execute[params].process.find({ params: code });
     const results = await api.execute[params].find({
       params: code,

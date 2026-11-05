@@ -106,7 +106,7 @@ export default function CardItems({ items, enabled, children }) {
                         className={`w-full flex flex-col px-4 text-xs sm:text-sm md:text-base text-left`}
                       >
                         <small>
-                          {formatDateCustom(i.date, "00:00:00")} |{" "}
+                          {formatDateCustom(i.date, i?.time)} |{" "}
                           <strong className="capitalize">
                             {PROCESS_FLOW.name[i.process]}{" "}
                           </strong>

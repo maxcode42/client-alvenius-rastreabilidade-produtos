@@ -77,7 +77,8 @@ async function handlerResponse(response, protheusStatusAPI) {
       response.status !== STATUS_CODE.CREATE
     ) {
       throw new NotFoundError({
-        message: "Um error interno inesperado ocorreu na request externa.",
+        message:
+          "Ocorreu error interno na API Protheus. Entre em contato com suporte.",
         action: "Contate suporte tecnico.",
       });
     }
@@ -191,7 +192,9 @@ const execute = {
   boilermaking: {
     read: async ({ tokenProtheus }) => {
       return await handleSend(
-        `wsrastreio/process?${PROCESS_FLOW.route.boilermaking.acronym}`,
+        //`wsrastreio/process?${PROCESS_FLOW.route.boilermaking.acronym}`,
+        //http://187.108.39.242:8085/rest/index/wsrastreio
+        `wsrastreio/lista?sigla=${PROCESS_FLOW.route.boilermaking.acronym}`,
         "GET",
         null,
         tokenProtheus,
@@ -202,7 +205,7 @@ const execute = {
     },
     find: async ({ params, tokenProtheus }) => {
       return await handleSend(
-        `wsrastreio/id?${params}`,
+        `wsrastreio/id?spool=${params}`,
         "GET",
         null,
         tokenProtheus,
@@ -222,7 +225,9 @@ const execute = {
   coating: {
     read: async ({ tokenProtheus }) => {
       return await handleSend(
-        `wsrastreio/process?${PROCESS_FLOW.route.coating.acronym}`,
+        // `wsrastreio/process?${PROCESS_FLOW.route.coating.acronym}`,
+        `wsrastreio/lista?sigla=${PROCESS_FLOW.route.coating.acronym}`,
+
         "GET",
         null,
         tokenProtheus,
@@ -233,7 +238,7 @@ const execute = {
     },
     find: async ({ params, tokenProtheus }) => {
       return await handleSend(
-        `wsrastreio/id?${params}`,
+        `wsrastreio/id?spool=${params}`,
         "GET",
         null,
         tokenProtheus,
@@ -243,7 +248,8 @@ const execute = {
   painting: {
     read: async ({ tokenProtheus }) => {
       return await handleSend(
-        `wsrastreio/process?${PROCESS_FLOW.route.painting.acronym}`,
+        // `wsrastreio/process?${PROCESS_FLOW.route.painting.acronym}`,
+        `wsrastreio/lista?sigla=${PROCESS_FLOW.route.painting.acronym}`,
         "GET",
         null,
         tokenProtheus,
@@ -254,7 +260,7 @@ const execute = {
     },
     find: async ({ params, tokenProtheus }) => {
       return await handleSend(
-        `wsrastreio/id?${params}`,
+        `wsrastreio/id?spool=${params}`,
         "GET",
         null,
         tokenProtheus,
@@ -293,15 +299,17 @@ const execute = {
     component: {
       read: async ({ tokenProtheus }) => {
         return await handleSend(
-          `wsrastreio/transfer/component`,
+          //`wsrastreio/transfer/component?process=CA`,
+          `wsrastreio/componente?process=CA`,
           "GET",
           null,
           tokenProtheus,
         );
       },
       create: async ({ data, tokenProtheus }) => {
+        console.log(data);
         return await handleSend(
-          `wsrastreio/transfer/component`,
+          `wsrastreio/componente`,
           "POST",
           data,
           tokenProtheus,

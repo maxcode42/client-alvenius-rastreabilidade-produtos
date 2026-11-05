@@ -6,6 +6,7 @@ import { normalizeAlphanumeric } from "../../../util/formatters/text";
 const execute = {
   parse: async (data) => {
     //DEV HISTORY
+    /*
     const historyItemsFilter = [
       "SP041500426020",
       "SP041500343002",
@@ -28,6 +29,7 @@ const execute = {
         status: "SU",
       },
     ];
+    */
     //END HISTORY
 
     const objects = data?.objects ?? [];
@@ -60,11 +62,21 @@ const execute = {
           process: PROCESS_FLOW.name[item?.PROCES?.trim()] ?? "",
           process_acronym: item?.PROCES?.trim() ?? "",
           description: item?.DESCRI ?? "",
-          history: historyItemsFilter.includes(
-            normalizeAlphanumeric(item?.COD?.trim()),
-          )
-            ? history
+          history: item?.HISTORICO
+            ? item?.HISTORICO.map((h) => {
+                return {
+                  date: h?.date ?? "000000",
+                  time: item?.HRSAID ?? "",
+                  process: h?.process ?? "",
+                  status: h?.status ?? "",
+                };
+              })
             : [],
+          // history: historyItemsFilter.includes(
+          //   normalizeAlphanumeric(item?.COD?.trim()),
+          // )
+          //   ? history
+          //   : [],
         };
 
         acc.data.push(formattedItem);
@@ -273,11 +285,6 @@ const execute = {
         };
         return formattedItem;
       }) || [];
-
-    // console.log("API PARSED RESULTS PROTHEUS");
-    // console.log(data);
-    // console.log("API PARSED");
-    // console.log(results);
 
     return { status_list, results };
   },

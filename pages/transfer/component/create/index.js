@@ -1,4 +1,4 @@
-import ProcessTransferComponentCreate from "components/container/process-transfer/component/create/";
+import ProcessTransferComponentCreate from "components/container/process-transfer/component/[params]/create";
 
 import { PROCESS_FLOW } from "../../../../types/process-flow";
 
