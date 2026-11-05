@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { twMerge } from "tailwind-merge";
 
 import QRCodeBase from "../qr-code-base";
 import Separator from "components/ui/separator";
@@ -8,6 +9,8 @@ import QRCodeFormQuestion from "components/ui/qr-code/qr-code-form-question";
 import { PROCESS_STATUS } from "types/process-status";
 import { PROCESS_FLOW } from "types/process-flow";
 import { useQRCode } from "hooks/qr-code-context";
+
+import { styleColorStatus } from "types/styles-color-status";
 
 export default function QRCodeFlow() {
   const { currentSpool, spool } = useQRCode();
@@ -20,6 +23,19 @@ export default function QRCodeFlow() {
   return (
     <QRCodeBase>
       <div className="flex flex-col gap-2">
+        <div className="flex flex-row justify-center item-center">
+          <p className="z-50 capitalize text-center min-w-20 text-xs sm:text-sm md:text-base text-stone-800">
+            <span
+              className={twMerge(
+                `p-1 text-xs rounded-full flex flex-row justify-center items-center border-r`,
+                styleColorStatus(currentSpool?.status_acronym),
+              )}
+            >
+              <small>{currentSpool?.status}</small>
+            </span>
+          </p>
+        </div>
+
         <h2 className="text-sm font-semibold text-center">
           Ler o QRCode do Spool.
         </h2>

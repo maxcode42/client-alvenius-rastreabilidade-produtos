@@ -1,5 +1,4 @@
 import apiProtheus from "infra/provider/api-protheus";
-// import responseProtheus from "adapters/api-protheus/response";
 
 import { normalizeAlphanumeric } from "../util/formatters/text";
 

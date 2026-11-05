@@ -16,10 +16,10 @@ beforeAll(async () => {
   responseSessionBody = await orchestrator.createAuth();
 });
 
-describe("POST '/api/v1/transfer/[process]'", () => {
+describe("POST '/api/v1/transfer/process/[params]'", () => {
   describe("Default user", () => {
     test("With valid session and does not create transfer", async () => {
-      PATH_URL = `/api/v1/transfer/${PROCESS_FLOW.route.boilermaking.acronym}`;
+      PATH_URL = `/api/v1/transfer/process/${PROCESS_FLOW.route.boilermaking.acronym}`;
 
       const response = await orchestrator.fetchToExecute({
         path: PATH_URL,
@@ -40,7 +40,7 @@ describe("POST '/api/v1/transfer/[process]'", () => {
       });
     });
     test("With valid session and create transfer", async () => {
-      PATH_URL = `/api/v1/transfer/${PROCESS_FLOW.route.boilermaking.acronym}`;
+      PATH_URL = `/api/v1/transfer/process/${PROCESS_FLOW.route.boilermaking.acronym}`;
       const objectData = await orchestrator.createRegisterObject();
 
       const response = await orchestrator.fetchToExecute({

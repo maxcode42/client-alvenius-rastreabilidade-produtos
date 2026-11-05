@@ -2,13 +2,13 @@ import responseProtheus from "adapters/api-protheus/response";
 import apiProtheus from "infra/provider/api-protheus";
 
 async function runInsertAPIProtheus(data) {
-  const results = await apiProtheus.execute.transfer.create(data);
+  const results = await apiProtheus.execute.transfer.process.create(data);
 
   return results;
 }
 
 async function findAll(tokenProtheus, params) {
-  const response = await apiProtheus.execute.transfer.read({
+  const response = await apiProtheus.execute.transfer.process.read({
     tokenProtheus,
     params,
   });
@@ -28,15 +28,6 @@ async function create(tokenProtheus, transferInputValues, params) {
     processo: String(transferInputValues?.process),
     aet: String(transferInputValues?.third),
   };
-  /*
-  "spools": ["SP0414FL005001", "SP0313FL005002"],
-  "processo":"AC",
-  "fornecedor": {
-    "origem": "003385",
-    "destino": "004449"
-  },
-  "aet": "S" | "N"
-  */
 
   const response = await runInsertAPIProtheus({
     data: dataObject,

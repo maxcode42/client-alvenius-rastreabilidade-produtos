@@ -111,7 +111,10 @@ export default function ProcessTransferCreate({
   }
 
   async function findOnByCode({ code }) {
-    const results = await api.execute[params].find({ params: code });
+    // const results = await api.execute[params].process.find({ params: code });
+    const results = await api.execute[params].find({
+      params: code,
+    });
 
     return results?.data?.[0] ?? {};
   }
@@ -126,7 +129,7 @@ export default function ProcessTransferCreate({
 
       const results = await api.execute[
         PROCESS_FLOW.route.transfer.name
-      ].create({
+      ].process.create({
         data: {
           spools: data?.spools,
           process: data?.process,

@@ -16,10 +16,10 @@ beforeAll(async () => {
   responseSessionBody = await orchestrator.createAuth();
 });
 
-describe("GET '/api/v1/transfer/[process]'", () => {
+describe("GET '/api/v1/transfer/process/[params]'", () => {
   describe("Default user", () => {
     test("With valid session and return list boilermaking", async () => {
-      PATH_URL = `/api/v1/transfer/${PROCESS_FLOW.route.boilermaking.acronym}`;
+      PATH_URL = `/api/v1/transfer/process/${PROCESS_FLOW.route.boilermaking.acronym}`;
 
       const response = await orchestrator.fetchToExecute({
         path: PATH_URL,
@@ -62,7 +62,7 @@ describe("GET '/api/v1/transfer/[process]'", () => {
       });
     });
     test("With valid session and return list coating", async () => {
-      PATH_URL = `/api/v1/transfer/${PROCESS_FLOW.route.coating.acronym}`;
+      PATH_URL = `/api/v1/transfer/process/${PROCESS_FLOW.route.coating.acronym}`;
 
       const response = await orchestrator.fetchToExecute({
         path: PATH_URL,
@@ -105,7 +105,7 @@ describe("GET '/api/v1/transfer/[process]'", () => {
       });
     });
     test("With valid session and return list painting", async () => {
-      PATH_URL = `/api/v1/transfer/${PROCESS_FLOW.route.painting.acronym}`;
+      PATH_URL = `/api/v1/transfer/process/${PROCESS_FLOW.route.painting.acronym}`;
 
       const response = await orchestrator.fetchToExecute({
         path: PATH_URL,

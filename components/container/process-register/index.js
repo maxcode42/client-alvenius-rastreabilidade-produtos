@@ -52,12 +52,12 @@ export default function ProcessRegister({ title = "", info = "", route }) {
   function openModalQRCode(e) {
     e.preventDefault();
 
-    setResult(null);
+    //setResult(null);
     setOpenQRCode(true);
     setCheckCodeExists(false);
     setScannerLocked(false);
 
-    setSpool(null);
+    //setSpool(null);
     setOpenAlert(false);
     setCurrentProcess(currentRoute.replace("/", ""));
   }
@@ -75,9 +75,10 @@ export default function ProcessRegister({ title = "", info = "", route }) {
   }
 
   function clearData() {
-    setQrCodeReadingType([QRCODE_TYPES.spool, QRCODE_TYPES.component]);
+    //setQrCodeReadingType([QRCODE_TYPES.spool, QRCODE_TYPES.component]);
     //setOpenAlertInfo(false);
     setCurrentSpool(null);
+    resetDataDefault();
     setSpool(null);
     setItens([]);
   }
@@ -119,9 +120,14 @@ export default function ProcessRegister({ title = "", info = "", route }) {
   const assignDefaultStandards = useCallback(() => {
     setQrCodeReadingType([QRCODE_TYPES.spool, QRCODE_TYPES.component]);
 
+    // setOnClose(() => {
+    //   return () => {
+    //     setOpenQRCode(false), setScannerLocked(true), resetDataDefault();
+    //   };
+    // });
     setOnClose(() => {
       return () => {
-        setOpenQRCode(false), setScannerLocked(true), resetDataDefault();
+        setOpenQRCode(false), setScannerLocked(true), setResult(null);
       };
     });
 
@@ -130,6 +136,7 @@ export default function ProcessRegister({ title = "", info = "", route }) {
   }, []);
 
   useEffect(() => {
+    clearData();
     assignDefaultStandards();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route]);

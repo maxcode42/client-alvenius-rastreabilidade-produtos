@@ -2,7 +2,7 @@ import { PROCESS_STATUS } from "types/process-status";
 
 import CardItemTransfer from "../card-item-transfer";
 
-export default function CardItemsTransfer({ items, status, children }) {
+export default function CardItemsTransfer({ items, status, types, children }) {
   if (!items || items?.length === 0) return null;
 
   return (
@@ -28,7 +28,12 @@ export default function CardItemsTransfer({ items, status, children }) {
             }
           `}
         >
-          <CardItemTransfer item={item} status={status} index={index} />
+          <CardItemTransfer
+            item={item}
+            index={index}
+            status={status}
+            types={types}
+          />
         </li>
       ))}
     </ul>

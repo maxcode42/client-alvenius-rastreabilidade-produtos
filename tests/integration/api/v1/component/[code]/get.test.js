@@ -19,8 +19,6 @@ describe("GET '/api/v1/component'", () => {
       const objectUser = {
         username: process.env.USERNAME_TEST,
         password: process.env.PASSWORD_TEST,
-        // username: "josuel",
-        // password: "mudar123",
       };
 
       const responseSession = await orchestrator.fetchToExecute({

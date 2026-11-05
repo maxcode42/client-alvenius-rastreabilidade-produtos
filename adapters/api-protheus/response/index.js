@@ -5,6 +5,33 @@ import { normalizeAlphanumeric } from "../../../util/formatters/text";
 
 const execute = {
   parse: async (data) => {
+    //DEV HISTORY
+    /*
+    const historyItemsFilter = [
+      "SP041500426020",
+      "SP041500343002",
+      "SP041500232006",
+    ];
+    const history = [
+      {
+        date: "20260801",
+        process: "CA",
+        status: "SU",
+      },
+      {
+        date: "20260805",
+        process: "CA",
+        status: "SU",
+      },
+      {
+        date: "20260810",
+        process: "RR",
+        status: "SU",
+      },
+    ];
+    */
+    //END HISTORY
+
     const objects = data?.objects ?? [];
 
     const results = objects.reduce(
@@ -34,7 +61,22 @@ const execute = {
           user: item?.USER?.trim() ?? "",
           process: PROCESS_FLOW.name[item?.PROCES?.trim()] ?? "",
           process_acronym: item?.PROCES?.trim() ?? "",
-          descricao: item?.DESCRI ?? "",
+          description: item?.DESCRI ?? "",
+          history: item?.HISTORICO
+            ? item?.HISTORICO.map((h) => {
+                return {
+                  date: h?.date ?? "000000",
+                  time: item?.HRSAID ?? "",
+                  process: h?.process ?? "",
+                  status: h?.status ?? "",
+                };
+              })
+            : [],
+          // history: historyItemsFilter.includes(
+          //   normalizeAlphanumeric(item?.COD?.trim()),
+          // )
+          //   ? history
+          //   : [],
         };
 
         acc.data.push(formattedItem);
@@ -84,7 +126,7 @@ const execute = {
   parseTransfer: async (data) => {
     // console.log(">>API PROTHEUS TRANSFER PARSE OBJECTS");
 
-    // console.log(data);
+    //console.log(data);
     if (!data || !data?.objects || data?.objects.length === 0) {
       return {
         status_list: [],
@@ -195,7 +237,7 @@ const execute = {
       data?.objects?.map((item) => {
         const formattedItem = {
           code: item.CODIGO,
-          spools: item.SPOOLS,
+          //codes: item.ITENS,
           supplier: {
             origin: {
               code:
@@ -226,6 +268,7 @@ const execute = {
                   : "----",
             },
           },
+          codes: item?.SPOOLS.map((item) => item.replace(/ /g, "")),
           number_sc: item.NUM_SC,
           order: item.PEDIDO,
           romaneio: item.ROMANEIO,
@@ -242,11 +285,6 @@ const execute = {
         };
         return formattedItem;
       }) || [];
-
-    // console.log("API PARSED RESULTS PROTHEUS");
-    // console.log(data);
-    // console.log("API PARSED");
-    // console.log(results);
 
     return { status_list, results };
   },

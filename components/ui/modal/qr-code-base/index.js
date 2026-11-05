@@ -23,6 +23,9 @@ import { QRCODE_TYPES } from "types/qr-code-reading";
 import { PROCESS_FLOW } from "types/process-flow";
 import { formatCodeDefault } from "util/formatters/code";
 
+import beepCapture from "assets/audio/beep_03.wav";
+import beepError from "assets/audio/beep_error_03.wav";
+
 export default function QRCodeBase({ children }) {
   const {
     setQrCodeReadingType,
@@ -49,6 +52,8 @@ export default function QRCodeBase({ children }) {
 
   const productsTypes = useMemo(() => PRODUCTS_TYPES, []);
   const processingRef = useRef(false);
+
+  const audioRef = useRef(null);
 
   const checkIfCodeExists = useCallback(
     async (code) => {
@@ -239,7 +244,22 @@ export default function QRCodeBase({ children }) {
       setOpenQRCodeBase(isOpenQRCodeBase);
       setOpenAlert(true);
 
-      if (!resultExtract) return;
+      // if (!resultExtract) return;
+      if (!resultExtract) {
+        audioRef.current = new Audio(beepError);
+
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch((error) => {
+          console.error("Erro ao reproduzir áudio:", error);
+        });
+        return;
+      }
+
+      audioRef.current = new Audio(beepCapture);
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch((error) => {
+        console.error("Erro ao reproduzir áudio:", error);
+      });
 
       setMessage(resultExtract);
     },

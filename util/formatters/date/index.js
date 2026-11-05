@@ -19,7 +19,7 @@ export function formatDateCustom(date, time) {
     const dateFull = date.concat(" ").concat(time);
     const result = dateFull.replace(
       /(\d{4})(\d{2})(\d{2})\s(\d{2}:\d{2})/,
-      "$3/$2/$1 às $4",
+      "$3/$2/$1 às $4h",
     );
 
     return result;

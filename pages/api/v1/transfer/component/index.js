@@ -3,7 +3,7 @@ import { createRouter } from "next-connect";
 import { STATUS_CODE } from "types/status-code";
 
 import controller from "infra/controller";
-import transfer from "models/transfer";
+import component from "models/transfer/component";
 import session from "models/session";
 
 const router = createRouter();
@@ -14,18 +14,11 @@ router.post(postHandler);
 export default router.handler(controller.errorHandlers);
 
 async function getHandler(req, res) {
-  const params = req?.query?.process;
   const token = req.cookies[process.env.COOKIE_NAME];
 
   const sessionObject = await session.findOneValidByToken(token);
 
-  const results = await transfer.findAll(sessionObject.token_protheus, params);
-
-  if (results === true) {
-    await controller.clearSessionCookie(res);
-
-    res.status(STATUS_CODE.SUCCESS).json(sessionObject.id);
-  }
+  const results = await component.findAll(sessionObject.token_protheus);
 
   await controller.setSessionCookie(res, sessionObject.token);
 
@@ -38,17 +31,16 @@ async function getHandler(req, res) {
 }
 
 async function postHandler(req, res) {
-  const params = req?.query?.process;
-  const transferInputValues = req.body;
+  const registerInputValues = req.body;
   const token = req.cookies[process.env.COOKIE_NAME];
 
   const sessionObject = await session.findOneValidByToken(token);
 
-  const results = await transfer.create(
+  const results = await component.create(
     sessionObject.token_protheus,
-    transferInputValues,
-    params,
+    registerInputValues,
   );
+
   await controller.setSessionCookie(res, sessionObject.token);
 
   res.setHeader(

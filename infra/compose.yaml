@@ -4,5 +4,12 @@ services:
     image: "postgres:16.0-alpine3.18"
     env_file:
       - "../.env.development"
+    networks:
+      - rastreabilidade-dev-network
     ports:
       - "5432:5432"
+
+networks:
+  rastreabilidade-dev-network:
+    name: rastreabilidade-dev-network
+    driver: bridge

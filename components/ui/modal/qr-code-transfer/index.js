@@ -28,6 +28,7 @@ export default function QRCodeTransfer({ data, setData, suppliers }) {
     }));
     setCurrentSpool(null);
     setSpool(null);
+
     // }, [spool, currentSpool]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spool]);
@@ -48,7 +49,6 @@ export default function QRCodeTransfer({ data, setData, suppliers }) {
         <p className="text-sm font-semibold ">
           3 - Ler o QRCode do Spool para serviço.
         </p>
-        {/* SC - AET - */}
       </div>
 
       <Separator />
